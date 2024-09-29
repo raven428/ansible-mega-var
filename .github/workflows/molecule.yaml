@@ -1,0 +1,23 @@
+---
+name: test role
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  schedule:
+    - cron: "11 11 * * 1"
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  test-role:
+    name: test role
+    timeout-minutes: 11
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: test role
+        run: molecule/run-tests.sh
