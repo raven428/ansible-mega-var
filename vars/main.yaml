@@ -1,0 +1,11 @@
+---
+meva_arch_map:
+  i386: "i386"
+  x86_64: "x64"
+  aarch64: "arm64"
+  armv7l: "arm"
+meva_arch_bin: >-
+  {{
+    meva_arch_map[ansible_architecture] |
+    default(ansible_architecture)
+  }}

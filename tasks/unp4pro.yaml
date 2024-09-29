@@ -1,0 +1,56 @@
+---
+- name: unpack archive block
+  block:
+    - name: recursive create directory
+      file:
+        path: "{{ _meva_down_name }}-dir"
+        state: directory
+        mode: "0755"
+      become: false
+      check_mode: false
+      delegate_to: "{{ i.delegate_to }}"
+    - name: unpack from archive
+      unarchive:
+        src: "{{ _meva_down_name }}"
+        dest: "{{ _meva_down_name }}-dir"
+        creates: "{{ _meva_down_name }}-dir/{{ i.creates }}"
+      become: false
+      check_mode: false
+      delegate_to: "{{ i.delegate_to }}"
+      register: unarchive_result
+      ignore_errors: true
+    - name: unarchive failed, trying to decompress
+      decompress:
+        src: "{{ _meva_down_name }}"
+        dst: "{{ _meva_down_name }}-dir/{{ i.creates }}"
+      become: false
+      check_mode: false
+      delegate_to: "{{ i.delegate_to }}"
+      when: unarchive_result.failed
+  when: i.archive
+
+- name: propagate unpacked files
+  copy:
+    src: "{{ _meva_down_name }}-dir/{{ f.name }}"
+    dest: "{{ f.dest | default(mandatory) }}"
+    force: "{{ f.force | default(omit) }}"
+    follow: "{{ f.follow | default(omit) }}"
+    owner: "{{ f.owner | default(omit) }}"
+    group: "{{ f.group | default(omit) }}"
+    mode: "{{ f.mode | default('0644') }}"
+  notify: "{{ f.notify | default(omit) }}"
+  loop_control:
+    loop_var: f
+  loop: "{{ i.files | default([]) | list }}"
+
+- name: propagate downloaded file if not archive
+  copy:
+    src: "{{ _meva_down_name }}"
+    dest: "{{ i.dest | default(mandatory) }}"
+    force: "{{ i.force | default(omit) }}"
+    follow: "{{ i.follow | default(omit) }}"
+    owner: "{{ i.owner | default(i.down_owner | default(omit)) }}"
+    group: "{{ i.group | default(i.down_owner | default(omit)) }}"
+    mode: "{{ i.mode | default(i.down_mode | default(omit)) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  when: not i.archive
