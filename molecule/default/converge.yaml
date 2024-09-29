@@ -1,0 +1,5 @@
+---
+- name: perform actions from inventory variables
+  hosts: all
+  roles:
+    - ansible-mega-var

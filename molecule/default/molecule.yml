@@ -1,0 +1,35 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: "dkr4ans"
+    image: "ghcr.io/raven428/container-images/systemd-ubuntu-22_04:latest"
+    network_mode: host
+    cgroupns_mode: host
+    privileged: true
+    mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_VERBOSITY: 1
+  inventory:
+    links:
+      group_vars: "group_vars"
+  playbooks:
+    create: create.yaml
+    prepare: prepare.yaml
+    converge: converge.yaml
+    destroy: destroy.yaml
+  config_options:
+    defaults:
+      remote_tmp: /tmp
+      jinja2_extensions: jinja2.ext.do
+verifier:
+  name: ansible
+scenario:
+  create_sequence:
+    - dependency
+    - create
