@@ -1,0 +1,25 @@
+---
+# - name: test retries
+#   hosts: localhost
+#   tasks:
+#     - name: test failure
+#       command: "/usr/bin/env false"
+#       retries: 5
+#       delay: 2
+#       ignore_errors: true
+- name: perform actions from inventory variables
+  hosts: all
+  pre_tasks:
+    - name: Create a check mode flag if running in check mode
+      ansible.builtin.file:
+        path: "{{ check_flag }}"
+        state: directory
+      check_mode: false
+      when: ansible_check_mode
+    - name: Remove the check mode flag if not running in check mode
+      ansible.builtin.file:
+        path: "{{ check_flag }}"
+        state: absent
+      when: not ansible_check_mode
+  roles:
+    - ansible-mega-var

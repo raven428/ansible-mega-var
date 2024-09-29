@@ -1,0 +1,48 @@
+---
+- name: verify downloaded files
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: "converge run was in check_mode"
+      stat:
+        path: "{{ check_flag }}"
+      register: converge_check
+    - name: get file list and hashes
+      ansible.builtin.shell: |
+        {
+          find '{{ download_root }}' -type d -exec stat --format="%A %U %G %n" {} +
+          find '{{ download_root }}' -type f -exec stat --format="%A %U %G %s %n" {} +
+          find '{{ download_root }}' -type f -exec sha512sum {} +
+        } | sort | tee /tmp/hashed-lists-$(date '+%Y%m%d%H%M%S')
+      no_log: yes
+      register: files_info
+      check_mode: false
+      changed_when: false
+    - name: view file_info lines
+      debug:
+        var: files_info.stdout_lines
+    - name: assert checksum matches
+      assert:
+        that: |
+          {%  set cur_sum = 'none' %}
+          {% if converge_check.stat.exists and post_dem is not defined %}
+          {%   set cur_sum = sum.dry %}
+          {% elif not converge_check.stat.exists %}
+          {%   set cur_sum = sum.run %}
+          {% elif converge_check.stat.exists and post_dem is defined %}
+          {%   set cur_sum = sum.check %}
+          {% endif %}
+          {{  files_info.stdout | hash('sha512') == cur_sum }}
+        fail_msg: |
+          {%  set res = [ ] %}
+          {%  set cur_sum = 'none' %}
+          {% if converge_check.stat.exists and post_dem is not defined %}
+          {%   set cur_sum = sum.dry %}
+          {% elif not converge_check.stat.exists %}
+          {%   set cur_sum = sum.run %}
+          {% elif converge_check.stat.exists and post_dem is defined %}
+          {%   set cur_sum = sum.check %}
+          {% endif %}
+          {%  do res.append('Exp: [' + cur_sum + ']') %}
+          {%  do res.append('Got: [' + files_info.stdout | hash('sha512') + ']') %}
+          {{ res | list }}
