@@ -1,0 +1,264 @@
+---
+- name: ensure some groups
+  group:
+    name: "{{ i.name | mandatory }}"
+    gid: "{{ i.gid | default(omit) }}"
+    local: "{{ i.local | default(omit) }}"
+    state: "{{ i.state | default('present') }}"
+    system: "{{ i.system | default(omit) }}"
+    non_unique: "{{ i.non_unique | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_groups2create }}"
+
+- name: ensure some users
+  user:
+    name: "{{ i.name | mandatory }}"
+    state: "{{ i.state | default('present') }}"
+    append: "{{ i.append | default(omit) }}"
+    authorization: "{{ i.authorization | default(omit) }}"
+    comment: "{{ i.comment | default(omit) }}"
+    create_home: "{{ i.create_home | default('no') }}"
+    expires: "{{ i.expires | default(omit) }}"
+    force: "{{ i.force | default(omit) }}"
+    generate_ssh_key: "{{ i.generate_ssh_key | default(omit) }}"
+    group: "{{ i.group | default(i.name) | default(omit) }}"
+    groups: "{{ i.groups | default(omit) }}"
+    hidden: "{{ i.hidden | default(omit) }}"
+    home: "{{ i.home | default(omit) }}"
+    local: "{{ i.local | default(omit) }}"
+    login_class: "{{ i.login_class | default(omit) }}"
+    move_home: "{{ i.move_home | default(omit) }}"
+    non_unique: "{{ i.non_unique | default(omit) }}"
+    password: "{{ i.password | default(omit) }}"
+    password_expire_max: "{{ i.password_expire_max | default(omit) }}"
+    password_expire_min: "{{ i.password_expire_min | default(omit) }}"
+    password_lock: "{{ i.password_lock | default(omit) }}"
+    profile: "{{ i.profile | default(omit) }}"
+    remove: "{{ i.remove | default(omit) }}"
+    role: "{{ i.role | default(omit) }}"
+    seuser: "{{ i.seuser | default(omit) }}"
+    shell: "{{ i.shell | default(omit) }}"
+    skeleton: "{{ i.skeleton | default(omit) }}"
+    ssh_key_bits: "{{ i.ssh_key_bits | default(omit) }}"
+    ssh_key_comment: "{{ i.ssh_key_comment | default(omit) }}"
+    ssh_key_file: "{{ i.ssh_key_file | default(omit) }}"
+    ssh_key_passphrase: "{{ i.ssh_key_passphrase | default(omit) }}"
+    ssh_key_type: "{{ i.ssh_key_type | default(omit) }}"
+    system: "{{ i.system | default(omit) }}"
+    uid: "{{ i.uid | default(omit) }}"
+    update_password: "{{ i.update_password | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_users2create }}"
+
+- name: create some directory
+  file:
+    access_time: "{{ i.access_time | default(omit) }}"
+    access_time_format: "{{ i.access_time_format | default(omit) }}"
+    attributes: "{{ i.attributes | default(omit) }}"
+    follow: "{{ i.follow | default(omit) }}"
+    force: "{{ i.force | default(omit) }}"
+    group: "{{ i.group | default(omit) }}"
+    mode: "{{ i.mode | default('0755') }}"
+    modification_time: "{{ i.modification_time | default(omit) }}"
+    modification_time_format: "{{ i.modification_time_format | default(omit) }}"
+    owner: "{{ i.owner | default(omit) }}"
+    path: "{{ i.path | mandatory }}"
+    recurse: "{{ i.recurse | default(omit) }}"
+    selevel: "{{ i.selevel | default(omit) }}"
+    serole: "{{ i.serole | default(omit) }}"
+    setype: "{{ i.setype | default(omit) }}"
+    src: "{{ i.src | default(omit) }}"
+    state: "{{ i.state | default('directory') }}"
+    unsafe_writes: "{{ i.unsafe_writes | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_dirs2create }}"
+
+- name: upload some templates
+  template:
+    src: "{{ i.src | mandatory }}"
+    dest: "{{ i.dest | mandatory }}"
+    force: "{{ i.force | default(omit) }}"
+    follow: "{{ i.follow | default(omit) }}"
+    owner: "{{ i.owner | default(omit) }}"
+    group: "{{ i.group | default(omit) }}"
+    mode: "{{ i.mode | default('0644') }}"
+  vars:
+    v: "{{ i.vars | default(omit) }}"
+  diff: "{{ i.diff | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_templates2upload }}"
+
+- name: upload some files
+  copy:
+    src: "{{ i.src | mandatory }}"
+    dest: "{{ i.dest | mandatory }}"
+    force: "{{ i.force | default(omit) }}"
+    follow: "{{ i.follow | default(omit) }}"
+    owner: "{{ i.owner | default(omit) }}"
+    group: "{{ i.group | default(omit) }}"
+    mode: "{{ i.mode | default('0644') }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_files2upload }}"
+
+- name: upload some content
+  copy:
+    dest: "{{ i.dest | mandatory }}"
+    content: "{{ i.content | mandatory }}"
+    force: "{{ i.force | default(omit) }}"
+    follow: "{{ i.follow | default(omit) }}"
+    owner: "{{ i.owner | default(omit) }}"
+    group: "{{ i.group | default(omit) }}"
+    mode: "{{ i.mode | default('0644') }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_content2upload }}"
+
+- name: rsync some files
+  synchronize:
+    src: "{{ i.src | mandatory }}"
+    dest: "{{ i.dest | mandatory }}"
+    recursive: "{{ i.recursive | default(omit) }}"
+    delete: "{{ i.delete | default(omit) }}"
+    rsync_opts: "{{ i.rsync_opts | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_tree2rsync }}"
+
+- name: systemd some units
+  systemd:
+    name: "{{ i.name | mandatory }}"
+    scope: "{{ i.scope | default(omit) }}"
+    state: "{{ i.state | default(omit) }}"
+    force: "{{ i.force | default(omit) }}"
+    masked: "{{ i.masked | default(omit) }}"
+    enabled: "{{ i.enabled | default(omit) }}"
+    no_block: "{{ i.no_block | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_systemd4units }}"
+
+- name: ensure some keys
+  authorized_key:
+    user: "{{ i.user | mandatory }}"
+    key: "{{ i.key | mandatory }}"
+    exclusive: "{{ i.state | default(true) }}"
+    state: "{{ i.state | default('present') }}"
+    comment: "{{ i.comment | default(omit) }}"
+    follow: "{{ i.follow | default(omit) }}"
+    key_options: "{{ i.key_options | default(omit) }}"
+    manage_dir: "{{ i.manage_dir | default(omit) }}"
+    path: "{{ i.path | default(omit) }}"
+    validate_certs: "{{ i.validate_certs | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_key2user }}"
+
+- name: download some binaries
+  include_tasks: file2down.yaml
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_file2down }}"
+
+- name: download github releases
+  include_tasks: ghr2down.yaml
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_ghr2down }}"
+
+- name: some disk partitioning
+  parted:
+    align: "{{ i.align | default(omit) }}"
+    device: "{{ i.device }}"
+    flags: "{{ i.flags | default(omit) }}"
+    fs_type: "{{ i.fs_type  | default(omit) }}"
+    label: "{{ i.label | default('gpt') }}"
+    name: "{{ i.name | default(omit) }}"
+    number: "{{ i.number | default(omit) }}"
+    part_end: "{{ i.part_end | default(omit) }}"
+    part_start: "{{ i.part_start | default(omit) }}"
+    part_type: "{{ i.part_type | default(omit) }}"
+    resize: "{{ i.resize | default('no') }}"
+    state: "{{ i.state | default('present') }}"
+    unit: "{{ i.unit | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_partitions }}"
+
+- name: some linux volume groups
+  lvg:
+    force: "{{ i.force | default('no') }}"
+    pesize: "{{ i.pesize | default(omit) }}"
+    pv_options: "{{ i.pv_options | default(omit) }}"
+    pvresize: "{{ i.pvresize | default(omit) }}"
+    pvs: "{{ i.pvs | default(omit) }}"
+    state: "{{ i.state | default(omit) }}"
+    vg: "{{ i.vg | default(omit) }}"
+    vg_options: "{{ i.vg_options | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_lvg }}"
+
+- name: some linux logical volumes
+  lvol:
+    active: "{{ i.active | default(omit) }}"
+    force: "{{ i.force | default('no') }}"
+    lv: "{{ i.lv | default(omit) }}"
+    opts: "{{ i.opts | default(omit) }}"
+    pvs: "{{ i.pvs | default(omit) }}"
+    resizefs: "{{ i.resizefs | default(omit) }}"
+    shrink: "{{ i.shrink | default(omit) }}"
+    size: "{{ i.size | default(omit) }}"
+    snapshot: "{{ i.snapshot | default(omit) }}"
+    state: "{{ i.state | default(omit) }}"
+    thinpool: "{{ i.thinpool | default(omit) }}"
+    vg: "{{ i.vg | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_lvol }}"
+
+- name: some file systems
+  filesystem:
+    dev: "{{ i.dev | default(omit) }}"
+    force: "{{ i.force | default(omit) }}"
+    fstype: "{{ i.fstype | default(omit) }}"
+    opts: "{{ i.opts | default(omit) }}"
+    resizefs: "{{ i.resizefs | default('no') }}"
+    state: "{{ i.state | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_filesystems }}"
+
+- name: some file mounts
+  mount:
+    backup: "{{ i.backup | default(omit) }}"
+    boot: "{{ i.boot | default(omit) }}"
+    dump: "{{ i.dump | default(omit) }}"
+    fstab: "{{ i.fstab | default(omit) }}"
+    fstype: "{{ i.fstype | default(omit) }}"
+    opts: "{{ i.opts | default(omit) }}"
+    passno: "{{ i.passno | default(omit) }}"
+    path: "{{ i.path | default(omit) }}"
+    src: "{{ i.src | default(omit) }}"
+    state: "{{ i.state | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_mounts }}"

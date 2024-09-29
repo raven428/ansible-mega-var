@@ -1,0 +1,84 @@
+---
+- name: "check creates [{{ i.dest }}/{{ i.creates }}] exists"
+  stat:
+    path: "{{ i.dest }}/{{ i.creates }}"
+  register: _file_creates
+  when:
+    - i.archive
+    - i.creates | default(none) != none
+
+- name: >-
+    remove [{{ i.dest }}/{{ i.creates | dirname }}] for upgrade
+    due creates: [{{ i.dest }}/{{ i.creates }}] isn't exists
+  file:
+    state: absent
+    path: "{{ i.dest }}/{{ i.creates | dirname }}"
+  no_log: yes
+  diff: no
+  when:
+    - i.archive
+    - _download_archive.changed
+    - not _file_creates.stat.exists
+  tags:
+    - skip_ansible_lint
+
+- name: unpack from archive
+  unarchive:
+    src: "{{ _meva_down_name }}"
+    dest: "{{ i.dest }}"
+    owner: "{{ i.owner | default(omit) }}"
+    group: "{{ i.group | default(omit) }}"
+    creates: "{{ i.dest }}/{{ i.creates }}"
+    remote_src: yes
+  register: unarchive_result
+  ignore_errors: true
+  when: i.archive
+
+- name: decompress block if unarchive failed
+  block:
+    - name: unarchive failed, trying to decompress
+      decompress:
+        src: "{{ _meva_down_name }}"
+        dst: "{{ f.dest }}/{{ i.creates }}"
+    - name: set owner, group and mode
+      file:
+        path: "{{ i.dest }}/{{ i.creates }}"
+        mode: "{{ i.file_mode | default(omit) }}"
+        owner: "{{ i.owner | default(omit) }}"
+        group: "{{ i.group | default(omit) }}"
+  when:
+    - i.archive
+    - unarchive_result.failed
+
+- name: apply filesystem modes
+  block:
+    - name: apply mode to directories
+      shell: /usr/bin/env find '{{ i.dest }}' -type d |
+        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
+        /usr/bin/env chmod {{ i.dir_mode | default('0755') }}
+    - name: apply mode to executable files
+      shell: >-
+        /usr/bin/env find '{{ i.dest }}' -type f -executable |
+        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
+        /usr/bin/env chmod {{ i.exec_mode | default('0755') }}
+    - name: apply mode to non-executable files
+      shell: /usr/bin/env find '{{ i.dest }}' -type f ! -executable |
+        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
+        /usr/bin/env chmod {{ i.file_mode | default('0644') }}
+  when:
+    - i.archive
+    - not unarchive_result.failed
+    - unarchive_result.changed
+
+- name: copy downloaded file to destination if not archive
+  copy:
+    src: "{{ _meva_down_name }}"
+    dest: "{{ i.dest | default(mandatory) }}"
+    force: "{{ i.force | default(omit) }}"
+    follow: "{{ i.follow | default(omit) }}"
+    owner: "{{ i.owner | default(i.down_owner | default(omit)) }}"
+    group: "{{ i.group | default(i.down_owner | default(omit)) }}"
+    mode: "{{ i.mode | default(i.down_mode | default(omit)) }}"
+    remote_src: yes
+  notify: "{{ i.notify | default(omit) }}"
+  when: not i.archive

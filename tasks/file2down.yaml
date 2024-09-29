@@ -1,0 +1,80 @@
+---
+- name: set temporary name for download
+  set_fact:
+    _meva_down_name: >-
+      /tmp/ansible-
+      {%-
+        set login =
+          lookup('env', 'ANSIBLE_REMOTE_USER') |
+          default(lookup('env', 'USER'))
+      -%}
+      {%- if login | length > 0 -%}
+      {{    login }}
+      {%- else -%}
+      {{    lookup('env', 'USER') }}
+      {%- endif -%}-{{
+        i.down_name | default(
+          i.url | default(i.creates) |
+          regex_replace('[^a-z0-9\\.]', '_', ignorecase=True)
+        )
+      }}
+
+# following two blocks due default(omit) work incorrect for delegate_to
+# issue link: https://github.com/ansible/ansible/issues/14130
+- name: delegate_to value defined
+  block:
+    - name: "download url [{{ i.url }}] to local"
+      become: false
+      get_url:
+        attributes: "{{ i.attributes | default(omit) }}"
+        client_cert: "{{ i.client_cert | default(omit) }}"
+        client_key: "{{ i.client_key | default(omit) }}"
+        mode: "{{ i.down_mode | default('0644') }}"
+        owner: "{{ i.down_owner | default(omit) }}"
+        group: "{{ i.down_owner | default(omit) }}"
+        timeout: "{{ i.timeout | default(omit) }}"
+        dest: "{{ _meva_down_name }}"
+        headers: "{{ i.headers | default(omit) }}"
+        url: "{{ i.url | default(mandatory) }}"
+        unredirected_headers: "{{ i.unredirected_headers | default(omit) }}"
+        force: "{{ i.force | default(omit) }}"
+      register: _download_archive
+      until: _download_archive is succeeded
+      retries: 5
+      delay: 2
+      delegate_to: "{{ i.delegate_to }}"
+      check_mode: false
+      notify: "{{ i.notify | default(omit) }}"
+    - name: unpack downloaded archive and propagate files
+      include_tasks: unp4pro.yaml
+  when: "'delegate_to' in i"
+
+- name: delegate_to value undefined
+  block:
+    - name: "download url [{{ i.url }}] to remote"
+      become: true
+      get_url:
+        attributes: "{{ i.attributes | default(omit) }}"
+        client_cert: "{{ i.client_cert | default(omit) }}"
+        client_key: "{{ i.client_key | default(omit) }}"
+        mode: "{{ i.down_mode | default('0644') }}"
+        owner: "{{ i.down_owner | default(omit) }}"
+        group: "{{ i.down_owner | default(omit) }}"
+        timeout: "{{ i.timeout | default(omit) }}"
+        dest: "{{ _meva_down_name }}"
+        headers: "{{ i.headers | default(omit) }}"
+        url: "{{ i.url | default(mandatory) }}"
+        unredirected_headers: "{{ i.unredirected_headers | default(omit) }}"
+        # For 'force' parameter Ansible have bug
+        # https://github.com/ansible/ansible/issues/64016
+        force: "{{ i.force | default(omit) }}"
+      register: _download_archive
+      until: _download_archive is succeeded
+      retries: 5
+      delay: 2
+      notify: "{{ i.notify | default(omit) }}"
+      check_mode: false
+    - name: unpack downloaded archive to destination
+      include_tasks: unp2loc.yaml
+  when:
+    - "'delegate_to' not in i"
