@@ -1,0 +1,82 @@
+---
+meva_arch_map1:
+  i386: "i386"
+  x86_64: "amd64"
+  aarch64: "arm64"
+  armv7l: "arm"
+meva_arch_bin1: >-
+  {{
+    meva_arch_map1[ansible_architecture] |
+    default(ansible_architecture)
+  }}
+gh_owner: raven428
+check_flag: "{{ download_root }}/to-notify-verifier-that-converged-in-check-mode"
+download_root: "/tmp/molecule"
+download_topic: "pyenv-emtpy"
+download_tag_begin: "000"
+download_tag_upgrade: "001"
+download_version_file: "2.2.4"
+download_file_name: >-
+  {{ download_topic }}-{{
+    download_version_file |
+    regex_replace('[^0-9a-z]', '_', ignorecase=True)
+  }}-linux-{{
+    meva_arch_bin1
+  }}.tar.xz
+download_types:
+  simple_uri: >-
+    https://github.com/raven428/finch-externaleditor/releases/download/v{{
+      download_tag_begin
+    }}/{{
+      download_file_name
+    }}
+  github_repo_pub: "finch-externaleditor"
+  github_repo_priv: "far-smartpad"
+default_time: "201111111111.11"
+download_paths:
+  single: "{{ download_root }}/single"
+  compress: "{{ download_root }}/compress"
+  arch_tree:  "{{ download_root }}/arch_tree"
+download_options:
+  direct: "direct-download"
+  con_copy: "controller-copy"
+  con_rsync: "controller-rsync"
+sum:
+  dry: >-
+    98401e1c6b7c79a35d4480c3e12afc5963e0039d7cd8d6435959bdbd912746d14fada98a22cd496ffde4c049c8df60bd8ab551c8ba7eaae46c90e4e110892ffe
+  run: >-
+    088a78ddaed005022998456ecb32e9fa0f6b54bfbadfd9d5c5a2b73551fb36ab16d9f991a34bf595f94b3753cf50be809cec848da0940717ea11e288d2e347f4
+  check: >-
+    6740a6eecf1e2c07f9f83afe1fc63ae3f89d547e92cb171c134a9ede68c7e77f4fb3eeb5dd56912d08d0d59de5471df9ace5fabbc91ff2744af74a15ff14e70a
+meva_dirs2create:
+  - path: "{{ download_paths.single }}"
+  - path: "{{ download_paths.compress }}"
+  - path: "{{ download_paths.arch_tree }}"
+meva_file2down:
+  - url: "{{ download_types.simple_uri }}"
+    down_name: "{{ download_paths.single }}/{{ download_options.direct }}"
+    down_mode: "0641"
+    dest: "{{ download_paths.single }}/{{ download_file_name }}"
+    modification_time: "{{ default_time }}"
+    archive: no
+# meva_file2down_buildkite:
+#   - url: "https://github.com/raven428/python-virtualenvs/releases/download/001/pyenv-emtpy-2_2_4-linux-amd64.tar.xz"
+#     dest: "/usr/pyenv"
+#     owner: "{{ infra_pyenv_owner }}"
+#     group: "{{ infra_pyenv_owner }}"
+#     creates: ".pyenv/build-001"
+#     archive: yes
+# meva_ghr2down:
+#   - gh_tag: "{{ blch_app_binary_version }}"
+#     gh_repo: "{{ blch_app_binary_repo }}"
+#     gh_owner: "p2p-org"
+#     gh_token: "{{ meva_github_token }}"
+#     substring: "{{ meva_app_binary_name }}"
+#     creates: "{{ meva_app_binary_name }}"
+#     delegate_to: localhost
+#     file_mode: "0755"
+#     archive: yes
+#     files:
+#       - name: "{{ meva_app_binary_name }}"
+#         dest: "{{ blch_app_node_bin }}"
+#         file_mode: "0755"

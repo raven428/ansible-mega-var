@@ -1,0 +1,41 @@
+---
+- name: prepare
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  vars:
+    roles_dir: "{{ lookup('env', 'HOME') }}/.ansible/roles"
+  tasks:
+    - name: create molecule roles directory
+      ansible.builtin.file:
+        path: "{{ roles_dir }}"
+        state: directory
+        force: yes
+        recurse: yes
+    - name: symbolic link to role
+      ansible.builtin.file:
+        src: /ansible
+        dest: "{{ roles_dir }}/ansible-mega-var"
+        state: link
+        force: yes
+
+- name: prepare targets
+  hosts: all
+  tasks:
+    - name: remove downloads directory
+      ansible.builtin.file:
+        path: "{{ download_root }}"
+        state: absent
+    - name: create downloads directory
+      ansible.builtin.file:
+        path: "{{ dir }}"
+        state: directory
+        force: yes
+        recurse: yes
+      loop_control:
+        loop_var: dir
+      loop:
+        - "{{ download_paths.single }}"
+        - "{{ download_paths.compress }}"
+        - "{{ download_paths.arch_tree }}"
