@@ -1,0 +1,25 @@
+---
+- name: prepare
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  tasks:
+    - name: create molecule roles directory
+      ansible.builtin.file:
+        path: >-
+          {{
+            lookup('env', 'HOME')
+          }}/.cache/molecule/ansible/default/roles
+        state: directory
+        force: yes
+        recurse: yes
+    - name: symbolic link to role
+      ansible.builtin.file:
+        src: /ansible
+        dest: >-
+          {{
+            lookup('env', 'HOME')
+          }}/.cache/molecule/ansible/default/roles/ansible-mega-var
+        state: link
+        force: yes

@@ -1,0 +1,70 @@
+---
+meva_arch_map1:
+  i386: "i386"
+  x86_64: "amd64"
+  aarch64: "arm64"
+  armv7l: "arm"
+meva_arch_bin1: >-
+  {{
+    meva_arch_map1[ansible_architecture] |
+    default(ansible_architecture)
+  }}
+gh_owner: raven428
+download_root: "/tmp"
+download_topic: "pyenv-emtpy"
+download_tag_begin: "000"
+download_tag_upgrade: "001"
+download_version_file: "2.2.4"
+download_file_name: >-
+  {{ download_topic }}-{{
+    download_version_file |
+    regex_replace('[^0-9a-z]', '_', ignorecase=True)
+  }}-linux-{{
+    meva_arch_bin1
+  }}.tar.xz
+download_types:
+  simple_uri: >-
+    https://github.com/raven428/finch-externaleditor/releases/download/v{{
+      download_tag_begin
+    }}/{{
+      download_file_name
+    }}
+  github_repo_pub: "finch-externaleditor"
+  github_repo_priv: "far-smartpad"
+download_paths:
+  single: "{{ download_root }}/single"
+  compress: "{{ download_root }}/compress"
+  arch_tree:  "{{ download_root }}/arch_tree"
+download_options:
+  direct: "direct-download"
+  con_copy: "controller-copy"
+  con_rsync: "controller-rsync"
+
+meva_file2down:
+  - url: "{{ download_types.simple_uri }}"
+    down_name: "{{ download_paths.single }}/{{ download_options.direct }}"
+    down_mode: "0641"
+    archive: no
+
+# meva_file2down_buildkite:
+#   - url: "https://github.com/raven428/python-virtualenvs/releases/download/001/pyenv-emtpy-2_2_4-linux-amd64.tar.xz"
+#     dest: "/usr/pyenv"
+#     owner: "{{ infra_pyenv_owner }}"
+#     group: "{{ infra_pyenv_owner }}"
+#     creates: ".pyenv/build-001"
+#     archive: yes
+
+# meva_ghr2down:
+#   - gh_tag: "{{ blch_app_binary_version }}"
+#     gh_repo: "{{ blch_app_binary_repo }}"
+#     gh_owner: "p2p-org"
+#     gh_token: "{{ meva_github_token }}"
+#     substring: "{{ meva_app_binary_name }}"
+#     creates: "{{ meva_app_binary_name }}"
+#     delegate_to: localhost
+#     mode: "0755"
+#     archive: yes
+#     files:
+#       - name: "{{ meva_app_binary_name }}"
+#         dest: "{{ blch_app_node_bin }}"
+#         mode: "0755"
