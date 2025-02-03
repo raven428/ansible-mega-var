@@ -13,8 +13,8 @@
   file:
     state: absent
     path: "{{ i.dest }}/{{ i.creates | dirname }}"
-  no_log: yes
-  diff: no
+  no_log: true
+  diff: false
   when:
     - i.archive
     - _download_archive.changed
@@ -40,12 +40,18 @@
       decompress:
         src: "{{ _meva_down_name }}"
         dst: "{{ f.dest }}/{{ i.creates }}"
+      notify: "{{ i.notify | default(omit) }}"
     - name: set owner, group and mode
       file:
         path: "{{ i.dest }}/{{ i.creates }}"
         mode: "{{ i.file_mode | default(omit) }}"
         owner: "{{ i.owner | default(omit) }}"
         group: "{{ i.group | default(omit) }}"
+        access_time: "{{ i.access_time | default(omit) }}"
+        access_time_format: "{{ i.access_time_format | default(omit) }}"
+        modification_time: "{{ i.modification_time | default(omit) }}"
+        modification_time_format: "{{ i.modification_time_format | default(omit) }}"
+      notify: "{{ i.notify | default(omit) }}"
   when:
     - i.archive
     - unarchive_result.failed
@@ -70,15 +76,30 @@
     - not unarchive_result.failed
     - unarchive_result.changed
 
-- name: copy downloaded file to destination if not archive
-  copy:
-    src: "{{ _meva_down_name }}"
-    dest: "{{ i.dest | default(mandatory) }}"
-    force: "{{ i.force | default(omit) }}"
-    follow: "{{ i.follow | default(omit) }}"
-    owner: "{{ i.owner | default(i.down_owner | default(omit)) }}"
-    group: "{{ i.group | default(i.down_owner | default(omit)) }}"
-    mode: "{{ i.mode | default(i.down_mode | default(omit)) }}"
-    remote_src: yes
-  notify: "{{ i.notify | default(omit) }}"
-  when: not i.archive
+- name: copy and set attrs
+  block:
+    - name: copy downloaded file to destination if not archive
+      copy:
+        src: "{{ _meva_down_name }}"
+        dest: "{{ i.dest | default(mandatory) }}"
+        force: "{{ i.force | default(omit) }}"
+        follow: "{{ i.follow | default(omit) }}"
+        owner: "{{ i.owner | default(i.down_owner | default(omit)) }}"
+        group: "{{ i.group | default(i.down_owner | default(omit)) }}"
+        mode: "{{ i.file_mode | default(i.down_mode | default(omit)) }}"
+        remote_src: yes
+      notify: "{{ i.notify | default(omit) }}"
+      register: copy_result
+    - name: set owner, group and mode
+      file:
+        path: "{{ i.dest | default(mandatory) }}"
+        mode: "{{ i.file_mode | default(omit) }}"
+        owner: "{{ i.owner | default(omit) }}"
+        group: "{{ i.group | default(omit) }}"
+        access_time: "{{ i.access_time | default(omit) }}"
+        access_time_format: "{{ i.access_time_format | default(omit) }}"
+        modification_time: "{{ i.modification_time | default(omit) }}"
+        modification_time_format: "{{ i.modification_time_format | default(omit) }}"
+      notify: "{{ i.notify | default(omit) }}"
+      when: "'size' in copy_result"
+  when: not i.archive and 'dest' in i

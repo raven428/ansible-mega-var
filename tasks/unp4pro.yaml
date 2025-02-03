@@ -43,14 +43,29 @@
     loop_var: f
   loop: "{{ i.files | default([]) | list }}"
 
-- name: propagate downloaded file if not archive
-  copy:
-    src: "{{ _meva_down_name }}"
-    dest: "{{ i.dest | default(mandatory) }}"
-    force: "{{ i.force | default(omit) }}"
-    follow: "{{ i.follow | default(omit) }}"
-    owner: "{{ i.owner | default(i.down_owner | default(omit)) }}"
-    group: "{{ i.group | default(i.down_owner | default(omit)) }}"
-    mode: "{{ i.mode | default(i.down_mode | default(omit)) }}"
-  notify: "{{ i.notify | default(omit) }}"
+- name: propagate and set attrs
+  block:
+    - name: propagate downloaded file if not archive
+      copy:
+        src: "{{ _meva_down_name }}"
+        dest: "{{ i.dest | default(mandatory) }}"
+        force: "{{ i.force | default(omit) }}"
+        follow: "{{ i.follow | default(omit) }}"
+        owner: "{{ i.owner | default(i.down_owner | default(omit)) }}"
+        group: "{{ i.group | default(i.down_owner | default(omit)) }}"
+        mode: "{{ i.mode | default(i.down_mode | default(omit)) }}"
+      notify: "{{ i.notify | default(omit) }}"
+      register: copy_result
+    - name: set owner, group and mode
+      file:
+        path: "{{ i.dest | default(mandatory) }}"
+        mode: "{{ i.file_mode | default(omit) }}"
+        owner: "{{ i.owner | default(omit) }}"
+        group: "{{ i.group | default(omit) }}"
+        access_time: "{{ i.access_time | default(omit) }}"
+        access_time_format: "{{ i.access_time_format | default(omit) }}"
+        modification_time: "{{ i.modification_time | default(omit) }}"
+        modification_time_format: "{{ i.modification_time_format | default(omit) }}"
+      notify: "{{ i.notify | default(omit) }}"
+      when: "'size' in copy_result"
   when: not i.archive
