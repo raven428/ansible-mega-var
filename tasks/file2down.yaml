@@ -1,23 +1,6 @@
 ---
-- name: set temporary name for download
-  set_fact:
-    _meva_down_name: >-
-      /tmp/ansible-
-      {%-
-        set login =
-          lookup('env', 'ANSIBLE_REMOTE_USER') |
-          default(lookup('env', 'USER'))
-      -%}
-      {%- if login | length > 0 -%}
-      {{    login }}
-      {%- else -%}
-      {{    lookup('env', 'USER') }}
-      {%- endif -%}-{{
-        i.down_name | default(
-          i.url | default(i.creates) |
-          regex_replace('[^a-z0-9\\.]', '_', ignorecase=True)
-        )
-      }}
+- name: include settings temporary name for download
+  include_tasks: down_name.yaml
 
 # following two blocks due default(omit) work incorrect for delegate_to
 # issue link: https://github.com/ansible/ansible/issues/14130
