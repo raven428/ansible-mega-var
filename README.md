@@ -30,16 +30,14 @@
   tags: [mega-var]
 ```
 
-## Molecule tests todo
+## Molecule tests to-do
 
 ### Releases for testing
 - [public](https://github.com/raven428/finch-externaleditor/releases)
-- [private](https://github.com/raven428/far-smartpad/releases)
 
 ### File types for downloading (c)
 1. simple HTTPS connection by URI
-2. release from GitHub for platform and version lookup w/o auth token
-3. release from GitHub for platform and version lookup using auth token
+2. release from GitHub for platform and version lookup using auth token
 
 ### File type to unpack (p)
 1. single raw
@@ -49,18 +47,15 @@
 ### Transfer options (b)
 1. directly to target host
 2. at the Ansible controller with `copy:`
-3. at the Ansible controller with `synchronize:`
 
-### check_mode (m)
-1. no
-2. yes
+### check_mode implemented at `run-test.sh` script
 
-total `3 * 3 * 3 * 2 = 54` downloading tests
+total `2 * 3 * 2 = 12` downloading tests
 
 ### Update options (u)
-Only for p2, with c1-c5, b1-b3 and m1-m2
+Only for p3, with c1-c2, b1-b2
 
-additional `1 * 3 * 3 * 2 = 18` update tests
+additional `1 * 2 * 2 = 4` update tests
 
 ### Linters
 --"--
@@ -72,6 +67,7 @@ additional `1 * 3 * 3 * 2 = 18` update tests
 2. plain HTTPS with token auth
 
 ### Other improvements
+- add all compressors tests for decompress module
 - it should be split into multiple files to allow usage of every single part from other roles with the tasks_from parameter
 - it needs to be tested as one of the units in CI, e.g., by molecule:
   - calling the whole role
@@ -79,3 +75,4 @@ additional `1 * 3 * 3 * 2 = 18` update tests
   - check mode also should be tested because the role contains a lot of check_mode: yes parameters
 - elaborate Ansible module for getting the exact URL of the GitHub release file to avoid flooding the Ansible log
 - join `file2down` with `ghr2down` for the ability to download and unpack
+- reduce verbosity of `get releases list` task
