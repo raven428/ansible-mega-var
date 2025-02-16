@@ -12,12 +12,21 @@ env:
 jobs:
   test-role:
     name: test role
-    timeout-minutes: 11
+    timeout-minutes: 33
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        image_name:
+          - ansible-6_7_0:latest
+          - ansible-9_9_0:latest
+          - ansible-11_1_0:latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: true
       - name: test role
+        env:
+          IMAGE_NAME: ${{ matrix.image_name }}
+          ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/run-tests.sh
