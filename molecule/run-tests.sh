@@ -5,6 +5,10 @@ umask 0022
 : "${SSH_AUTH_SOCK:="/dev/null"}"
 MY_BIN="$(readlink -f "$0")"
 MY_PATH="$(dirname "${MY_BIN}")"
+[[ -v ANSIBLE_GITHUB_TOKEN ]] || {
+  echo 'mandatory variable [ANSIBLE_GITHUB_TOKEN] not found, exiting…'
+  exit 1
+}
 export DEBIAN_FRONTEND=noninteractive
 /usr/bin/env which sponge >/dev/null || {
   /usr/bin/env sudo apt-get update &&
