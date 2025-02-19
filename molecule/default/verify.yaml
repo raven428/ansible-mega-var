@@ -10,9 +10,10 @@
     - name: get file list and hashes
       ansible.builtin.shell: |
         {
-          find '{{ download_root }}' -type d -exec stat --format="%A %U %G %n" {} +
-          find '{{ download_root }}' -type f -exec stat --format="%A %U %G %s %n" {} +
-          find '{{ download_root }}' -type f -exec sha512sum {} +
+          find '{{ download_root }}' -type d -exec stat --format="%n %A %U %G" {} +
+          find '{{ download_root }}' -type f -exec stat --format="%n %A %U %G %s" {} +
+          find '{{ download_root }}' -type f -exec md5sum {} + | sed -E \
+            's/^([^ ]+)\s+(.+)$/\2 \1/'
         } | sort | tee /tmp/hashed-lists-$(date '+%Y%m%d%H%M%S')
       no_log: yes
       register: files_info

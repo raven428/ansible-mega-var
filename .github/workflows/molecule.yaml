@@ -20,4 +20,6 @@ jobs:
           fetch-depth: 0
           submodules: true
       - name: test role
+        env:
+          ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/run-tests.sh
