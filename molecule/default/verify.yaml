@@ -7,42 +7,52 @@
       stat:
         path: "{{ check_flag }}"
       register: converge_check
+    - name: "upload etalon output"
+      copy:
+        src: "files/{{ file_name }}.txt"
+        dest: "/tmp/{{ file_name }}"
+        force: yes
+        follow: no
+        mode: "0644"
+      loop_control:
+        loop_var: file_name
+      loop:
+        - "01-check"
+        - "02-converge"
+        - "03-chevrge"
+        - "04-update"
+        - "05-u_check"
     - name: get file list and hashes
       ansible.builtin.shell: |
+        {%  set etalon = 'none' %}
+        {%  if ver2down == '000' %}
+        {%    if converge_check.stat.exists and post_dem is not defined %}
+        {%      set etalon = '01-check' %}
+        {%    elif not converge_check.stat.exists %}
+        {%      set etalon = '02-converge' %}
+        {%    elif converge_check.stat.exists and post_dem is defined %}
+        {%      set etalon = '03-chevrge' %}
+        {%    endif %}
+        {%  else %}
+        {%    if not converge_check.stat.exists %}
+        {%      set etalon = '04-update' %}
+        {%    elif converge_check.stat.exists %}
+        {%      set etalon = '05-u_check' %}
+        {%    endif %}
+        {%  endif %}
         {
-          find '{{ download_root }}' -type d -exec stat --format="%A %U %G %n" {} +
-          find '{{ download_root }}' -type f -exec stat --format="%A %U %G %s %n" {} +
-          find '{{ download_root }}' -type f -exec sha512sum {} +
-        } | sort | tee /tmp/hashed-lists-$(date '+%Y%m%d%H%M%S')
-      no_log: yes
+          find '{{ download_root }}' -type d -exec stat --format="%n %A %U %G" {} +
+          find '{{ download_root }}' -type f -exec stat --format="%n %A %U %G %s" {} +
+          find '{{ download_root }}' -type f -exec md5sum {} + |
+          sed -E 's/^([^ ]+)\s+(.+)$/\2 \1/'
+        } | sort >/tmp/hashed-lists-{{ ctime }}
+        diff -u /tmp/{{ etalon }} /tmp/hashed-lists-{{ ctime }} 2>&1
       register: files_info
+      no_log: true
       check_mode: false
       changed_when: false
-    - name: view file_info lines
-      debug:
-        var: files_info.stdout_lines
-    - name: assert checksum matches
+      ignore_errors: true
+    - name: assert non-zero rc
       assert:
-        that: |
-          {%  set cur_sum = 'none' %}
-          {% if converge_check.stat.exists and post_dem is not defined %}
-          {%   set cur_sum = sum.dry %}
-          {% elif not converge_check.stat.exists %}
-          {%   set cur_sum = sum.run %}
-          {% elif converge_check.stat.exists and post_dem is defined %}
-          {%   set cur_sum = sum.check %}
-          {% endif %}
-          {{  files_info.stdout | hash('sha512') == cur_sum }}
-        fail_msg: |
-          {%  set res = [ ] %}
-          {%  set cur_sum = 'none' %}
-          {% if converge_check.stat.exists and post_dem is not defined %}
-          {%   set cur_sum = sum.dry %}
-          {% elif not converge_check.stat.exists %}
-          {%   set cur_sum = sum.run %}
-          {% elif converge_check.stat.exists and post_dem is defined %}
-          {%   set cur_sum = sum.check %}
-          {% endif %}
-          {%  do res.append('Exp: [' + cur_sum + ']') %}
-          {%  do res.append('Got: [' + files_info.stdout | hash('sha512') + ']') %}
-          {{ res | list }}
+        that: "files_info.rc == 0"
+        fail_msg: "{{ files_info.stdout_lines | list }}"

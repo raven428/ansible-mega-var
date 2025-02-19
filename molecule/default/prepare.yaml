@@ -29,13 +29,10 @@
         state: absent
     - name: create downloads directory
       ansible.builtin.file:
-        path: "{{ dir }}"
+        path: "{{ i.path }}"
         state: directory
         force: yes
         recurse: yes
       loop_control:
-        loop_var: dir
-      loop:
-        - "{{ download_paths.single }}"
-        - "{{ download_paths.compress }}"
-        - "{{ download_paths.arch_tree }}"
+        loop_var: i
+      loop: "{{ dirs2prepare }}"

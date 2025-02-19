@@ -31,8 +31,6 @@ provisioner:
   env:
     ANSIBLE_VERBOSITY: 1
   inventory:
-    # group_vars:
-    #   all:
     links:
       group_vars: "group_vars"
   playbooks:

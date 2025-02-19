@@ -9,12 +9,14 @@ meva_arch_bin1: >-
     meva_arch_map1[ansible_architecture] |
     default(ansible_architecture)
   }}
+ctime: "{{ now(fmt='%Y%m%d%H%M%S') }}"
 gh_owner: raven428
 check_flag: "{{ download_root }}/to-notify-verifier-that-converged-in-check-mode"
+ver2down: >-
+  {{ lookup('ansible.builtin.env', 'ANSIBLE_DOWNLOAD_TAG',  default='000') }}
+download_tag: "v{{ ver2down }}"
 download_root: "/tmp/molecule"
 download_topic: "pyenv-emtpy"
-download_tag_begin: "000"
-download_tag_upgrade: "001"
 download_version_file: "2.2.4"
 download_file_name: >-
   {{ download_topic }}-{{
@@ -23,60 +25,269 @@ download_file_name: >-
   }}-linux-{{
     meva_arch_bin1
   }}.tar.xz
-download_types:
+decompressed_file_name: "decompressed-file-name"
+download_files:
   simple_uri: >-
-    https://github.com/raven428/finch-externaleditor/releases/download/v{{
-      download_tag_begin
+    https://github.com/raven428/finch-externaleditor/releases/download/{{
+      download_tag
     }}/{{
       download_file_name
     }}
-  github_repo_pub: "finch-externaleditor"
-  github_repo_priv: "far-smartpad"
+github_repo_pub: "finch-externaleditor"
+github_repo_priv: "far-smartpad"
+github_repo_owner: "raven428"
 default_time: "201111111111.11"
+download_types:
+  simple: "simple"
+  release: "release"
 download_paths:
-  single: "{{ download_root }}/single"
-  compress: "{{ download_root }}/compress"
-  arch_tree:  "{{ download_root }}/arch_tree"
+  single: "single"
+  compress: "compress"
+  arch_tree:  "arch-tree"
 download_options:
   direct: "direct-download"
   con_copy: "controller-copy"
   con_rsync: "controller-rsync"
-sum:
-  dry: >-
-    98401e1c6b7c79a35d4480c3e12afc5963e0039d7cd8d6435959bdbd912746d14fada98a22cd496ffde4c049c8df60bd8ab551c8ba7eaae46c90e4e110892ffe
-  run: >-
-    088a78ddaed005022998456ecb32e9fa0f6b54bfbadfd9d5c5a2b73551fb36ab16d9f991a34bf595f94b3753cf50be809cec848da0940717ea11e288d2e347f4
-  check: >-
-    6740a6eecf1e2c07f9f83afe1fc63ae3f89d547e92cb171c134a9ede68c7e77f4fb3eeb5dd56912d08d0d59de5471df9ace5fabbc91ff2744af74a15ff14e70a
-meva_dirs2create:
-  - path: "{{ download_paths.single }}"
-  - path: "{{ download_paths.compress }}"
-  - path: "{{ download_paths.arch_tree }}"
+dirs2prepare: |
+  {%- set result = [ ] -%}
+  {%- for type in download_types.values() -%}
+  {%-   for path in download_paths.values() -%}
+  {%-     for option in download_options.values() -%}
+  {%-       do result.append({
+              'path': download_root ~ '/' ~ type ~ '/' ~ path ~ '/' ~ option
+            }) -%}
+  {%-     endfor -%}
+  {%-   endfor -%}
+  {%- endfor -%}
+  {{  result | list }}
 meva_file2down:
-  - url: "{{ download_types.simple_uri }}"
-    down_name: "{{ download_paths.single }}/{{ download_options.direct }}"
+# 1. simple HTTPS connection by URI
+#   1. single raw
+#     1. directly to target host
+  - url: "{{ download_files.simple_uri }}"
+    dest: >-
+      {{ download_root }}/{{ download_types.simple }}/{{ download_paths.single
+      }}/{{ download_options.direct }}/{{ download_file_name }}
+    down_name: >-
+      {{ download_types.simple }}-{{ download_paths.single
+      }}-{{ download_options.direct }}.xz
     down_mode: "0641"
-    dest: "{{ download_paths.single }}/{{ download_file_name }}"
     modification_time: "{{ default_time }}"
     archive: no
-# meva_file2down_buildkite:
-#   - url: "https://github.com/raven428/python-virtualenvs/releases/download/001/pyenv-emtpy-2_2_4-linux-amd64.tar.xz"
-#     dest: "/usr/pyenv"
-#     owner: "{{ infra_pyenv_owner }}"
-#     group: "{{ infra_pyenv_owner }}"
-#     creates: ".pyenv/build-001"
-#     archive: yes
-# meva_ghr2down:
-#   - gh_tag: "{{ blch_app_binary_version }}"
-#     gh_repo: "{{ blch_app_binary_repo }}"
-#     gh_owner: "p2p-org"
-#     gh_token: "{{ meva_github_token }}"
-#     substring: "{{ meva_app_binary_name }}"
-#     creates: "{{ meva_app_binary_name }}"
-#     delegate_to: localhost
-#     file_mode: "0755"
-#     archive: yes
-#     files:
-#       - name: "{{ meva_app_binary_name }}"
-#         dest: "{{ blch_app_node_bin }}"
-#         file_mode: "0755"
+# 1. simple HTTPS connection by URI
+#   1. single raw
+#     2. at the Ansible controller with `copy:`
+  - url: "{{ download_files.simple_uri }}"
+    dest: >-
+      {{ download_root }}/{{ download_types.simple }}/{{ download_paths.single
+      }}/{{ download_options.con_copy }}/{{ download_file_name }}
+    down_name: >-
+      {{ download_types.simple }}-{{ download_paths.single
+      }}-{{ download_options.con_copy }}.xz
+    down_mode: "0641"
+    modification_time: "{{ default_time }}"
+    delegate_to: localhost
+    archive: no
+# 1. simple HTTPS connection by URI
+#   2. single compressed
+#     1. directly to target host
+  - url: "{{ download_files.simple_uri }}"
+    dest: >-
+      {{ download_root }}/{{ download_types.simple }}/{{ download_paths.compress
+      }}/{{ download_options.direct }}
+    down_name: >-
+      {{ download_types.simple }}-{{ download_paths.compress
+      }}-{{ download_options.direct }}.xz
+    creates: "{{ decompressed_file_name }}"
+    down_mode: "0641"
+    modification_time: "{{ default_time }}"
+    archive: yes
+# 1. simple HTTPS connection by URI
+#   2. single compressed
+#     2. at the Ansible controller with `copy:`
+  - url: "{{ download_files.simple_uri }}"
+    down_name: >-
+      {{ download_types.simple }}-{{ download_paths.compress
+      }}-{{ download_options.con_copy }}.xz
+    # file name to decompress:
+    creates: "{{ decompressed_file_name }}"
+    delegate_to: localhost
+    archive: yes
+    files:
+      # file name to upload (should be same as in "creates:" above):
+      - name: "{{ decompressed_file_name }}"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.compress
+          }}/{{ download_options.con_copy }}
+        file_mode: "0641"
+# 1. simple HTTPS connection by URI
+#   3. archive with directory tree
+#     1. directly to target host
+  - url: "{{ download_files.simple_uri }}"
+    dest: >-
+      {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+      }}/{{ download_options.direct }}
+    down_name: >-
+      {{ download_types.simple }}-{{ download_paths.arch_tree
+      }}-{{ download_options.direct }}-{{ ver2down }}.tar.xz
+    creates: "pyenv/build-{{ ver2down }}"
+    modification_time: "{{ default_time }}"
+    archive: yes
+# 1. simple HTTPS connection by URI
+#   3. archive with directory tree
+#     2. at the Ansible controller with `copy:`
+  - url: "{{ download_files.simple_uri }}"
+    down_name: >-
+      {{ download_types.simple }}-{{ download_paths.arch_tree
+      }}-{{ download_options.con_copy }}-{{ ver2down }}.tar.xz
+    creates: "pyenv/build-{{ ver2down }}"
+    delegate_to: localhost
+    archive: yes
+    files:
+      - name: "pyenv/Makefile"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+          }}/{{ download_options.con_copy }}/
+        file_mode: "0640"
+      - name: "pyenv/README.md"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+          }}/{{ download_options.con_copy }}/
+        file_mode: "0640"
+      - name: "pyenv/bin"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+          }}/{{ download_options.con_copy }}/
+        file_mode: "0755"
+      - name: "pyenv/pyenv.d/rehash/conda.d/default.list"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+          }}/{{ download_options.con_copy }}/pyenv.d/rehash/conda.d/
+        file_mode: "0640"
+meva_ghr2down:
+# 2. release from GitHub for platform and version lookup using auth token
+#   1. single raw
+#     1. directly to target host
+  - gh_tag: "{{ download_tag }}"
+    gh_repo: "{{ github_repo_pub }}"
+    gh_owner: "{{ github_repo_owner }}"
+    gh_token: "{{ lookup('env', 'ANSIBLE_GITHUB_TOKEN') }}"
+    substring: "{{ download_file_name }}"
+    down_name: >-
+      {{ download_types.release }}-{{ download_paths.single
+      }}-{{ download_options.direct }}.xz
+    creates: "{{ download_file_name }}"
+    file_mode: "0641"
+    archive: no
+    dest: >-
+      {{ download_root }}/{{ download_types.release }}/{{ download_paths.single
+      }}/{{ download_options.direct }}/{{ download_file_name }}
+# 2. release from GitHub for platform and version lookup using auth token
+#   1. single raw
+#     2. at the Ansible controller with `copy:`
+  - gh_tag: "{{ download_tag }}"
+    gh_repo: "{{ github_repo_pub }}"
+    gh_owner: "{{ github_repo_owner }}"
+    gh_token: "{{ lookup('env', 'ANSIBLE_GITHUB_TOKEN') }}"
+    substring: "{{ download_file_name }}"
+    down_name: >-
+      {{ download_types.release }}-{{ download_paths.single
+      }}-{{ download_options.con_copy }}.xz
+    creates: "{{ download_file_name }}"
+    file_mode: "0641"
+    delegate_to: localhost
+    archive: no
+    dest: >-
+      {{ download_root }}/{{ download_types.release }}/{{ download_paths.single
+      }}/{{ download_options.con_copy }}/{{ download_file_name }}
+# 2. release from GitHub for platform and version lookup using auth token
+#   2. single compressed
+#     1. directly to target host
+  - gh_tag: "{{ download_tag }}"
+    gh_repo: "{{ github_repo_pub }}"
+    gh_owner: "{{ github_repo_owner }}"
+    gh_token: "{{ lookup('env', 'ANSIBLE_GITHUB_TOKEN') }}"
+    substring: "{{ download_file_name }}"
+    down_name: >-
+      {{ download_types.release }}-{{ download_paths.compress
+      }}-{{ download_options.direct }}.xz
+    creates: "{{ decompressed_file_name }}"
+    file_mode: "0641"
+    archive: yes
+    dest: >-
+      {{ download_root }}/{{ download_types.release }}/{{ download_paths.compress
+      }}/{{ download_options.direct }}
+# 2. release from GitHub for platform and version lookup using auth token
+#   2. single compressed
+#     2. at the Ansible controller with `copy:`
+  - gh_tag: "{{ download_tag }}"
+    gh_repo: "{{ github_repo_pub }}"
+    gh_owner: "{{ github_repo_owner }}"
+    gh_token: "{{ lookup('env', 'ANSIBLE_GITHUB_TOKEN') }}"
+    substring: "{{ download_file_name }}"
+    down_name: >-
+      {{ download_types.release }}-{{ download_paths.compress
+      }}-{{ download_options.con_copy }}.xz
+    # file name to decompress:
+    creates: "{{ decompressed_file_name }}"
+    delegate_to: localhost
+    archive: yes
+    files:
+      # file name to upload (should be same as in "creates:" above):
+      - name: "{{ decompressed_file_name }}"
+        dest: >-
+          {{ download_root }}/{{ download_types.release }}/{{ download_paths.compress
+          }}/{{ download_options.con_copy }}
+        file_mode: "0641"
+# 2. release from GitHub for platform and version lookup using auth token
+#   3. archive with directory tree
+#     1. directly to target host
+  - gh_tag: "{{ download_tag }}"
+    gh_repo: "{{ github_repo_pub }}"
+    gh_owner: "{{ github_repo_owner }}"
+    gh_token: "{{ lookup('env', 'ANSIBLE_GITHUB_TOKEN') }}"
+    substring: "{{ download_file_name }}"
+    down_name: >-
+      {{ download_types.release }}-{{ download_paths.arch_tree
+      }}-{{ download_options.direct }}-{{ ver2down }}.tar.xz
+    creates: "pyenv/build-{{ ver2down }}"
+    file_mode: "0641"
+    archive: yes
+    dest: >-
+      {{ download_root }}/{{ download_types.release }}/{{ download_paths.arch_tree
+      }}/{{ download_options.direct }}
+# 2. release from GitHub for platform and version lookup using auth token
+#   3. archive with directory tree
+#     2. at the Ansible controller with `copy:`
+  - gh_tag: "{{ download_tag }}"
+    gh_repo: "{{ github_repo_pub }}"
+    gh_owner: "{{ github_repo_owner }}"
+    gh_token: "{{ lookup('env', 'ANSIBLE_GITHUB_TOKEN') }}"
+    substring: "{{ download_file_name }}"
+    down_name: >-
+      {{ download_types.release }}-{{ download_paths.arch_tree
+      }}-{{ download_options.con_copy }}-{{ ver2down }}.tar.xz
+    creates: "pyenv/build-{{ ver2down }}"
+    delegate_to: localhost
+    archive: yes
+    files:
+      - name: "pyenv/Makefile"
+        dest: >-
+          {{ download_root }}/{{ download_types.release }}/{{ download_paths.arch_tree
+          }}/{{ download_options.con_copy }}/
+        file_mode: "0640"
+      - name: "pyenv/README.md"
+        dest: >-
+          {{ download_root }}/{{ download_types.release }}/{{ download_paths.arch_tree
+          }}/{{ download_options.con_copy }}/
+        file_mode: "0640"
+      - name: "pyenv/bin"
+        dest: >-
+          {{ download_root }}/{{ download_types.release }}/{{ download_paths.arch_tree
+          }}/{{ download_options.con_copy }}/
+        file_mode: "0755"
+      - name: "pyenv/pyenv.d/rehash/conda.d/default.list"
+        dest: >-
+          {{ download_root }}/{{ download_types.release }}/{{ download_paths.arch_tree
+          }}/{{ download_options.con_copy }}/pyenv.d/rehash/conda.d/
+        file_mode: "0640"
