@@ -19,6 +19,7 @@
       delegate_to: "{{ i.delegate_to }}"
       register: unarchive_result
       ignore_errors: true
+      when: i.creates | dirname != ''
     - name: unarchive failed, trying to decompress
       decompress:
         src: "{{ _meva_down_name }}"
@@ -26,7 +27,7 @@
       become: false
       check_mode: false
       delegate_to: "{{ i.delegate_to }}"
-      when: unarchive_result.failed
+      when: unarchive_result.failed | default(true)
   when: i.archive
 
 - name: propagate unpacked files
@@ -37,7 +38,7 @@
     follow: "{{ f.follow | default(omit) }}"
     owner: "{{ f.owner | default(omit) }}"
     group: "{{ f.group | default(omit) }}"
-    mode: "{{ f.mode | default('0644') }}"
+    mode: "{{ f.file_mode | default('0644') }}"
   notify: "{{ f.notify | default(omit) }}"
   loop_control:
     loop_var: f
@@ -53,10 +54,10 @@
         follow: "{{ i.follow | default(omit) }}"
         owner: "{{ i.owner | default(i.down_owner | default(omit)) }}"
         group: "{{ i.group | default(i.down_owner | default(omit)) }}"
-        mode: "{{ i.mode | default(i.down_mode | default(omit)) }}"
+        mode: "{{ i.file_mode | default(i.down_mode | default(omit)) }}"
       notify: "{{ i.notify | default(omit) }}"
       register: copy_result
-    - name: set owner, group and mode
+    - name: set owner, group and mode after download
       file:
         path: "{{ i.dest | default(mandatory) }}"
         mode: "{{ i.file_mode | default(omit) }}"

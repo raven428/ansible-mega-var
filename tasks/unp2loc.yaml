@@ -17,10 +17,10 @@
   diff: false
   when:
     - i.archive
+    - i.creates | dirname != ''
     - _download_archive.changed
+    - _file_creates.stat.exists | default(none) != none
     - not _file_creates.stat.exists
-  tags:
-    - skip_ansible_lint
 
 - name: unpack from archive
   unarchive:
@@ -32,16 +32,18 @@
     remote_src: yes
   register: unarchive_result
   ignore_errors: true
-  when: i.archive
+  when:
+    - i.archive
+    - i.creates | dirname != ''
 
 - name: decompress block if unarchive failed
   block:
     - name: unarchive failed, trying to decompress
       decompress:
         src: "{{ _meva_down_name }}"
-        dst: "{{ f.dest }}/{{ i.creates }}"
+        dst: "{{ i.dest }}/{{ i.creates }}"
       notify: "{{ i.notify | default(omit) }}"
-    - name: set owner, group and mode
+    - name: set owner, group and mode after decompress
       file:
         path: "{{ i.dest }}/{{ i.creates }}"
         mode: "{{ i.file_mode | default(omit) }}"
@@ -54,7 +56,8 @@
       notify: "{{ i.notify | default(omit) }}"
   when:
     - i.archive
-    - unarchive_result.failed
+    - not ansible_check_mode
+    - unarchive_result.failed | default(true)
 
 - name: apply filesystem modes
   block:
@@ -73,8 +76,8 @@
         /usr/bin/env chmod {{ i.file_mode | default('0644') }}
   when:
     - i.archive
-    - not unarchive_result.failed
-    - unarchive_result.changed
+    - not unarchive_result.failed | default(true)
+    - unarchive_result.changed | default(false)
 
 - name: copy and set attrs
   block:
@@ -90,7 +93,7 @@
         remote_src: yes
       notify: "{{ i.notify | default(omit) }}"
       register: copy_result
-    - name: set owner, group and mode
+    - name: set owner, group and mode after download
       file:
         path: "{{ i.dest | default(mandatory) }}"
         mode: "{{ i.file_mode | default(omit) }}"
