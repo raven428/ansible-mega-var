@@ -13,7 +13,7 @@ ctime: "{{ now(fmt='%Y%m%d%H%M%S') }}"
 gh_owner: raven428
 check_flag: "{{ download_root }}/to-notify-verifier-that-converged-in-check-mode"
 ver2down: >-
-  {{ lookup('ansible.builtin.env', 'ANSIBLE_DOWNLOAD_TAG',  default='000') }}
+  {{ lookup('ansible.builtin.env', 'ANSIBLE_DOWNLOAD_TAG', default='000') }}
 download_tag: "v{{ ver2down }}"
 download_root: "/tmp/molecule"
 download_topic: "pyenv-emtpy"
@@ -43,7 +43,7 @@ download_types:
 download_paths:
   single: "single"
   compress: "compress"
-  arch_tree:  "arch-tree"
+  arch_tree: "arch-tree"
 download_options:
   direct: "direct-download"
   con_copy: "controller-copy"
@@ -61,9 +61,9 @@ dirs2prepare: |
   {%- endfor -%}
   {{  result | list }}
 meva_file2down:
-# 1. simple HTTPS connection by URI
-#   1. single raw
-#     1. directly to target host
+  # 1. simple HTTPS connection by URI
+  #   1. single raw
+  #     1. directly to target host
   - url: "{{ download_files.simple_uri }}"
     dest: >-
       {{ download_root }}/{{ download_types.simple }}/{{ download_paths.single
@@ -73,10 +73,10 @@ meva_file2down:
       }}-{{ download_options.direct }}.xz
     down_mode: "0641"
     modification_time: "{{ default_time }}"
-    archive: no
-# 1. simple HTTPS connection by URI
-#   1. single raw
-#     2. at the Ansible controller with `copy:`
+    archive: false
+  # 1. simple HTTPS connection by URI
+  #   1. single raw
+  #     2. at the Ansible controller with `copy:`
   - url: "{{ download_files.simple_uri }}"
     dest: >-
       {{ download_root }}/{{ download_types.simple }}/{{ download_paths.single
@@ -87,10 +87,10 @@ meva_file2down:
     down_mode: "0641"
     modification_time: "{{ default_time }}"
     delegate_to: localhost
-    archive: no
-# 1. simple HTTPS connection by URI
-#   2. single compressed
-#     1. directly to target host
+    archive: false
+  # 1. simple HTTPS connection by URI
+  #   2. single compressed
+  #     1. directly to target host
   - url: "{{ download_files.simple_uri }}"
     dest: >-
       {{ download_root }}/{{ download_types.simple }}/{{ download_paths.compress
@@ -101,10 +101,10 @@ meva_file2down:
     creates: "{{ decompressed_file_name }}"
     down_mode: "0641"
     modification_time: "{{ default_time }}"
-    archive: yes
-# 1. simple HTTPS connection by URI
-#   2. single compressed
-#     2. at the Ansible controller with `copy:`
+    archive: true
+  # 1. simple HTTPS connection by URI
+  #   2. single compressed
+  #     2. at the Ansible controller with `copy:`
   - url: "{{ download_files.simple_uri }}"
     down_name: >-
       {{ download_types.simple }}-{{ download_paths.compress
@@ -112,7 +112,7 @@ meva_file2down:
     # file name to decompress:
     creates: "{{ decompressed_file_name }}"
     delegate_to: localhost
-    archive: yes
+    archive: true
     files:
       # file name to upload (should be same as in "creates:" above):
       - name: "{{ decompressed_file_name }}"
@@ -120,9 +120,9 @@ meva_file2down:
           {{ download_root }}/{{ download_types.simple }}/{{ download_paths.compress
           }}/{{ download_options.con_copy }}
         file_mode: "0641"
-# 1. simple HTTPS connection by URI
-#   3. archive with directory tree
-#     1. directly to target host
+  # 1. simple HTTPS connection by URI
+  #   3. archive with directory tree
+  #     1. directly to target host
   - url: "{{ download_files.simple_uri }}"
     dest: >-
       {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
@@ -132,17 +132,17 @@ meva_file2down:
       }}-{{ download_options.direct }}-{{ ver2down }}.tar.xz
     creates: "pyenv/build-{{ ver2down }}"
     modification_time: "{{ default_time }}"
-    archive: yes
-# 1. simple HTTPS connection by URI
-#   3. archive with directory tree
-#     2. at the Ansible controller with `copy:`
+    archive: true
+  # 1. simple HTTPS connection by URI
+  #   3. archive with directory tree
+  #     2. at the Ansible controller with `copy:`
   - url: "{{ download_files.simple_uri }}"
     down_name: >-
       {{ download_types.simple }}-{{ download_paths.arch_tree
       }}-{{ download_options.con_copy }}-{{ ver2down }}.tar.xz
     creates: "pyenv/build-{{ ver2down }}"
     delegate_to: localhost
-    archive: yes
+    archive: true
     files:
       - name: "pyenv/Makefile"
         dest: >-
@@ -165,9 +165,9 @@ meva_file2down:
           }}/{{ download_options.con_copy }}/pyenv.d/rehash/conda.d/
         file_mode: "0640"
 meva_ghr2down:
-# 2. release from GitHub for platform and version lookup using auth token
-#   1. single raw
-#     1. directly to target host
+  # 2. release from GitHub for platform and version lookup using auth token
+  #   1. single raw
+  #     1. directly to target host
   - gh_tag: "{{ download_tag }}"
     gh_repo: "{{ github_repo_pub }}"
     gh_owner: "{{ github_repo_owner }}"
@@ -178,13 +178,13 @@ meva_ghr2down:
       }}-{{ download_options.direct }}.xz
     creates: "{{ download_file_name }}"
     file_mode: "0641"
-    archive: no
+    archive: false
     dest: >-
       {{ download_root }}/{{ download_types.release }}/{{ download_paths.single
       }}/{{ download_options.direct }}/{{ download_file_name }}
-# 2. release from GitHub for platform and version lookup using auth token
-#   1. single raw
-#     2. at the Ansible controller with `copy:`
+  # 2. release from GitHub for platform and version lookup using auth token
+  #   1. single raw
+  #     2. at the Ansible controller with `copy:`
   - gh_tag: "{{ download_tag }}"
     gh_repo: "{{ github_repo_pub }}"
     gh_owner: "{{ github_repo_owner }}"
@@ -196,13 +196,13 @@ meva_ghr2down:
     creates: "{{ download_file_name }}"
     file_mode: "0641"
     delegate_to: localhost
-    archive: no
+    archive: false
     dest: >-
       {{ download_root }}/{{ download_types.release }}/{{ download_paths.single
       }}/{{ download_options.con_copy }}/{{ download_file_name }}
-# 2. release from GitHub for platform and version lookup using auth token
-#   2. single compressed
-#     1. directly to target host
+  # 2. release from GitHub for platform and version lookup using auth token
+  #   2. single compressed
+  #     1. directly to target host
   - gh_tag: "{{ download_tag }}"
     gh_repo: "{{ github_repo_pub }}"
     gh_owner: "{{ github_repo_owner }}"
@@ -213,13 +213,13 @@ meva_ghr2down:
       }}-{{ download_options.direct }}.xz
     creates: "{{ decompressed_file_name }}"
     file_mode: "0641"
-    archive: yes
+    archive: true
     dest: >-
       {{ download_root }}/{{ download_types.release }}/{{ download_paths.compress
       }}/{{ download_options.direct }}
-# 2. release from GitHub for platform and version lookup using auth token
-#   2. single compressed
-#     2. at the Ansible controller with `copy:`
+  # 2. release from GitHub for platform and version lookup using auth token
+  #   2. single compressed
+  #     2. at the Ansible controller with `copy:`
   - gh_tag: "{{ download_tag }}"
     gh_repo: "{{ github_repo_pub }}"
     gh_owner: "{{ github_repo_owner }}"
@@ -231,7 +231,7 @@ meva_ghr2down:
     # file name to decompress:
     creates: "{{ decompressed_file_name }}"
     delegate_to: localhost
-    archive: yes
+    archive: true
     files:
       # file name to upload (should be same as in "creates:" above):
       - name: "{{ decompressed_file_name }}"
@@ -239,9 +239,9 @@ meva_ghr2down:
           {{ download_root }}/{{ download_types.release }}/{{ download_paths.compress
           }}/{{ download_options.con_copy }}
         file_mode: "0641"
-# 2. release from GitHub for platform and version lookup using auth token
-#   3. archive with directory tree
-#     1. directly to target host
+  # 2. release from GitHub for platform and version lookup using auth token
+  #   3. archive with directory tree
+  #     1. directly to target host
   - gh_tag: "{{ download_tag }}"
     gh_repo: "{{ github_repo_pub }}"
     gh_owner: "{{ github_repo_owner }}"
@@ -252,13 +252,13 @@ meva_ghr2down:
       }}-{{ download_options.direct }}-{{ ver2down }}.tar.xz
     creates: "pyenv/build-{{ ver2down }}"
     file_mode: "0641"
-    archive: yes
+    archive: true
     dest: >-
       {{ download_root }}/{{ download_types.release }}/{{ download_paths.arch_tree
       }}/{{ download_options.direct }}
-# 2. release from GitHub for platform and version lookup using auth token
-#   3. archive with directory tree
-#     2. at the Ansible controller with `copy:`
+  # 2. release from GitHub for platform and version lookup using auth token
+  #   3. archive with directory tree
+  #     2. at the Ansible controller with `copy:`
   - gh_tag: "{{ download_tag }}"
     gh_repo: "{{ github_repo_pub }}"
     gh_owner: "{{ github_repo_owner }}"
@@ -269,7 +269,7 @@ meva_ghr2down:
       }}-{{ download_options.con_copy }}-{{ ver2down }}.tar.xz
     creates: "pyenv/build-{{ ver2down }}"
     delegate_to: localhost
-    archive: yes
+    archive: true
     files:
       - name: "pyenv/Makefile"
         dest: >-
