@@ -1,10 +1,10 @@
 ---
-- name: include settings temporary name for download
-  include_tasks: down_name.yaml
+- name: Include settings temporary name for download
+  ansible.builtin.include_tasks: down_name.yaml
 
-- name: get releases list
+- name: Get releases list
   become: false
-  uri:
+  ansible.builtin.uri:
     url: >-
       https://api.github.com/repos/{{
         i.gh_owner
@@ -25,11 +25,12 @@
 
 # following two blocks due default(omit) work incorrect for delegate_to
 # issue link: https://github.com/ansible/ansible/issues/14130
-- name: delegate_to value defined
+- name: Delegate_to value defined
+  when: "'delegate_to' in i"
   block:
-    - name: download github release to local
+    - name: Download github release to local
       become: false
-      get_url:
+      ansible.builtin.get_url:
         attributes: "{{ i.attributes | default(omit) }}"
         client_cert: "{{ i.client_cert | default(omit) }}"
         client_key: "{{ i.client_key | default(omit) }}"
@@ -61,15 +62,15 @@
         loop_var: j
       loop: "{{ _release_info.json.assets }}"
       when: "i.substring in j.name"
-    - name: unpack downloaded archive and propagate files
-      include_tasks: unp4pro.yaml
-  when: "'delegate_to' in i"
+    - name: Unpack downloaded archive and propagate files
+      ansible.builtin.include_tasks: unp4pro.yaml
 
-- name: delegate_to value undefined
+- name: Delegate_to value undefined
+  when: "'delegate_to' not in i"
   block:
-    - name: download github release to remote
+    - name: Download github release to remote
       become: true
-      get_url:
+      ansible.builtin.get_url:
         attributes: "{{ i.attributes | default(omit) }}"
         client_cert: "{{ i.client_cert | default(omit) }}"
         client_key: "{{ i.client_key | default(omit) }}"
@@ -100,7 +101,5 @@
         loop_var: j
       loop: "{{ _release_info.json.assets }}"
       when: "i.substring in j.name"
-    - name: unpack downloaded archive and propagate files
-      include_tasks: unp2loc.yaml
-  when:
-    - "'delegate_to' not in i"
+    - name: Unpack downloaded archive and propagate files
+      ansible.builtin.include_tasks: unp2loc.yaml

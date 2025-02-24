@@ -1,16 +1,17 @@
 ---
-- name: unpack archive block
+- name: Unpack archive block
+  when: i.archive
   block:
-    - name: recursive create directory
-      file:
+    - name: Recursive create directory
+      ansible.builtin.file:
         path: "{{ _meva_down_name }}-dir"
         state: directory
         mode: "0755"
       become: false
       check_mode: false
       delegate_to: "{{ i.delegate_to }}"
-    - name: unpack from archive
-      unarchive:
+    - name: Unpack from archive
+      ansible.builtin.unarchive:
         src: "{{ _meva_down_name }}"
         dest: "{{ _meva_down_name }}-dir"
         creates: "{{ _meva_down_name }}-dir/{{ i.creates }}"
@@ -20,7 +21,7 @@
       register: unarchive_result
       ignore_errors: true
       when: i.creates | dirname != ''
-    - name: unarchive failed, trying to decompress
+    - name: Unarchive failed, trying to decompress
       decompress:
         src: "{{ _meva_down_name }}"
         dst: "{{ _meva_down_name }}-dir/{{ i.creates }}"
@@ -28,10 +29,9 @@
       check_mode: false
       delegate_to: "{{ i.delegate_to }}"
       when: unarchive_result.failed | default(true)
-  when: i.archive
 
-- name: propagate unpacked files
-  copy:
+- name: Propagate unpacked files
+  ansible.builtin.copy:
     src: "{{ _meva_down_name }}-dir/{{ f.name }}"
     dest: "{{ f.dest | default(mandatory) }}"
     force: "{{ f.force | default(omit) }}"
@@ -44,10 +44,11 @@
     loop_var: f
   loop: "{{ i.files | default([]) | list }}"
 
-- name: propagate and set attrs
+- name: Propagate and set attrs
+  when: not i.archive
   block:
-    - name: propagate downloaded file if not archive
-      copy:
+    - name: Propagate downloaded file if not archive
+      ansible.builtin.copy:
         src: "{{ _meva_down_name }}"
         dest: "{{ i.dest | default(mandatory) }}"
         force: "{{ i.force | default(omit) }}"
@@ -57,8 +58,8 @@
         mode: "{{ i.file_mode | default(i.down_mode | default(omit)) }}"
       notify: "{{ i.notify | default(omit) }}"
       register: copy_result
-    - name: set owner, group and mode after download
-      file:
+    - name: Set owner, group and mode after download
+      ansible.builtin.file:
         path: "{{ i.dest | default(mandatory) }}"
         mode: "{{ i.file_mode | default(omit) }}"
         owner: "{{ i.owner | default(omit) }}"
@@ -69,4 +70,3 @@
         modification_time_format: "{{ i.modification_time_format | default(omit) }}"
       notify: "{{ i.notify | default(omit) }}"
       when: "'size' in copy_result"
-  when: not i.archive
