@@ -1,5 +1,5 @@
 ---
-- name: prepare
+- name: Prepare
   hosts: localhost
   connection: local
   gather_facts: false
@@ -7,32 +7,32 @@
   vars:
     roles_dir: "{{ lookup('env', 'HOME') }}/.ansible/roles"
   tasks:
-    - name: create molecule roles directory
+    - name: Create molecule roles directory
       ansible.builtin.file:
         path: "{{ roles_dir }}"
         state: directory
-        force: yes
-        recurse: yes
-    - name: symbolic link to role
+        force: true
+        recurse: true
+    - name: Symbolic link to role
       ansible.builtin.file:
         src: /ansible
         dest: "{{ roles_dir }}/ansible-mega-var"
         state: link
-        force: yes
+        force: true
 
-- name: prepare targets
+- name: Prepare targets
   hosts: all
   tasks:
-    - name: remove downloads directory
+    - name: Remove downloads directory
       ansible.builtin.file:
         path: "{{ download_root }}"
         state: absent
-    - name: create downloads directory
+    - name: Create downloads directory
       ansible.builtin.file:
         path: "{{ i.path }}"
         state: directory
-        force: yes
-        recurse: yes
+        force: true
+        recurse: true
       loop_control:
         loop_var: i
       loop: "{{ dirs2prepare }}"

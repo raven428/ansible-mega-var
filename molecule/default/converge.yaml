@@ -1,5 +1,5 @@
 ---
-- name: perform actions from inventory variables
+- name: Perform actions from inventory variables
   hosts: all
   pre_tasks:
     - name: Create a check mode flag if running in check mode
@@ -14,4 +14,4 @@
         state: absent
       when: not ansible_check_mode
   roles:
-    - ansible-mega-var
+    - ansible-mega-var # noqa syntax-check[specific]

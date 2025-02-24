@@ -59,7 +59,7 @@ EXAMPLES = '''
     dest: '~/isos/newname_image.iso'
 
 # Extract multiple images using with_items
-- name: decompress multiple images
+- name: Decompress multiple images
   decompress:
     src: "{{ item }}"
     dest: '/my-images/'
@@ -85,6 +85,7 @@ files:
 
 from ansible.module_utils.basic import AnsibleModule
 import shutil, posixpath, os, importlib
+
 
 def decompress_file(data={}):
   try:
@@ -142,15 +143,15 @@ def decompress_file(data={}):
         f_out.write(lz4.decompress(f_in.read()))
     else:
       result = [
-        False, False, "The file type [" + ext +
-        "] is not supported by this module. " +
+        False, False,
+        "The file type [" + ext + "] is not supported by this module. " +
         "Supported file formats are .xz .gz, .bz2", orig_file_path
       ]
     if result == []:
       result = [
-        False, True, "File extracted successfully" + (
-          " and replaced because Force: true" if dst_exists else ""
-        ) + ": " + dst, dst
+        False, True, "File extracted successfully" +
+        (" and replaced because Force: true" if dst_exists else "") + ": " +
+        dst, dst
       ]
     return result[0], result[1], result[2], result[3]
   except Exception as e:
@@ -158,6 +159,7 @@ def decompress_file(data={}):
     return True, False, message, {
       'Error': str(e)
     }
+
 
 def run_module():
   module_args = dict(
@@ -180,8 +182,10 @@ def run_module():
   result['files'] = files
   module.exit_json(**result)
 
+
 def main():
   run_module()
+
 
 if __name__ == '__main__':
   main()

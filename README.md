@@ -3,7 +3,7 @@
 ## Example usage from `site.yaml`
 
 ```yaml
-- name: perform some files, dirs, and templates upload
+- name: Perform some files, dirs, and templates upload
   hosts: mega_var
   become: true
   handlers:
@@ -33,18 +33,22 @@
 ## Molecule tests to-do
 
 ### Releases for testing
+
 - [public](https://github.com/raven428/finch-externaleditor/releases)
 
 ### File types for downloading (c)
+
 1. simple HTTPS connection by URI
 2. release from GitHub for platform and version lookup using auth token
 
 ### File type to unpack (p)
+
 1. single raw
 2. single compressed
 3. archive with directory tree
 
 ### Transfer options (b)
+
 1. directly to target host
 2. at the Ansible controller with `copy:`
 
@@ -53,20 +57,24 @@
 total `2 * 3 * 2 = 12` downloading tests
 
 ### Update options (u)
+
 Only for p3, with c1-c2, b1-b2
 
 additional `1 * 2 * 2 = 4` update tests
 
 ### Linters
+
 --"--
 
 ## Role development road-map
 
 ### Add to `c`
+
 1. plain HTTPS with basic auth
 2. plain HTTPS with token auth
 
 ### Other improvements
+
 - add all compressors tests for decompress module
 - it should be split into multiple files to allow usage of every single part from other roles with the tasks_from parameter
 - it needs to be tested as one of the units in CI, e.g., by molecule:
