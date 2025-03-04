@@ -1,18 +1,18 @@
 ---
-- name: verify downloaded files
+- name: Verify downloaded files
   hosts: all
   gather_facts: false
   tasks:
-    - name: "converge run was in check_mode"
-      stat:
+    - name: Converge run was in check_mode
+      ansible.builtin.stat:
         path: "{{ check_flag }}"
       register: converge_check
-    - name: "upload etalon output"
-      copy:
+    - name: Upload etalon output
+      ansible.builtin.copy:
         src: "files/{{ file_name }}.txt"
         dest: "/tmp/{{ file_name }}"
-        force: yes
-        follow: no
+        force: true
+        follow: false
         mode: "0644"
       loop_control:
         loop_var: file_name
@@ -22,7 +22,7 @@
         - "03-chevrge"
         - "04-update"
         - "05-u_check"
-    - name: get file list and hashes
+    - name: Get file list and hashes
       ansible.builtin.shell: |
         {%  set etalon = 'none' %}
         {%  if ver2down == '000' %}
@@ -52,7 +52,7 @@
       check_mode: false
       changed_when: false
       ignore_errors: true
-    - name: assert non-zero rc
-      assert:
+    - name: Assert non-zero rc
+      ansible.builtin.assert:
         that: "files_info.rc == 0"
         fail_msg: "{{ files_info.stdout_lines | list }}"

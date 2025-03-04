@@ -1,6 +1,7 @@
 ---
-- name: "check creates [{{ i.dest }}/{{ i.creates }}] exists"
-  stat:
+- name: Check creates [{{ i.dest }}/{{ i.creates }}] exists
+  # noqa name[template]
+  ansible.builtin.stat:
     path: "{{ i.dest }}/{{ i.creates }}"
   register: _file_creates
   when:
@@ -8,9 +9,10 @@
     - i.creates | default(none) != none
 
 - name: >-
-    remove [{{ i.dest }}/{{ i.creates | dirname }}] for upgrade
+    Remove [{{ i.dest }}/{{ i.creates | dirname }}] for upgrade
     due creates: [{{ i.dest }}/{{ i.creates }}] isn't exists
-  file:
+  # noqa name[template]
+  ansible.builtin.file:
     state: absent
     path: "{{ i.dest }}/{{ i.creates | dirname }}"
   no_log: true
@@ -22,29 +24,33 @@
     - _file_creates.stat.exists | default(none) != none
     - not _file_creates.stat.exists
 
-- name: unpack from archive
-  unarchive:
+- name: Unpack from archive
+  ansible.builtin.unarchive:
     src: "{{ _meva_down_name }}"
     dest: "{{ i.dest }}"
     owner: "{{ i.owner | default(omit) }}"
     group: "{{ i.group | default(omit) }}"
     creates: "{{ i.dest }}/{{ i.creates }}"
-    remote_src: yes
+    remote_src: true
   register: unarchive_result
   ignore_errors: true
   when:
     - i.archive
     - i.creates | dirname != ''
 
-- name: decompress block if unarchive failed
+- name: Decompress block if unarchive failed
+  when:
+    - i.archive
+    - not ansible_check_mode
+    - unarchive_result.failed | default(true)
   block:
-    - name: unarchive failed, trying to decompress
+    - name: Unarchive failed, trying to decompress
       decompress:
         src: "{{ _meva_down_name }}"
         dst: "{{ i.dest }}/{{ i.creates }}"
       notify: "{{ i.notify | default(omit) }}"
-    - name: set owner, group and mode after decompress
-      file:
+    - name: Set owner, group and mode after decompress
+      ansible.builtin.file:
         path: "{{ i.dest }}/{{ i.creates }}"
         mode: "{{ i.file_mode | default(omit) }}"
         owner: "{{ i.owner | default(omit) }}"
@@ -54,35 +60,40 @@
         modification_time: "{{ i.modification_time | default(omit) }}"
         modification_time_format: "{{ i.modification_time_format | default(omit) }}"
       notify: "{{ i.notify | default(omit) }}"
-  when:
-    - i.archive
-    - not ansible_check_mode
-    - unarchive_result.failed | default(true)
 
-- name: apply filesystem modes
-  block:
-    - name: apply mode to directories
-      shell: /usr/bin/env find '{{ i.dest }}' -type d |
-        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
-        /usr/bin/env chmod {{ i.dir_mode | default('0755') }}
-    - name: apply mode to executable files
-      shell: >-
-        /usr/bin/env find '{{ i.dest }}' -type f -executable |
-        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
-        /usr/bin/env chmod {{ i.exec_mode | default('0755') }}
-    - name: apply mode to non-executable files
-      shell: /usr/bin/env find '{{ i.dest }}' -type f ! -executable |
-        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
-        /usr/bin/env chmod {{ i.file_mode | default('0644') }}
+- name: Apply filesystem modes
   when:
     - i.archive
     - not unarchive_result.failed | default(true)
     - unarchive_result.changed | default(false)
-
-- name: copy and set attrs
   block:
-    - name: copy downloaded file to destination if not archive
-      copy:
+    - name: Apply mode to directories
+      # noqa no-changed-when
+      # noqa risky-shell-pipe
+      ansible.builtin.shell: >-
+        /usr/bin/env find '{{ i.dest }}' -type d |
+        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
+        /usr/bin/env chmod {{ i.dir_mode | default('0755') }}
+    - name: Apply mode to executable files
+      # noqa no-changed-when
+      # noqa risky-shell-pipe
+      ansible.builtin.shell: >-
+        /usr/bin/env find '{{ i.dest }}' -type f -executable |
+        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
+        /usr/bin/env chmod {{ i.exec_mode | default('0755') }}
+    - name: Apply mode to non-executable files
+      # noqa no-changed-when
+      # noqa risky-shell-pipe
+      ansible.builtin.shell: >-
+        /usr/bin/env find '{{ i.dest }}' -type f ! -executable |
+        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
+        /usr/bin/env chmod {{ i.file_mode | default('0644') }}
+
+- name: Copy and set attrs
+  when: not i.archive and 'dest' in i
+  block:
+    - name: Copy downloaded file to destination if not archive
+      ansible.builtin.copy:
         src: "{{ _meva_down_name }}"
         dest: "{{ i.dest | default(mandatory) }}"
         force: "{{ i.force | default(omit) }}"
@@ -90,11 +101,11 @@
         owner: "{{ i.owner | default(i.down_owner | default(omit)) }}"
         group: "{{ i.group | default(i.down_owner | default(omit)) }}"
         mode: "{{ i.file_mode | default(i.down_mode | default(omit)) }}"
-        remote_src: yes
+        remote_src: true
       notify: "{{ i.notify | default(omit) }}"
       register: copy_result
-    - name: set owner, group and mode after download
-      file:
+    - name: Set owner, group and mode after download
+      ansible.builtin.file:
         path: "{{ i.dest | default(mandatory) }}"
         mode: "{{ i.file_mode | default(omit) }}"
         owner: "{{ i.owner | default(omit) }}"
@@ -105,4 +116,3 @@
         modification_time_format: "{{ i.modification_time_format | default(omit) }}"
       notify: "{{ i.notify | default(omit) }}"
       when: "'size' in copy_result"
-  when: not i.archive and 'dest' in i
