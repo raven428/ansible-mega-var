@@ -17,7 +17,7 @@ export DEBIAN_FRONTEND=noninteractive
 }
 /usr/bin/env which ansible-docker.sh >/dev/null || {
   /usr/bin/env sudo curl -sL -o /usr/local/bin/ansible-docker.sh \
-    https://raw.githubusercontent.com/raven428/container-images/refs/heads/master/sources/ansible-ubuntu/files/ansible-docker.sh
+    https://raw.githubusercontent.com/raven428/container-images/refs/heads/master/_shared/install/ansible/ansible-docker.sh
   /usr/bin/env sudo chmod 755 /usr/local/bin/ansible-docker.sh
 }
 [[ "${SSH_AUTH_SOCK}" == "/dev/null" ]] && export SSH_AUTH_SOCK
