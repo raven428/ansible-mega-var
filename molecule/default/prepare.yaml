@@ -1,5 +1,5 @@
 ---
-- name: Prepare
+- name: Prepare controller
   hosts: localhost
   connection: local
   gather_facts: false

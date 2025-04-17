@@ -1,4 +1,10 @@
 ---
+- name: Ensure some packages
+  ansible.builtin.include_tasks: packages.yaml
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_packages }}"
+
 - name: Ensure some groups
   ansible.builtin.group:
     name: "{{ i.name | mandatory }}"
@@ -54,7 +60,7 @@
     loop_var: i
   loop: "{{ meva_users2create }}"
 
-- name: Create some directory
+- name: Create some directories
   ansible.builtin.file:
     access_time: "{{ i.access_time | default(omit) }}"
     access_time_format: "{{ i.access_time_format | default(omit) }}"
@@ -124,7 +130,7 @@
     loop_var: i
   loop: "{{ meva_content2upload }}"
 
-- name: Upload some files by rsynnc
+- name: Rsync some files
   ansible.posix.synchronize:
     src: "{{ i.src | mandatory }}"
     dest: "{{ i.dest | mandatory }}"
@@ -179,7 +185,7 @@
     loop_var: i
   loop: "{{ meva_ghr2down }}"
 
-- name: Some disk partitioning
+- name: Partitioning some disks
   community.general.parted:
     align: "{{ i.align | default(omit) }}"
     device: "{{ i.device }}"
@@ -199,7 +205,7 @@
     loop_var: i
   loop: "{{ meva_partitions }}"
 
-- name: Some linux volume groups
+- name: Ensure some volume groups
   community.general.lvg:
     force: "{{ i.force | default('no') }}"
     pesize: "{{ i.pesize | default(omit) }}"
@@ -214,7 +220,7 @@
     loop_var: i
   loop: "{{ meva_lvg }}"
 
-- name: Some linux logical volumes
+- name: Ensure some logical volumes
   community.general.lvol:
     active: "{{ i.active | default(omit) }}"
     force: "{{ i.force | default('no') }}"
@@ -233,7 +239,7 @@
     loop_var: i
   loop: "{{ meva_lvol }}"
 
-- name: Some file systems
+- name: Ensure some file systems
   community.general.filesystem:
     dev: "{{ i.dev | default(omit) }}"
     force: "{{ i.force | default(omit) }}"
@@ -246,7 +252,7 @@
     loop_var: i
   loop: "{{ meva_filesystems }}"
 
-- name: Some file mounts
+- name: Ensure some file mounts
   ansible.posix.mount:
     backup: "{{ i.backup | default(omit) }}"
     boot: "{{ i.boot | default(omit) }}"

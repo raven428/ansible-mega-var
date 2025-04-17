@@ -60,6 +60,10 @@ dirs2prepare: |
   {%-   endfor -%}
   {%- endfor -%}
   {{  result | list }}
+meva_packages:
+  - name:
+      - xz-utils
+    update_cache: true
 meva_file2down:
   # 1. simple HTTPS connection by URI
   #   1. single raw
