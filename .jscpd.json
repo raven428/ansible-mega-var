@@ -1,0 +1,3 @@
+{
+  "ignore": ["molecule/default/files/*"]
+}
