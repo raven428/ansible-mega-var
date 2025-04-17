@@ -1,5 +1,7 @@
 # Ansible actions from inventory variables
 
+[![molecule](https://github.com/raven428/ansible-mega-var/actions/workflows/molecule.yaml/badge.svg)](https://github.com/raven428/ansible-mega-var/actions/workflows/molecule.yaml)
+
 ## Example usage from `site.yaml`
 
 ```yaml
@@ -75,12 +77,13 @@ additional `1 * 2 * 2 = 4` update tests
 
 ### Other improvements
 
-- add all compressors tests for decompress module
-- it should be split into multiple files to allow usage of every single part from other roles with the tasks_from parameter
-- it needs to be tested as one of the units in CI, e.g., by molecule:
+- role should be split into multiple files to allow usage of every single part from other roles with the tasks_from parameter
+- role needs to be tested as one of the units in CI, e.g., by molecule:
   - calling the whole role
   - calling every of split tasks
   - check mode also should be tested because the role contains a lot of check_mode: yes parameters
 - elaborate Ansible module for getting the exact URL of the GitHub release file to avoid flooding the Ansible log
 - join `file2down` with `ghr2down` for the ability to download and unpack
 - reduce verbosity of `get releases list` task
+- add all compressors tests for decompress module
+- replace `docker` to rootless `podman` with [upgrade](https://github.com/raven428/container-images/blob/master/podman.sh) to recent version
