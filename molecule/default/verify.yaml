@@ -43,8 +43,8 @@
         {
           find '{{ download_root }}' -type d -exec stat --format="%n %A %U %G" {} +
           find '{{ download_root }}' -type f -exec stat --format="%n %A %U %G %s" {} +
-          find '{{ download_root }}' -type f -exec md5sum {} + |
-          sed -E 's/^([^ ]+)\s+(.+)$/\2 \1/'
+          find '{{ download_root }}' -type f -exec \
+          md5sum {} + | sed -E 's/^([^ ]+)\s+(.+)$/\2 \1/' # DevSkim: ignore DS126858
         } | sort >/tmp/hashed-lists-{{ ctime }}
         diff -u /tmp/{{ etalon }} /tmp/hashed-lists-{{ ctime }} 2>&1
       register: files_info

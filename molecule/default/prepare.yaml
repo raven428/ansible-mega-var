@@ -1,6 +1,6 @@
 ---
 - name: Prepare controller
-  hosts: localhost
+  hosts: localhost # DevSkim: ignore DS162092
   connection: local
   gather_facts: false
   no_log: "{{ molecule_no_log }}"

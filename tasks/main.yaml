@@ -1,3 +1,4 @@
+# kics-scan disable=59029ddf-e651-412b-ae7b-ff6d403184bc
 ---
 - name: Ensure some packages
   ansible.builtin.include_tasks: packages.yaml
@@ -154,7 +155,7 @@
   notify: "{{ i.notify | default(omit) }}"
   loop_control:
     loop_var: i
-  loop: "{{ meva_systemd4units }}"
+  loop: "{{ meva_systemd4units }}" # DevSkim: ignore DS126858
 
 - name: Ensure some keys
   ansible.posix.authorized_key:

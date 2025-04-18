@@ -1,9 +1,7 @@
-#!/usr/bin/python
-
 ANSIBLE_METADATA = {
   'metadata_version': '1.1',
   'status': ['preview'],
-  'supported_by': 'community'
+  'supported_by': 'community',
 }
 
 DOCUMENTATION = '''
@@ -15,7 +13,10 @@ short_description: This is a simple module for decompressing unarchived files
 version_added: "2.4"
 
 description:
-  - "The module gets either a gz,bz2 or zip compressed file and just uncompress its content. Its purpose is to cover the case where a single file is just compressed such as a bootimage.iso.gz. but not archived. In case the file is archived, e.g. bootimage.tar.gz then the core module unarchive can handle it."
+  - "The module gets either a gz,bz2 or zip compressed file and just uncompress its
+    content. Its purpose is to cover the case where a single file is just compressed such
+    as a bootimage.iso.gz. but not archived. In case the file is archived, e.g.
+    bootimage.tar.gz then the core module unarchive can handle it."
 
 options:
   src:
@@ -24,11 +25,16 @@ options:
     required: true
   dst:
     description:
-      - The destination of the uncompressed file. This can be an absolute file path where the content will be saved as the specified filename, a directory where the filename will match the src filename without the (.gz|.bz2|.zip) extention or undefined. In the last case the file will be uncompressed in the same directory of the src with the same filename without the compress extention.
+      - The destination of the uncompressed file. This can be an absolute file path where
+        the content will be saved as the specified filename, a directory where the
+        filename will match the src filename without the (.gz|.bz2|.zip) extention or
+        undefined. In the last case the file will be uncompressed in the same directory
+        of the src with the same filename without the compress extention.
     required: false
   force:
     description:
-      - Set this option to True to overwrite the extracted file in case it exists on destination.
+      - Set this option to True to overwrite the extracted file in case it exists on
+        destination.
     required: false
     default: false
   update:
@@ -66,7 +72,8 @@ EXAMPLES = '''
     force: true
   with_items: "{{ compressed_isos_list }}"
 
-# Setting just the src will use the same name omiting the extention, the result will be /tmp/bootimage.iso
+# Setting just the src will use the same name omiting the extention, the result will be
+# /tmp/bootimage.iso
 - name: Decompress in the same folder using the same name
   decompress:
     src: '/tmp/bootimage.iso.zip'
@@ -83,37 +90,46 @@ files:
     type: list
 '''
 
-from ansible.module_utils.basic import AnsibleModule
-import shutil, posixpath, os, importlib
+import importlib
+import os
+import posixpath
+import shutil
+
+# pylint: disable=import-error
+from ansible.module_utils.basic import (  # type: ignore[reportMissingImports]
+  AnsibleModule,
+)
 
 
-def decompress_file(data={}):
+def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912,PLR0915
   try:
     orig_file_path = str(posixpath.abspath(data['src']))
-    path_list = os.path.splitext(orig_file_path)
-    original_file_dir = os.path.dirname(orig_file_path)
+    path_list = os.path.splitext(orig_file_path)  # noqa: PTH122
+    original_file_dir = os.path.dirname(orig_file_path)  # noqa: PTH120
     ext = path_list[1]
     destination = data['dst']
     force = data['force']
     if not destination:
       destination = path_list[0]
-    elif not os.path.dirname(destination):
+    elif not os.path.dirname(destination):  # noqa: PTH120
       destination = original_file_dir + "/" + destination
-    elif not os.path.basename(destination):
-      destination = destination + os.path.basename(path_list[0])
-    if not os.path.exists(os.path.dirname(destination)):
-      os.makedirs(os.path.dirname(destination), 755)
+    elif not os.path.basename(destination):  # noqa: PTH119
+      destination = destination + os.path.basename(  # noqa: PTH119
+        path_list[0]
+      )
+    if not os.path.exists(os.path.dirname(destination)):  # noqa: PTH110,PTH120
+      os.makedirs(os.path.dirname(destination), 755)  # noqa: PTH103,PTH120
     dst = destination
-    if os.path.isdir(destination):
+    if os.path.isdir(destination):  # noqa: PTH112
       dst = path_list[0]
-    dst_exists = os.path.exists(dst)
+    dst_exists = os.path.exists(dst)  # noqa: PTH110
     result = []
     if dst_exists and not force:
       result = [
         False, False, "File [" + dst +
         "] exists: skipping extraction. Use Force: true to overwrite)", dst
       ]
-    elif ext == ".xz" or ext == ".lzma":
+    elif ext == ".xz" or ext == ".lzma":  # noqa: PLR1714
       lzma = importlib.import_module("lzma")
       with lzma.open(orig_file_path, "r") as f_in, open(dst, "wb") as f_out:
         shutil.copyfileobj(f_in, f_out)
@@ -154,36 +170,32 @@ def decompress_file(data={}):
         dst, dst
       ]
     return result[0], result[1], result[2], result[3]
-  except Exception as e:
+  except Exception as e:  # noqa: BLE001
     message = f"Error {e} occurred"
     return True, False, message, {
       'Error': str(e)
     }
 
 
-def run_module():
+def run_module() -> None:
   module_args = dict(
     src=dict(type='str', required=True),
     dst=dict(type='str', required=False),
     force=dict(type='bool', required=False, default=False),
     update=dict(type='bool', required=False, default=True),
   )
-  result = dict(
-    changed=False,
-    message='',
-    failed=False,
-    files=[],
-  )
   module = AnsibleModule(argument_spec=module_args)
   (error, is_changed, message, files) = decompress_file(module.params)
-  result['changed'] = is_changed
-  result['message'] = message
-  result['failed'] = error
-  result['files'] = files
+  result = dict(
+    changed=is_changed,
+    message=message,
+    failed=error,
+    files=files,
+  )
   module.exit_json(**result)
 
 
-def main():
+def main() -> None:
   run_module()
 
 
