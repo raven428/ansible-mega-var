@@ -20,7 +20,7 @@
   until: _release_info is succeeded
   retries: 5
   delay: 1
-  delegate_to: localhost
+  delegate_to: localhost # DevSkim: ignore DS162092
   check_mode: false
 
 # following two blocks due default(omit) work incorrect for delegate_to

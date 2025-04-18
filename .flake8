@@ -1,0 +1,21 @@
+[flake8]
+max-line-length = 90
+indent-size = 2
+extend-ignore =
+  # No spaces inside brackets (space_inside_brackets=False)
+  E201, E202,
+  # No spaces around colons in slices (spaces_around_subscript_colon=False)
+  E203,
+  # No spaces around operators (no_spaces_around_selected_binary_operators)
+  E225, E226,
+  # No extra spaces in dicts/lists (spaces_around_dict_delimiters=False, etc.)
+  E231, E241, E242
+  # No blank lines before nested defs/classes (blank_line_before_nested_class_or_def=False)
+  E301,
+  # Allow 2 blank lines around top-level defs (blank_lines_around_top_level_definition=2)
+  E302,
+  E401, E402,
+# Spaces before comments (spaces_before_comment=2)
+inline-comment-spacing = 2
+# Allow space after comma (space_between_ending_comma_and_closing_bracket=True)
+no-space-after-comma = false

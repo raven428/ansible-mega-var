@@ -60,6 +60,10 @@ dirs2prepare: |
   {%-   endfor -%}
   {%- endfor -%}
   {{  result | list }}
+meva_packages:
+  - name:
+      - xz-utils
+    update_cache: true
 meva_file2down:
   # 1. simple HTTPS connection by URI
   #   1. single raw
@@ -86,7 +90,7 @@ meva_file2down:
       }}-{{ download_options.con_copy }}.xz
     down_mode: "0641"
     modification_time: "{{ default_time }}"
-    delegate_to: localhost
+    delegate_to: localhost # DevSkim: ignore DS162092
     archive: false
   # 1. simple HTTPS connection by URI
   #   2. single compressed
@@ -111,7 +115,7 @@ meva_file2down:
       }}-{{ download_options.con_copy }}.xz
     # file name to decompress:
     creates: "{{ decompressed_file_name }}"
-    delegate_to: localhost
+    delegate_to: localhost # DevSkim: ignore DS162092
     archive: true
     files:
       # file name to upload (should be same as in "creates:" above):
@@ -141,7 +145,7 @@ meva_file2down:
       {{ download_types.simple }}-{{ download_paths.arch_tree
       }}-{{ download_options.con_copy }}-{{ ver2down }}.tar.xz
     creates: "pyenv/build-{{ ver2down }}"
-    delegate_to: localhost
+    delegate_to: localhost # DevSkim: ignore DS162092
     archive: true
     files:
       - name: "pyenv/Makefile"
@@ -195,7 +199,7 @@ meva_ghr2down:
       }}-{{ download_options.con_copy }}.xz
     creates: "{{ download_file_name }}"
     file_mode: "0641"
-    delegate_to: localhost
+    delegate_to: localhost # DevSkim: ignore DS162092
     archive: false
     dest: >-
       {{ download_root }}/{{ download_types.release }}/{{ download_paths.single
@@ -230,7 +234,7 @@ meva_ghr2down:
       }}-{{ download_options.con_copy }}.xz
     # file name to decompress:
     creates: "{{ decompressed_file_name }}"
-    delegate_to: localhost
+    delegate_to: localhost # DevSkim: ignore DS162092
     archive: true
     files:
       # file name to upload (should be same as in "creates:" above):
@@ -268,7 +272,7 @@ meva_ghr2down:
       {{ download_types.release }}-{{ download_paths.arch_tree
       }}-{{ download_options.con_copy }}-{{ ver2down }}.tar.xz
     creates: "pyenv/build-{{ ver2down }}"
-    delegate_to: localhost
+    delegate_to: localhost # DevSkim: ignore DS162092
     archive: true
     files:
       - name: "pyenv/Makefile"

@@ -1,0 +1,114 @@
+line-length = 90
+target-version = "py38"
+
+[lint]
+select = [
+  "A",
+  "AIR",
+  "ANN",
+  "ARG",
+  "ASYNC",
+  "B",
+  "BLE",
+  "C",
+  "COM",
+  "CPY",
+  "D",
+  "DJ",
+  "DOC",
+  "DTZ",
+  "E",
+  "EM",
+  "ERA",
+  "EXE",
+  "F",
+  "FA",
+  "FAST",
+  "FBT",
+  "FIX",
+  "FLY",
+  "FURB",
+  "G",
+  "I",
+  "ICN",
+  "INP",
+  "INT",
+  "ISC",
+  "LOG",
+  "N",
+  "NPY",
+  "PD",
+  "PERF",
+  "PGH",
+  "PIE",
+  "PLC",
+  "PLE",
+  "PLR",
+  "PLW",
+  "PT",
+  "PTH",
+  "PYI",
+  "Q",
+  "RET",
+  "RSE",
+  "RUF",
+  "S",
+  "SIM",
+  "SLF",
+  "SLOT",
+  "T",
+  "TC",
+  "TD",
+  "TID",
+  "TRY",
+  "UP",
+  "W",
+  "YTT",
+]
+#   "E",  # pycodestyle errors
+#   "W",  # pycodestyle warnings
+#   "F",  # pyflakes
+#   "I",  # isort
+#   "C90",  # mccabe
+#   "N",  # pep8-naming
+#   "ANN",  # flake8-annotations
+#   "SIM",  # flake8-simplify
+#   "UP",  # pyupgrade
+#   "B",  # flake8-bugbear
+# ]
+ignore = [
+  "C408",
+  "COM812",
+  "D100",
+  "D103",
+  "D203",
+  "D213",
+  # No spaces inside brackets (space_inside_brackets=False)
+  "E201",
+  "E202",
+  # No spaces around colons in slices (spaces_around_subscript_colon=False)
+  "E203",
+  # No spaces around operators (no_spaces_around_selected_binary_operators)
+  "E225",
+  "E226",
+  # No extra spaces in dicts/lists (spaces_around_dict_delimiters=False, etc.)
+  "E231",
+  "E241",
+  "E242",
+  # No blank lines before nested defs/classes (blank_line_before_nested_class_or_def=False)
+  "E301",
+  # Allow 2 blank lines around top-level defs (blank_lines_around_top_level_definition=2)
+  "E302",
+  "E401",
+  "E402",
+  # Allow import errors for Ansible
+  "F811",
+  "F821",
+  "PTH123",
+  "Q000",
+  "Q001",
+  "INP001",
+]
+
+[format]
+indent-style = "space"

@@ -1,0 +1,26 @@
+---
+extends: default
+
+rules:
+  indentation:
+    level: error
+  comments-indentation: disable
+  document-start:
+    level: error
+  truthy:
+    allowed-values: ["true", "false", "yes", "no", "on", "off"]
+    check-keys: true
+  braces:
+    level: error
+    min-spaces-inside: 1
+    max-spaces-inside: 1
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 0
+  comments:
+    require-starting-space: true
+    ignore-shebangs: true
+    min-spaces-from-content: 1
+    level: error
+  line-length:
+    max: 90
+    allow-non-breakable-inline-mappings: true
