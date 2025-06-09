@@ -13,5 +13,24 @@
         path: "{{ check_flag }}"
         state: absent
       when: not ansible_check_mode
-  roles:
-    - ansible-mega-var # noqa syntax-check[specific]
+  tasks:
+    - name: Run full role
+      include_role:
+        name: ansible-mega-var
+      when: lookup('env', 'ANSIBLE_CALL_MODE') == 'full'
+    - name: Run ghr2down part
+      include_role:
+        role: ansible-mega-var
+        tasks_from: _ghr2down.yaml
+      loop_control:
+        loop_var: i
+      loop: "{{ meva_ghr2down }}"
+      when: lookup('env', 'ANSIBLE_CALL_MODE') == 'split'
+    - name: Run file2down part
+      include_role:
+        name: ansible-mega-var
+        tasks_from: _file2down.yaml
+      loop_control:
+        loop_var: i
+      loop: "{{ meva_file2down }}"
+      when: lookup('env', 'ANSIBLE_CALL_MODE') == 'split'

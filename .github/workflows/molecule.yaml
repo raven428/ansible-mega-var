@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
+        call_mode:
+          - full
+          - split
         image_name:
           - ansible-6_7_0:latest
           - ansible-9_9_0:latest
@@ -29,6 +32,7 @@ jobs:
       - name: test role
         env:
           IMAGE_NAME: ${{ matrix.image_name }}
+          ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/run-tests.sh
   linters:
