@@ -1,0 +1,17 @@
+---
+- name: Partitioning some disks
+  community.general.parted:
+    align: "{{ i.align | default(omit) }}"
+    device: "{{ i.device }}"
+    flags: "{{ i.flags | default(omit) }}"
+    fs_type: "{{ i.fs_type | default(omit) }}"
+    label: "{{ i.label | default('gpt') }}"
+    name: "{{ i.name | default(omit) }}"
+    number: "{{ i.number | default(omit) }}"
+    part_end: "{{ i.part_end | default(omit) }}"
+    part_start: "{{ i.part_start | default(omit) }}"
+    part_type: "{{ i.part_type | default(omit) }}"
+    resize: "{{ i.resize | default('no') }}"
+    state: "{{ i.state | default('present') }}"
+    unit: "{{ i.unit | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"

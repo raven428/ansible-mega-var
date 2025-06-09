@@ -27,6 +27,7 @@
     allow_change_held_packages: "{{ i.allow_change_held_packages | default(omit) }}"
     fail_on_autoremove: "{{ i.fail_on_autoremove | default(omit) }}"
   when: ansible_pkg_mgr == 'apt'
+  notify: "{{ i.notify | default(omit) }}"
   timeout: "{{ i.timeout | default(111) }}"
   retries: "{{ i.retries | default(3) }}"
   delay: "{{ i.delay | default(1) }}"

@@ -1,0 +1,10 @@
+---
+- name: Ensure some file systems
+  community.general.filesystem:
+    dev: "{{ i.dev | default(omit) }}"
+    force: "{{ i.force | default(omit) }}"
+    fstype: "{{ i.fstype | default(omit) }}"
+    opts: "{{ i.opts | default(omit) }}"
+    resizefs: "{{ i.resizefs | default('no') }}"
+    state: "{{ i.state | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
