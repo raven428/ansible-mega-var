@@ -1,7 +1,4 @@
 ---
-- name: Include settings temporary name for download
-  ansible.builtin.include_tasks: _down_name.yaml
-
 - name: "Download to local url {{ i.url }}"
   become: false
   ansible.builtin.get_url:
@@ -40,11 +37,3 @@
   delegate_to: "{{ i.delegate_to | default(omit)  }}"
   check_mode: false
   notify: "{{ i.notify | default(omit) }}"
-
-- name: Unpack downloaded archive and propagate files
-  ansible.builtin.include_tasks: _unp4pro.yaml
-  when: "'delegate_to' in i"
-
-- name: Unpack downloaded archive to destination
-  ansible.builtin.include_tasks: _unp2loc.yaml
-  when: "'delegate_to' not in i"

@@ -59,17 +59,11 @@
     loop_var: i
   loop: "{{ meva_key2user }}"
 
-- name: Download some binaries
-  ansible.builtin.include_tasks: _file2down.yaml
+- name: Download some files
+  ansible.builtin.include_tasks: _download.yaml
   loop_control:
     loop_var: i
-  loop: "{{ meva_file2down }}"
-
-- name: Download github releases
-  ansible.builtin.include_tasks: _ghr2down.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_ghr2down }}"
+  loop: "{{ meva_file2down | default([]) + meva_ghr2down | default([]) }}"
 
 - name: Partitioning some disks
   ansible.builtin.include_tasks: _parted.yaml

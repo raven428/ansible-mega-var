@@ -1,0 +1,19 @@
+---
+- name: Include settings temporary name for download
+  ansible.builtin.include_tasks: _down_name.yaml
+
+- name: Unpack downloaded archive and propagate files
+  ansible.builtin.include_tasks: _ghr2down.yaml
+  when: "'gh_tag' in i"
+
+- name: Unpack downloaded archive and propagate files
+  ansible.builtin.include_tasks: _file2down.yaml
+  when: "'gh_tag' not in i"
+
+- name: Unpack downloaded archive and propagate files
+  ansible.builtin.include_tasks: _unp4pro.yaml
+  when: "'delegate_to' in i"
+
+- name: Unpack downloaded archive to destination
+  ansible.builtin.include_tasks: _unp2loc.yaml
+  when: "'delegate_to' not in i"

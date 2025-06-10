@@ -1,7 +1,4 @@
 ---
-- name: Include settings temporary name for download
-  ansible.builtin.include_tasks: _down_name.yaml
-
 - name: Get releases list
   become: false
   ansible.builtin.uri:
@@ -71,11 +68,3 @@
     loop_var: j
   loop: "{{ _release_info.json.assets }}"
   when: "i.substring in j.name"
-
-- name: Unpack downloaded archive and propagate files
-  ansible.builtin.include_tasks: _unp4pro.yaml
-  when: "'delegate_to' in i"
-
-- name: Unpack downloaded archive to destination
-  ansible.builtin.include_tasks: _unp2loc.yaml
-  when: "'delegate_to' not in i"
