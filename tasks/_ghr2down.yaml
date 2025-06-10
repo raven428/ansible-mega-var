@@ -40,7 +40,13 @@
       }}/{{
         i.gh_repo
       }}/releases/assets/{{
-        j.id
+        (
+          _release_info.json.assets |
+          selectattr('name', 'search', i.substring) |
+          list |
+          first
+        ).id |
+        default('NO RELEASE FOUND', true)
       }}
     unredirected_headers: "{{ i.unredirected_headers | default(omit) }}"
     force: "{{ i.force | default(omit) }}"
@@ -64,7 +70,3 @@
   delegate_to: "{{ i.delegate_to | default(omit) }}"
   check_mode: false
   notify: "{{ i.notify | default(omit) }}"
-  loop_control:
-    loop_var: j
-  loop: "{{ _release_info.json.assets }}"
-  when: "i.substring in j.name"
