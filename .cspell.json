@@ -73,7 +73,10 @@
     "pycache",
     "venv",
     "termios",
-    "isort"
+    "isort",
+    "gssapi",
+    "netrc",
+    "selectattr"
   ],
   "enabled": true
 }
