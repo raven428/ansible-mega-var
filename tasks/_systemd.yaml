@@ -1,0 +1,11 @@
+---
+- name: Create some systemd units
+  ansible.builtin.systemd:
+    name: "{{ i.name | mandatory }}"
+    scope: "{{ i.scope | default(omit) }}"
+    state: "{{ i.state | default(omit) }}"
+    force: "{{ i.force | default(omit) }}"
+    masked: "{{ i.masked | default(omit) }}"
+    enabled: "{{ i.enabled | default(omit) }}"
+    no_block: "{{ i.no_block | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"

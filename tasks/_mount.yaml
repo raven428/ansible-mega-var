@@ -1,0 +1,14 @@
+---
+- name: Ensure some file mounts
+  ansible.posix.mount:
+    backup: "{{ i.backup | default(omit) }}"
+    boot: "{{ i.boot | default(omit) }}"
+    dump: "{{ i.dump | default(omit) }}"
+    fstab: "{{ i.fstab | default(omit) }}"
+    fstype: "{{ i.fstype | default(omit) }}"
+    opts: "{{ i.opts | default(omit) }}"
+    passno: "{{ i.passno | default(omit) }}"
+    path: "{{ i.path | default(omit) }}"
+    src: "{{ i.src | default(omit) }}"
+    state: "{{ i.state | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"

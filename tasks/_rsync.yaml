@@ -1,0 +1,9 @@
+---
+- name: Rsync some files
+  ansible.posix.synchronize:
+    src: "{{ i.src | mandatory }}"
+    dest: "{{ i.dest | mandatory }}"
+    recursive: "{{ i.recursive | default(omit) }}"
+    delete: "{{ i.delete | default(omit) }}"
+    rsync_opts: "{{ i.rsync_opts | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"

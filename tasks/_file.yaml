@@ -1,0 +1,11 @@
+---
+- name: Upload some files
+  ansible.builtin.copy:
+    src: "{{ i.src | mandatory }}"
+    dest: "{{ i.dest | mandatory }}"
+    force: "{{ i.force | default(omit) }}"
+    follow: "{{ i.follow | default(omit) }}"
+    owner: "{{ i.owner | default(omit) }}"
+    group: "{{ i.group | default(omit) }}"
+    mode: "{{ i.mode | default('0644') }}"
+  notify: "{{ i.notify | default(omit) }}"

@@ -1,0 +1,16 @@
+---
+- name: Ensure some logical volumes
+  community.general.lvol:
+    active: "{{ i.active | default(omit) }}"
+    force: "{{ i.force | default('no') }}"
+    lv: "{{ i.lv | default(omit) }}"
+    opts: "{{ i.opts | default(omit) }}"
+    pvs: "{{ i.pvs | default(omit) }}"
+    resizefs: "{{ i.resizefs | default(omit) }}"
+    shrink: "{{ i.shrink | default(omit) }}"
+    size: "{{ i.size | default(omit) }}"
+    snapshot: "{{ i.snapshot | default(omit) }}"
+    state: "{{ i.state | default(omit) }}"
+    thinpool: "{{ i.thinpool | default(omit) }}"
+    vg: "{{ i.vg | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"

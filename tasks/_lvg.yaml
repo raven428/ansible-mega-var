@@ -1,0 +1,12 @@
+---
+- name: Ensure some volume groups
+  community.general.lvg:
+    force: "{{ i.force | default('no') }}"
+    pesize: "{{ i.pesize | default(omit) }}"
+    pv_options: "{{ i.pv_options | default(omit) }}"
+    pvresize: "{{ i.pvresize | default(omit) }}"
+    pvs: "{{ i.pvs | default(omit) }}"
+    state: "{{ i.state | default(omit) }}"
+    vg: "{{ i.vg | default(omit) }}"
+    vg_options: "{{ i.vg_options | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"

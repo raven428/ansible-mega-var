@@ -1,0 +1,105 @@
+---
+- name: Include settings temporary name for download
+  ansible.builtin.include_tasks: _down_name.yaml
+
+- name: Get releases list
+  become: false
+  ansible.builtin.uri:
+    url: >-
+      https://api.github.com/repos/{{
+        i.gh_owner
+      }}/{{
+        i.gh_repo
+      }}/releases/tags/{{
+        i.gh_tag
+      }}
+    headers:
+      Authorization: "token {{ i.gh_token }}"
+    return_content: true
+  register: _release_info
+  until: _release_info is succeeded
+  retries: 5
+  delay: 1
+  delegate_to: localhost # DevSkim: ignore DS162092
+  check_mode: false
+
+# following two blocks due default(omit) work incorrect for delegate_to
+# issue link: https://github.com/ansible/ansible/issues/14130
+- name: Delegate_to value defined
+  when: "'delegate_to' in i"
+  block:
+    - name: Download github release to local
+      become: false
+      ansible.builtin.get_url:
+        attributes: "{{ i.attributes | default(omit) }}"
+        client_cert: "{{ i.client_cert | default(omit) }}"
+        client_key: "{{ i.client_key | default(omit) }}"
+        mode: "{{ i.down_mode | default('0644') }}"
+        owner: "{{ i.down_owner | default(omit) }}"
+        group: "{{ i.down_owner | default(omit) }}"
+        timeout: "{{ i.timeout | default(omit) }}"
+        dest: "{{ _meva_down_name }}"
+        headers:
+          Accept: "application/octet-stream"
+          Authorization: "token {{ i.gh_token }}"
+        url: >-
+          https://api.github.com/repos/{{
+            i.gh_owner
+          }}/{{
+            i.gh_repo
+          }}/releases/assets/{{
+            j.id
+          }}
+        #  unredirected_headers: [ "Authorization" ]
+      register: _download_archive
+      until: _download_archive is succeeded
+      retries: 5
+      delay: 2
+      delegate_to: "{{ i.delegate_to }}"
+      check_mode: false
+      notify: "{{ i.notify | default(omit) }}"
+      loop_control:
+        loop_var: j
+      loop: "{{ _release_info.json.assets }}"
+      when: "i.substring in j.name"
+    - name: Unpack downloaded archive and propagate files
+      ansible.builtin.include_tasks: _unp4pro.yaml
+
+- name: Delegate_to value undefined
+  when: "'delegate_to' not in i"
+  block:
+    - name: Download github release to remote
+      become: true
+      ansible.builtin.get_url:
+        attributes: "{{ i.attributes | default(omit) }}"
+        client_cert: "{{ i.client_cert | default(omit) }}"
+        client_key: "{{ i.client_key | default(omit) }}"
+        mode: "{{ i.down_mode | default('0644') }}"
+        owner: "{{ i.down_owner | default(omit) }}"
+        group: "{{ i.down_owner | default(omit) }}"
+        timeout: "{{ i.timeout | default(omit) }}"
+        dest: "{{ _meva_down_name }}"
+        headers:
+          Accept: "application/octet-stream"
+          Authorization: "token {{ i.gh_token }}"
+        url: >-
+          https://api.github.com/repos/{{
+            i.gh_owner
+          }}/{{
+            i.gh_repo
+          }}/releases/assets/{{
+            j.id
+          }}
+        #  unredirected_headers: [ "Authorization" ]
+      register: _download_archive
+      until: _download_archive is succeeded
+      retries: 5
+      delay: 2
+      check_mode: false
+      notify: "{{ i.notify | default(omit) }}"
+      loop_control:
+        loop_var: j
+      loop: "{{ _release_info.json.assets }}"
+      when: "i.substring in j.name"
+    - name: Unpack downloaded archive and propagate files
+      ansible.builtin.include_tasks: _unp2loc.yaml
