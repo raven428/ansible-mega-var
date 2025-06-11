@@ -34,7 +34,7 @@ jobs:
           IMAGE_NAME: ${{ matrix.image_name }}
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
-        run: /usr/bin/env sudo molecule/downloads/run-tests.sh
+        run: molecule/downloads/run-tests.sh
   linters:
     name: linters
     timeout-minutes: 11

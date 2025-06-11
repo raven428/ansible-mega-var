@@ -18,6 +18,8 @@ export DEBIAN_FRONTEND=noninteractive
   /usr/bin/env sudo curl -fsSLm 11 -o /usr/local/bin/ansible-docker.sh \
     https://raw.githubusercontent.com/raven428/container-images/refs/heads/master/_shared/install/ansible/ansible-docker.sh
   /usr/bin/env sudo chmod 755 /usr/local/bin/ansible-docker.sh
+  # remove after replace docker to podman inside carrier
+  /usr/bin/env sudo sed -i 's/--network=host//g' /usr/local/bin/ansible-docker.sh
 }
 [[ -v GITHUB_JOB ]] && /usr/bin/env curl -fsSLm 11 \
   https://raw.githubusercontent.com/raven428/container-images/refs/heads/master/podman.sh | /usr/bin/env sudo bash
@@ -29,19 +31,21 @@ export ANSIBLE_CONT_NAME ANSIBLE_IMAGE_NAME CONTENGI
 {
   cd "${MY_PATH}/../.."
   ANSIBLE_CONT_ADDONS=" \
-    --cgroupns=host --privileged \
-    -v ${HOME}/.cache:${HOME}/.cache:rw \
+    --tmpfs /sys/fs/cgroup:rw,nosuid,noexec,nodev,mode=755 \
+    -v ${HOME}/.cache:${HOME}/.cache:rw -u 0 --privileged --userns=keep-id \
     -v ${HOME}/.ansible_async:${HOME}/.ansible_async:rw \
-    -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
-    --cap-add=NET_ADMIN --cap-add=SYS_MODULE \
+    --cap-add=NET_ADMIN,SYS_MODULE,SYS_ADMIN --replace \
   " ANSIBLE_CONT_COMMAND=' ' /usr/bin/env ansible-docker.sh true
 }
+/usr/bin/env "${CONTENGI}" exec "${CONT_NAME}" bash -c \
+  'echo '\''{"bridge": "none","iptables":false}'\'' > /etc/docker/daemon.json'
 count=7
-while ! /usr/bin/env docker exec "${CONT_NAME}" systemctl status docker; do
+while ! /usr/bin/env "${CONTENGI}" exec "${CONT_NAME}" systemctl status docker; do
   echo "waiting container ready, left [$count] tries"
   count=$((count - 1))
   if [[ $count -le 0 ]]; then
-    break
+    echo "unable to start docker daemon inside ${CONTENGI} container"
+    exit 1
   fi
   sleep 1
 done
