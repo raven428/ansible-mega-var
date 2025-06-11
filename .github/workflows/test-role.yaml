@@ -11,10 +11,10 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
-  test-role:
-    name: test role
+  downloads:
+    name: downloads
     timeout-minutes: 33
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         call_mode:
@@ -34,11 +34,11 @@ jobs:
           IMAGE_NAME: ${{ matrix.image_name }}
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
-        run: molecule/run-tests.sh
+        run: /usr/bin/env sudo molecule/downloads/run-tests.sh
   linters:
     name: linters
     timeout-minutes: 11
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:

@@ -10,6 +10,7 @@ meva_arch_bin1: >-
     default(ansible_architecture)
   }}
 ctime: "{{ now(fmt='%Y%m%d%H%M%S') }}"
+call_mode: "{{ lookup('ansible.builtin.env', 'ANSIBLE_CALL_MODE', default='split') }}"
 gh_owner: raven428
 check_flag: "{{ download_root }}/to-notify-verifier-that-converged-in-check-mode"
 ver2down: >-

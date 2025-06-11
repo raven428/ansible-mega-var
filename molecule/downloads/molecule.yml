@@ -45,7 +45,7 @@ provisioner:
 verifier:
   name: ansible
 scenario:
-  name: default
+  name: downloads
   create_sequence:
     - dependency
     - create

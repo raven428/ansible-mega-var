@@ -17,7 +17,7 @@
     - name: Run full role
       include_role:
         name: ansible-mega-var
-      when: lookup('env', 'ANSIBLE_CALL_MODE') == 'full'
+      when: call_mode == 'full'
     - name: Run split parts
       include_role:
         role: ansible-mega-var
@@ -25,4 +25,4 @@
       loop_control:
         loop_var: i
       loop: "{{ meva_file2down | default([]) + meva_ghr2down | default([]) }}"
-      when: lookup('env', 'ANSIBLE_CALL_MODE') == 'split'
+      when: call_mode == 'split'
