@@ -33,7 +33,7 @@ options:
     required: false
   force:
     description:
-      - Set this option to True to overwrite the extracted file in case it exists on
+      - Set this option to True to overwrite the decompressed file in case it exists on
         destination.
     required: false
     default: false
@@ -58,13 +58,13 @@ EXAMPLES = '''
     src: '/tmp/bootimage.iso.gz'
     dest: '~/isos/'
 
-# Setting the extracted file name explicitly
+# Setting the decompressed file name explicitly
 - name: Decompress a bz2 iso image downloaded from the Internet
   decompress:
     src: '/tmp/bootimage.iso.bz2'
     dest: '~/isos/newname_image.iso'
 
-# Extract multiple images using with_items
+# Decompress multiple images using with_items
 - name: Decompress multiple images
   decompress:
     src: "{{ item }}"
@@ -101,7 +101,7 @@ from ansible.module_utils.basic import (  # type: ignore[reportMissingImports]
 )
 
 
-def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912,PLR0915
+def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912
   try:
     orig_file_path = str(posixpath.abspath(data['src']))
     path_list = os.path.splitext(orig_file_path)  # noqa: PTH122
@@ -127,9 +127,9 @@ def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912,PLR0915
     if dst_exists and not force:
       result = [
         False, False, "File [" + dst +
-        "] exists: skipping extraction. Use Force: true to overwrite)", dst
+        "] exists: skipping decompression. Use Force: true to overwrite)", dst
       ]
-    elif ext == ".xz" or ext == ".lzma":  # noqa: PLR1714
+    elif ext in {".xz", ".lzma"}:
       lzma = importlib.import_module("lzma")
       with lzma.open(orig_file_path, "r") as f_in, open(dst, "wb") as f_out:
         shutil.copyfileobj(f_in, f_out)
@@ -141,31 +141,24 @@ def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912,PLR0915
       bz2 = importlib.import_module("bz2")
       with bz2.BZ2File(orig_file_path, "r") as f_in, open(dst, "wb") as f_out:
         shutil.copyfileobj(f_in, f_out)
-    elif ext == ".lzip":
-      pylzip = importlib.import_module("pylzip")
+    elif ext in {".zst", ".zstd"}:
+      zstd = importlib.import_module("zstd")
       with open(orig_file_path, "rb") as f_in, open(dst, "wb") as f_out:
-        f_out.write(pylzip.decompress(f_in.read()))
-    elif ext == ".lzop":
-      lzop = importlib.import_module("lzop.decompress")
-      with open(orig_file_path, "rb") as f_in, open(dst, "wb") as f_out:
-        f_out.write(lzop.Decompressor().decompress(f_in.read()))
-    elif ext == ".zstd":
-      zstd = importlib.import_module("zstandard")
-      with open(orig_file_path, "rb") as f_in, open(dst, "wb") as f_out:
-        f_out.write(zstd.ZstdDecompressor().decompress(f_in.read()))
+        f_out.write(zstd.decompress(f_in.read()))
     elif ext == ".lz4":
       lz4 = importlib.import_module("lz4.frame")
       with open(orig_file_path, "rb") as f_in, open(dst, "wb") as f_out:
         f_out.write(lz4.decompress(f_in.read()))
     else:
       result = [
-        False, False,
+        True, False,
         "The file type [" + ext + "] is not supported by this module. " +
-        "Supported file formats are .xz .gz, .bz2", orig_file_path
+        "Supported file formats are .xz .gz, .bz2 .lzma .lz .lzip " +
+        ".zst .zstd .lz4", orig_file_path
       ]
     if result == []:
       result = [
-        False, True, "File extracted successfully" +
+        False, True, "File decompressed successfully" +
         (" and replaced because Force: true" if dst_exists else "") + ": " +
         dst, dst
       ]
