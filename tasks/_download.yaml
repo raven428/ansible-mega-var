@@ -1,6 +1,50 @@
 ---
-- name: Include settings temporary name for download
-  ansible.builtin.include_tasks: _down_name.yaml
+- name: Set temporary name for download
+  ansible.builtin.set_fact:
+    _meva_down_name: >-
+      /tmp/ansible-
+      {%-
+        set login =
+          lookup('env', 'ANSIBLE_REMOTE_USER') |
+          default(lookup('env', 'USER')) |
+          default('file2down_login')
+      -%}
+      {%- if login | length > 0 -%}
+      {{    login }}
+      {%- else -%}
+      {{    lookup('env', 'USER') }}
+      {%- endif -%}-{{
+        i.down_name |
+        default(i.url) |
+        default(i.creates) |
+        regex_replace('[^a-z0-9\\.]', '_', ignorecase=True)
+      }}
+
+- name: Set file name to remove
+  ansible.builtin.set_fact:
+    _meva_file2remove: >-
+      {%- set result = i.dest | regex_replace('/?$', '/') if i.dest | default('') |
+      length > 0 else 'dest-not-set/' -%}
+      {%- if 'delegate_to' in i -%}
+        {%- set result = _meva_down_name + '-dir' -%}
+      {%- else -%}
+        {%- if i.creates | dirname == '' -%}
+          {%- set result = result + i.creates -%}
+        {%- else -%}
+          {%- set result = result + i.creates | dirname -%}
+        {%- endif -%}
+      {%- endif -%}
+      {{ result }}
+    _meva_check4creates: >-
+      {%- if 'delegate_to' in i -%}
+        {%- set result = _meva_down_name + '-dir/' + i.creates -%}
+      {%- else -%}
+        {%- set result = (i.dest | regex_replace('/?$', '/') if i.dest | default('') |
+        length > 0 else 'dest-not-set/') + i.creates -%}
+      {%- endif -%}
+      {{ result }}
+  when:
+    - i.archive
 
 - name: Unpack downloaded archive and propagate files
   ansible.builtin.include_tasks: _ghr2down.yaml
@@ -10,10 +54,34 @@
   ansible.builtin.include_tasks: _file2down.yaml
   when: "'gh_tag' not in i"
 
+- name: "Check creates [{{ _meva_check4creates }}] exists" # noqa name[template]
+  ansible.builtin.stat:
+    path: "{{ _meva_check4creates }}"
+  delegate_to: "{{ i.delegate_to | default(omit) }}"
+  register: _file_creates
+  when:
+    - i.archive
+    - i.creates | default(none) != none
+
+- name: >-
+    Ensure [{{ _meva_file2remove }}] absent for upgrade due creates [{{
+      (i.dest | regex_replace('/?$', '/') if i.dest | default('') |
+      length > 0 else '') + i.creates
+    }}] missed or new [{{ _download_archive.changed }}] downloaded checksum
+  ansible.builtin.file:
+    state: absent
+    path: "{{ _meva_file2remove }}"
+  delegate_to: "{{ i.delegate_to | default(omit) }}"
+  no_log: true
+  diff: false
+  when:
+    - i.archive
+    - not _file_creates.stat.exists | default(false) or _download_archive.changed
+
 - name: Unpack downloaded archive and propagate files
   ansible.builtin.include_tasks: _unp4pro.yaml
   when: "'delegate_to' in i"
 
-- name: Unpack downloaded archive to destination
+- name: Unpack downloaded archive at the destination
   ansible.builtin.include_tasks: _unp2loc.yaml
   when: "'delegate_to' not in i"
