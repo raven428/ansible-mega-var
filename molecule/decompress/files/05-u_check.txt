@@ -1,0 +1,40 @@
+/tmp/molecule drwxr-xr-x root root
+/tmp/molecule/local drwxr-xr-x root root
+/tmp/molecule/local/bz2 drwxr-xr-x root root
+/tmp/molecule/local/bz2/decompressed-file -rw-r---w- root root 71680
+/tmp/molecule/local/bz2/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/local/gz drwxr-xr-x root root
+/tmp/molecule/local/gz/decompressed-file -rw-r---w- root root 71680
+/tmp/molecule/local/gz/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/local/lz4 drwxr-xr-x root root
+/tmp/molecule/local/lz4/decompressed-file -rw-r---w- root root 71680
+/tmp/molecule/local/lz4/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/local/lzma drwxr-xr-x root root
+/tmp/molecule/local/lzma/decompressed-file -rw-r---w- root root 71680
+/tmp/molecule/local/lzma/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/local/xz drwxr-xr-x root root
+/tmp/molecule/local/xz/decompressed-file -rw-r---w- root root 71680
+/tmp/molecule/local/xz/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/local/zst drwxr-xr-x root root
+/tmp/molecule/local/zst/decompressed-file -rw-r---w- root root 71680
+/tmp/molecule/local/zst/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/remote drwxr-xr-x root root
+/tmp/molecule/remote/bz2 d-wxr----t root root
+/tmp/molecule/remote/bz2/decompressed-file -rw-r--r-- root root 71680
+/tmp/molecule/remote/bz2/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/remote/gz d-wxr----t root root
+/tmp/molecule/remote/gz/decompressed-file -rw-r--r-- root root 71680
+/tmp/molecule/remote/gz/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/remote/lz4 d-wxr----t root root
+/tmp/molecule/remote/lz4/decompressed-file -rw-r--r-- root root 71680
+/tmp/molecule/remote/lz4/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/remote/lzma d-wxr----t root root
+/tmp/molecule/remote/lzma/decompressed-file -rw-r--r-- root root 71680
+/tmp/molecule/remote/lzma/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/remote/xz d-wxr----t root root
+/tmp/molecule/remote/xz/decompressed-file -rw-r--r-- root root 71680
+/tmp/molecule/remote/xz/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/remote/zst d-wxr----t root root
+/tmp/molecule/remote/zst/decompressed-file -rw-r--r-- root root 71680
+/tmp/molecule/remote/zst/decompressed-file 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/to-notify-verifier-that-converged-in-check-mode drwxr-xr-x root root
