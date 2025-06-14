@@ -76,7 +76,13 @@
     "isort",
     "gssapi",
     "netrc",
-    "selectattr"
+    "selectattr",
+    "CONTENGI",
+    "tmpfs",
+    "nodev",
+    "nosuid",
+    "userns",
+    "lzma"
   ],
   "enabled": true
 }

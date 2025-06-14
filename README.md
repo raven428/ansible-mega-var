@@ -41,6 +41,7 @@
   - ✔ check mode also should be tested because of a lot of check_mode: yes
 - ❌ add to `c` plain HTTPS with basic and token auth options
 - ✔ join `file2down` with `ghr2down` for the ability to download and unpack
-- reduce verbosity of `get releases list` task by python module
+- ✔ reduce verbosity of `get releases list` task by python module
+- ✔ replace `docker` to rootless `podman` with [upgrade](https://github.com/raven428/container-images/blob/master/podman.sh) to recent version
 - add all compressors tests for decompress module
-- replace `docker` to rootless `podman` with [upgrade](https://github.com/raven428/container-images/blob/master/podman.sh) to recent version
+- replace `docker` to `podman` driver in molecule

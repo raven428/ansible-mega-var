@@ -1,29 +1,4 @@
 ---
-- name: Check creates [{{ i.dest }}/{{ i.creates }}] exists
-  # noqa name[template]
-  ansible.builtin.stat:
-    path: "{{ i.dest }}/{{ i.creates }}"
-  register: _file_creates
-  when:
-    - i.archive
-    - i.creates | default(none) != none
-
-- name: >-
-    Remove [{{ i.dest }}/{{ i.creates | dirname }}] for upgrade
-    due creates: [{{ i.dest }}/{{ i.creates }}] isn't exists
-  # noqa name[template]
-  ansible.builtin.file:
-    state: absent
-    path: "{{ i.dest }}/{{ i.creates | dirname }}"
-  no_log: true
-  diff: false
-  when:
-    - i.archive
-    - i.creates | dirname != ''
-    - _download_archive.changed
-    - _file_creates.stat.exists | default(none) != none
-    - not _file_creates.stat.exists
-
 - name: Unpack from archive
   ansible.builtin.unarchive:
     src: "{{ _meva_down_name }}"
@@ -68,22 +43,19 @@
     - unarchive_result.changed | default(false)
   block:
     - name: Apply mode to directories
-      # noqa no-changed-when
-      # noqa risky-shell-pipe
+      # noqa no-changed-when risky-shell-pipe
       ansible.builtin.shell: >-
         /usr/bin/env find '{{ i.dest }}' -type d |
         /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
         /usr/bin/env chmod {{ i.dir_mode | default('0755') }}
     - name: Apply mode to executable files
-      # noqa no-changed-when
-      # noqa risky-shell-pipe
+      # noqa no-changed-when risky-shell-pipe
       ansible.builtin.shell: >-
         /usr/bin/env find '{{ i.dest }}' -type f -executable |
         /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
         /usr/bin/env chmod {{ i.exec_mode | default('0755') }}
     - name: Apply mode to non-executable files
-      # noqa no-changed-when
-      # noqa risky-shell-pipe
+      # noqa no-changed-when risky-shell-pipe
       ansible.builtin.shell: >-
         /usr/bin/env find '{{ i.dest }}' -type f ! -executable |
         /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
