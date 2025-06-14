@@ -9,7 +9,16 @@
       register: converge_check
     - name: Upload etalon output
       ansible.builtin.copy:
-        src: "files/{{ d_type }}/{{ file_name }}.txt"
+        src: >-
+          {%- set dir = d_type -%}
+          {%- if d_type == 'compress' -%}
+            {%- if call_mode == 'full' -%}
+              {%- set dir = 'local' -%}
+            {%- else -%}
+              {%- set dir = 'remote' -%}
+            {%- endif -%}
+          {%- endif -%}
+          files/{{ dir }}/{{ file_name }}.txt
         dest: "/tmp/{{ file_name }}"
         force: true
         follow: false

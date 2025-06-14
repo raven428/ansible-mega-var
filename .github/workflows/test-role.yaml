@@ -12,7 +12,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   downloads:
-    name: downloads
+    name: t
     timeout-minutes: 33
     runs-on: ubuntu-24.04
     strategy:
@@ -20,13 +20,14 @@ jobs:
         d_type:
           - simple
           - release
+          - compress
         call_mode:
           - full
           - split
-        image_name:
-          - ansible-6_7_0:latest
-          - ansible-9_9_0:latest
-          - ansible-11_1_0:latest
+        ansible_ver:
+          - "6_7_0"
+          - "9_9_0"
+          - "11_1_0"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,35 +35,11 @@ jobs:
           submodules: true
       - name: test role
         env:
-          IMAGE_NAME: ${{ matrix.image_name }}
           ANSIBLE_D_TYPE: ${{ matrix.d_type }}
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
+          IMAGE_NAME: ansible-${{ matrix.ansible_ver }}:latest
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/downloads/run-tests.sh
-  decompress:
-    name: decompress
-    timeout-minutes: 33
-    runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        call_mode:
-          - full
-          - split
-        image_name:
-          - ansible-6_7_0:latest
-          - ansible-9_9_0:latest
-          - ansible-11_1_0:latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: true
-      - name: test role
-        env:
-          IMAGE_NAME: ${{ matrix.image_name }}
-          ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
-          ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
-        run: molecule/decompress/run-tests.sh
   linters:
     name: linters
     timeout-minutes: 11
