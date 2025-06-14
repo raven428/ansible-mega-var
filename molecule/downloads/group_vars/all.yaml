@@ -10,6 +10,7 @@ meva_arch_bin1: >-
     default(ansible_architecture)
   }}
 ctime: "{{ now(fmt='%Y%m%d%H%M%S') }}"
+d_type: "{{ lookup('ansible.builtin.env', 'ANSIBLE_D_TYPE', default='simple') }}"
 call_mode: "{{ lookup('ansible.builtin.env', 'ANSIBLE_CALL_MODE', default='split') }}"
 gh_owner: raven428
 check_flag: "{{ download_root }}/to-notify-verifier-that-converged-in-check-mode"
@@ -51,21 +52,19 @@ download_options:
   con_rsync: "controller-rsync"
 dirs2prepare: |
   {%- set result = [ ] -%}
-  {%- for type in download_types.values() -%}
-  {%-   for path in download_paths.values() -%}
-  {%-     for option in download_options.values() -%}
-  {%-       do result.append({
-              'path': download_root ~ '/' ~ type ~ '/' ~ path ~ '/' ~ option
-            }) -%}
-  {%-     endfor -%}
-  {%-   endfor -%}
+  {%- for path in download_paths.values() -%}
+    {%- for option in download_options.values() -%}
+      {%- do result.append({
+        'path': download_root ~ '/' ~ d_type ~ '/' ~ path ~ '/' ~ option
+      }) -%}
+    {%- endfor -%}
   {%- endfor -%}
   {{  result | list }}
 meva_packages:
   - name:
       - xz-utils
     update_cache: true
-meva_file2down:
+tests_meva_file2down:
   # 1. simple HTTPS connection by URI
   #   1. single raw
   #     1. directly to target host
@@ -169,7 +168,7 @@ meva_file2down:
           {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
           }}/{{ download_options.con_copy }}/pyenv.d/rehash/conda.d/
         file_mode: "0640"
-meva_ghr2down:
+tests_meva_ghr2down:
   # 2. release from GitHub for platform and version lookup using auth token
   #   1. single raw
   #     1. directly to target host
@@ -296,3 +295,44 @@ meva_ghr2down:
           {{ download_root }}/{{ download_types.release }}/{{ download_paths.arch_tree
           }}/{{ download_options.con_copy }}/pyenv.d/rehash/conda.d/
         file_mode: "0640"
+
+compression_formats:
+  - [gz, bz2, lz4]
+  - [zst, lzma, xz]
+download_prefix: >-
+  https://github.com/raven428/finch-externaleditor/releases/download/{{
+    download_tag
+  }}/pyenv2decompress-2_2_4-linux-amd64.tar
+delegate_placeholder: "127.0.0.1" # DevSkim: ignore DS162092
+local_meva_file2down: |
+  {%  set result = [] %}
+  {%  for format in compression_formats | flatten %}
+  {%    do result.append({
+          'url': download_prefix + '.' + format,
+          'dest': download_root + '/local/' + format,
+          'down_name': decompressed_file_name + '2local.' + format,
+          'creates': decompressed_file_name,
+          'delegate_to': delegate_placeholder,
+          'archive': 'true',
+          'files': [{
+            'name': decompressed_file_name,
+            'dest': format + '-local.tar',
+            'file_mode': '0642',
+          }]
+        }) %}
+  {%  endfor %}
+  {{ result }}
+remote_meva_file2down: |
+  {%  set result = [] %}
+  {%  for format in compression_formats | flatten %}
+  {%    do result.append({
+          'url': download_prefix + '.' + format,
+          'dest': download_root + '/remote/' + format,
+          'down_name': decompressed_file_name + '2remote.' + format,
+          'creates': decompressed_file_name,
+          'archive': 'true',
+          'down_mode': '0641',
+          'modification_time': default_time,
+        }) %}
+  {%  endfor %}
+  {{ result }}

@@ -1,6 +1,6 @@
 # Ansible actions from inventory variables
 
-[![molecule](https://github.com/raven428/ansible-mega-var/actions/workflows/molecule.yaml/badge.svg)](https://github.com/raven428/ansible-mega-var/actions/workflows/molecule.yaml)
+[![molecule](https://github.com/raven428/ansible-mega-var/actions/workflows/test-role.yaml/badge.svg)](https://github.com/raven428/ansible-mega-var/actions/workflows/test-role.yaml)
 
 ## Example usage from `site.yaml`
 
@@ -43,5 +43,9 @@
 - ✔ join `file2down` with `ghr2down` for the ability to download and unpack
 - ✔ reduce verbosity of `get releases list` task by python module
 - ✔ replace `docker` to rootless `podman` with [upgrade](https://github.com/raven428/container-images/blob/master/podman.sh) to recent version
-- add all compressors tests for decompress module
+- ✔ add all compressors tests for decompress module
+- ✔ split to matrix `http` and `ghr` downloads
+- ✔ merge `decompress` and `downloads` scenarios
+- add `remove_back_slash` and `add_back_slash` filters
 - replace `docker` to `podman` driver in molecule
+- add manual for `file` and `ghr` parts of role

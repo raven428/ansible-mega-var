@@ -14,15 +14,59 @@
         state: absent
       when: not ansible_check_mode
   tasks:
-    - name: Run full role
-      include_role:
+    - name: Run full role with ghr tests
+      ansible.builtin.include_role:
         name: ansible-mega-var
-      when: call_mode == 'full'
-    - name: Run split parts
-      include_role:
+      vars:
+        meva_ghr2down: "{{ tests_meva_ghr2down }}"
+      when:
+        - d_type == 'release'
+        - call_mode == 'full'
+    - name: Run full role with file tests
+      ansible.builtin.include_role:
+        name: ansible-mega-var
+      vars:
+        meva_file2down: "{{ tests_meva_file2down }}"
+      when:
+        - d_type == 'simple'
+        - call_mode == 'full'
+    - name: Run split parts with ghr tests
+      ansible.builtin.include_role:
         role: ansible-mega-var
         tasks_from: _download.yaml
       loop_control:
         loop_var: i
-      loop: "{{ meva_file2down | default([]) + meva_ghr2down | default([]) }}"
-      when: call_mode == 'split'
+      loop: "{{ tests_meva_ghr2down }}"
+      when:
+        - d_type == 'release'
+        - call_mode == 'split'
+    - name: Run split parts with file tests
+      ansible.builtin.include_role:
+        role: ansible-mega-var
+        tasks_from: _download.yaml
+      loop_control:
+        loop_var: i
+      loop: "{{ tests_meva_file2down }}"
+      when:
+        - d_type == 'simple'
+        - call_mode == 'split'
+    - name: Run local decompress tests
+      ansible.builtin.include_role:
+        role: ansible-mega-var
+        tasks_from: _download.yaml
+      loop_control:
+        loop_var: i
+      loop: "{{ local_meva_file2down }}"
+      when:
+        - d_type == 'compress'
+        - call_mode == 'full'
+    - name: Run remote decompress tests
+      ansible.builtin.include_role:
+        role: ansible-mega-var
+        tasks_from: _download.yaml
+      loop_control:
+        loop_var: i
+      loop: "{{ remote_meva_file2down }}"
+      when:
+        - d_type == 'compress'
+        - call_mode == 'split'
