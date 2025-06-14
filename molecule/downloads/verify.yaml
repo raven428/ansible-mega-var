@@ -9,7 +9,7 @@
       register: converge_check
     - name: Upload etalon output
       ansible.builtin.copy:
-        src: "files/{{ file_name }}.txt"
+        src: "files/{{ d_type }}/{{ file_name }}.txt"
         dest: "/tmp/{{ file_name }}"
         force: true
         follow: false

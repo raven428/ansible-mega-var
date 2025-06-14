@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
+        d_type:
+          - simple
+          - release
         call_mode:
           - full
           - split
@@ -32,6 +35,7 @@ jobs:
       - name: test role
         env:
           IMAGE_NAME: ${{ matrix.image_name }}
+          ANSIBLE_D_TYPE: ${{ matrix.d_type }}
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/downloads/run-tests.sh
