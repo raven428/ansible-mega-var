@@ -47,6 +47,6 @@
 - ✔ split to matrix `http` and `ghr` downloads
 - ✔ merge `decompress` and `downloads` scenarios
 - ✔ replace `enforce-all-check` by `all-green` job
-- add `remove_back_slash` and `add_back_slash` filters
+- ✔ add `remove_back_slash` and `add_back_slash` filters
 - replace `docker` to `podman` driver in molecule
 - add manual for `file` and `ghr` parts of role
