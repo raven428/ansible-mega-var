@@ -1,2 +1,0 @@
-/tmp/molecule drwxr-xr-x root root
-/tmp/molecule/to-notify-verifier-that-converged-in-check-mode drwxr-xr-x root root

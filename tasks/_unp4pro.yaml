@@ -36,8 +36,8 @@
     src: "{{ _meva_down_name }}-dir/{{ f.name }}"
     dest: >-
       {{
-        i.dest | regex_replace('/?$', '/') if i.dest | default('') | length > 0 else '' +
-        f.dest | default(mandatory)
+        i.dest | regex_replace('/*$', '') ~ '/' if i.dest | default('') | length > 0
+        else '' + f.dest | default(mandatory)
       }}
     force: "{{ f.force | default(_download_archive.changed) }}"
     follow: "{{ f.follow | default(omit) }}"
