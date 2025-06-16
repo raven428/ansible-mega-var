@@ -23,7 +23,7 @@
 - name: Set file name to remove
   ansible.builtin.set_fact:
     _meva_file2remove: >-
-      {%- set result = i.dest | regex_replace('/?$', '/') if i.dest | default('') |
+      {%- set result = i.dest | regex_replace('/*$', '') ~ '/' if i.dest | default('') |
       length > 0 else 'dest-not-set/' -%}
       {%- if 'delegate_to' in i -%}
         {%- set result = _meva_down_name + '-dir' -%}
@@ -39,8 +39,8 @@
       {%- if 'delegate_to' in i -%}
         {%- set result = _meva_down_name + '-dir/' + i.creates -%}
       {%- else -%}
-        {%- set result = (i.dest | regex_replace('/?$', '/') if i.dest | default('') |
-        length > 0 else 'dest-not-set/') + i.creates -%}
+        {%- set result = (i.dest | regex_replace('/*$', '') ~ '/' if i.dest |
+        default('') | length > 0 else 'dest-not-set/') + i.creates -%}
       {%- endif -%}
       {{ result }}
   when:
@@ -65,7 +65,7 @@
 
 - name: >-
     Ensure [{{ _meva_file2remove }}] absent for upgrade due creates [{{
-      (i.dest | regex_replace('/?$', '/') if i.dest | default('') |
+      (i.dest | regex_replace('/*$', '') ~ '/' if i.dest | default('') |
       length > 0 else '') + i.creates
     }}] missed or new [{{ _download_archive.changed }}] downloaded checksum
   ansible.builtin.file:
