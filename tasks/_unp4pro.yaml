@@ -4,7 +4,7 @@
   block:
     - name: Recursive create directory
       ansible.builtin.file:
-        path: "{{ _meva_down_name }}-dir"
+        path: "{{ _meva_dest_path }}"
         state: directory
         mode: "0755"
       become: false
@@ -13,8 +13,8 @@
     - name: Unpack from archive
       ansible.builtin.unarchive:
         src: "{{ _meva_down_name }}"
-        dest: "{{ _meva_down_name }}-dir"
-        creates: "{{ _meva_down_name }}-dir/{{ i.creates }}"
+        dest: "{{ _meva_dest_path }}"
+        creates: "{{ _meva_check4creates }}"
       become: false
       check_mode: false
       delegate_to: "{{ i.delegate_to }}"
@@ -24,55 +24,59 @@
     - name: Unarchive failed, trying to decompress
       decompress:
         src: "{{ _meva_down_name }}"
-        dst: "{{ _meva_down_name }}-dir/{{ i.creates }}"
+        dst: "{{ _meva_check4creates }}"
         force: "{{ i.force | default(_download_archive.changed) }}"
       become: false
       check_mode: false
       delegate_to: "{{ i.delegate_to }}"
       when: unarchive_result.failed | default(true)
 
-- name: Propagate unpacked files
-  ansible.builtin.copy:
-    src: "{{ _meva_down_name }}-dir/{{ f.name }}"
-    dest: >-
-      {{
-        i.dest | regex_replace('/*$', '') ~ '/' if i.dest | default('') | length > 0
-        else '' + f.dest | default(mandatory)
-      }}
-    force: "{{ f.force | default(_download_archive.changed) }}"
-    follow: "{{ f.follow | default(omit) }}"
-    owner: "{{ f.owner | default(omit) }}"
-    group: "{{ f.group | default(omit) }}"
-    mode: "{{ f.file_mode | default('0644') }}"
-  notify: "{{ f.notify | default(omit) }}"
+- name: Propagate and set attrs
+  ansible.builtin.include_tasks: _unp4prof.yaml
   loop_control:
     loop_var: f
-  loop: "{{ i.files | default([]) | list }}"
-
-- name: Propagate and set attrs
-  when: not i.archive | default(false)
-  block:
-    - name: Propagate downloaded file if not archive
-      ansible.builtin.copy:
-        src: "{{ _meva_down_name }}"
-        dest: "{{ i.dest | default(mandatory) }}"
-        force: "{{ i.force | default(_download_archive.changed) }}"
-        follow: "{{ i.follow | default(omit) }}"
-        owner: "{{ i.owner | default(i.down_owner | default(omit)) }}"
-        group: "{{ i.group | default(i.down_owner | default(omit)) }}"
-        mode: "{{ i.file_mode | default(i.down_mode | default(omit)) }}"
-      notify: "{{ i.notify | default(omit) }}"
-      register: copy_result
-    - name: Set owner, group and mode after download
-      ansible.builtin.file:
-        path: "{{ i.dest | default(mandatory) }}"
-        mode: "{{ i.file_mode | default(omit) }}"
-        owner: "{{ i.owner | default(omit) }}"
-        group: "{{ i.group | default(omit) }}"
-        access_time: "{{ i.access_time | default(omit) }}"
-        force: "{{ i.force | default(_download_archive.changed) }}"
-        access_time_format: "{{ i.access_time_format | default(omit) }}"
-        modification_time: "{{ i.modification_time | default(omit) }}"
-        modification_time_format: "{{ i.modification_time_format | default(omit) }}"
-      notify: "{{ i.notify | default(omit) }}"
-      when: "'size' in copy_result"
+  loop: >-
+    {%- if not i.archive | default(false) -%}
+      {%- set result = [{
+        'src': _meva_down_name,
+        'name': i.dest | default(mandatory) | basename,
+        'follow': i.follow | default(omit),
+        'owner': i.owner | default(i.down_owner | default(omit)),
+        'group': i.group | default(i.down_owner | default(omit)),
+        'file_mode': i.file_mode | default(i.down_mode | default(omit)),
+        'access_time': i.access_time | default(omit),
+        'access_time_format': i.access_time_format | default(omit),
+        'modification_time': i.modification_time | default(omit),
+        'modification_time_format': i.modification_time_format | default(omit),
+        'attributes': i.attributes | default(omit),
+        'follow': i.follow | default(omit),
+        'backup': i.backup | default(omit),
+        'checksum': i.checksum | default(omit),
+        'decrypt': i.decrypt | default(omit),
+        'directory_mode': i.directory_mode | default(omit),
+        'local_follow': i.local_follow | default(omit),
+        'selevel': i.selevel | default(omit),
+        'serole': i.serole | default(omit),
+        'setype': i.setype | default(omit),
+        'seuser': i.seuser | default(omit),
+        'unsafe_writes': i.unsafe_writes | default(omit),
+        'validate': i.validate | default(omit),
+        'dir_mode': i.dir_mode | default(omit),
+        'dir_owner': i.dir_owner | default(omit),
+        'dir_group': i.dir_group | default(omit),
+        'dir_force': i.dir_force | default(omit),
+        'dir_atime': i.dir_atime | default(omit),
+        'dir_atime_format': i.dir_atime_format | default(omit),
+        'dir_mtime': i.dir_mtime | default(omit),
+        'dir_mtime_format': i.dir_mtime_format | default(omit),
+        'dir_attributes': i.dir_attributes | default(omit),
+        'dir_follow': i.dir_follow | default(omit),
+        'dir_selevel': i.dir_selevel | default(omit),
+        'dir_serole': i.dir_serole | default(omit),
+        'dir_setype': i.dir_setype | default(omit),
+        'dir_seuser': i.dir_seuser | default(omit),
+      }] -%}
+    {%- else -%}
+      {%- set result = i.files | default([]) | list -%}
+    {%- endif -%}
+    {{ result }}
