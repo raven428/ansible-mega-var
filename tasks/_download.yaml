@@ -44,7 +44,7 @@
       {%- endif -%}
       {{ result }}
   when:
-    - i.archive
+    - i.archive | default(false)
 
 - name: Unpack downloaded archive and propagate files
   ansible.builtin.include_tasks: _ghr2down.yaml
@@ -60,7 +60,7 @@
   delegate_to: "{{ i.delegate_to | default(omit) }}"
   register: _file_creates
   when:
-    - i.archive
+    - i.archive | default(false)
     - i.creates | default(none) != none
 
 - name: >-
@@ -75,7 +75,7 @@
   no_log: true
   diff: false
   when:
-    - i.archive
+    - i.archive | default(false)
     - not _file_creates.stat.exists | default(false) or _download_archive.changed
 
 - name: Unpack downloaded archive and propagate files

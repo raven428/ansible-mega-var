@@ -1,6 +1,6 @@
 ---
 - name: Unpack archive block
-  when: i.archive
+  when: i.archive | default(false)
   block:
     - name: Recursive create directory
       ansible.builtin.file:
@@ -50,7 +50,7 @@
   loop: "{{ i.files | default([]) | list }}"
 
 - name: Propagate and set attrs
-  when: not i.archive
+  when: not i.archive | default(false)
   block:
     - name: Propagate downloaded file if not archive
       ansible.builtin.copy:
