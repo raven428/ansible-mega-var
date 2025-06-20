@@ -120,7 +120,7 @@ tests_meva_file2down:
       - name: "{{ decompressed_file_name }}"
         dest: >-
           {{ download_root }}/{{ download_types.simple }}/{{ download_paths.compress
-          }}/{{ download_options.con_copy }}
+          }}/{{ download_options.con_copy }}/
         file_mode: "0641"
   # 1. simple HTTPS connection by URI
   #   3. archive with directory tree
@@ -156,10 +156,10 @@ tests_meva_file2down:
           {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
           }}/{{ download_options.con_copy }}/
         file_mode: "0640"
-      - name: "pyenv/bin"
+      - name: "pyenv/bin/"
         dest: >-
           {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
-          }}/{{ download_options.con_copy }}/
+          }}/{{ download_options.con_copy }}/bin
         file_mode: "0755"
       - name: "pyenv/pyenv.d/rehash/conda.d/default.list"
         dest: >-
@@ -237,7 +237,7 @@ tests_meva_ghr2down:
       - name: "{{ decompressed_file_name }}"
         dest: >-
           {{ download_root }}/{{ download_types.release }}/{{ download_paths.compress
-          }}/{{ download_options.con_copy }}
+          }}/{{ download_options.con_copy }}/
         file_mode: "0641"
   # 2. release from GitHub for platform and version lookup using auth token
   #   3. archive with directory tree
@@ -281,10 +281,10 @@ tests_meva_ghr2down:
           {{ download_root }}/{{ download_types.release }}/{{ download_paths.arch_tree
           }}/{{ download_options.con_copy }}/
         file_mode: "0640"
-      - name: "pyenv/bin"
+      - name: "pyenv/bin/"
         dest: >-
           {{ download_root }}/{{ download_types.release }}/{{ download_paths.arch_tree
-          }}/{{ download_options.con_copy }}/
+          }}/{{ download_options.con_copy }}/bin
         file_mode: "0755"
       - name: "pyenv/pyenv.d/rehash/conda.d/default.list"
         dest: >-
@@ -304,15 +304,15 @@ local_meva_file2down: |
   {%  set result = [] %}
   {%  for format in compression_formats | flatten %}
   {%    do result.append({
-          'url': download_prefix + '.' + format,
-          'dest': download_root + '/local/' + format,
-          'down_name': decompressed_file_name + '2local.' + format,
+          'url': download_prefix ~ '.' ~ format,
+          'dest': download_root ~ '/local',
+          'down_name': decompressed_file_name ~ '2local.' ~ format,
           'creates': decompressed_file_name,
           'delegate_to': delegate_placeholder,
           'archive': 'true',
           'files': [{
             'name': decompressed_file_name,
-            'dest': format + '-local.tar',
+            'dest': format ~ '/',
             'file_mode': '0642',
           }]
         }) %}
@@ -322,9 +322,9 @@ remote_meva_file2down: |
   {%  set result = [] %}
   {%  for format in compression_formats | flatten %}
   {%    do result.append({
-          'url': download_prefix + '.' + format,
-          'dest': download_root + '/remote/' + format,
-          'down_name': decompressed_file_name + '2remote.' + format,
+          'url': download_prefix ~ '.' ~ format,
+          'dest': download_root ~ '/remote/' ~ format,
+          'down_name': decompressed_file_name ~ '2remote.' ~ format,
           'creates': decompressed_file_name,
           'archive': 'true',
           'down_mode': '0641',
