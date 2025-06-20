@@ -82,7 +82,9 @@
     "nodev",
     "nosuid",
     "userns",
-    "lzma"
+    "lzma",
+    "notdefined",
+    "startswith"
   ],
   "enabled": true
 }
