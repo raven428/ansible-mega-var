@@ -49,11 +49,11 @@
   when:
     - i.archive | default(false)
 
-- name: Unpack downloaded archive and propagate files
+- name: Github release download
   ansible.builtin.include_tasks: _ghr2down.yaml
   when: "'gh_tag' in i"
 
-- name: Unpack downloaded archive and propagate files
+- name: Simple file download
   ansible.builtin.include_tasks: _file2down.yaml
   when: "'gh_tag' not in i"
 

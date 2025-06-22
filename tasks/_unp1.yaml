@@ -11,6 +11,9 @@
       {%- elif not i_dest.startswith('/') and i_dest != '' -%}
         {{ notdefined |
         mandatory('i.dest must be an absolute path') }}
+      {%- elif f.name | default('') == '' -%}
+        {{ notdefined |
+        mandatory('f.name should be defined and non-empty') }}
       {%- elif f_dest.startswith('/') and i_dest != ''  -%}
         {%- set prefix = '' -%}
       {%- elif i_dest != '' -%}
@@ -83,6 +86,7 @@
     seuser: "{{ f.seuser | default(omit) }}"
     unsafe_writes: "{{ f.unsafe_writes | default(omit) }}"
     validate: "{{ f.validate | default(omit) }}"
+    remote_src: "{{ f.remote_src | default(omit) }}"
   notify: "{{ f.notify | default(omit) }}"
   register: copy_result
 
