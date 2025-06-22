@@ -10,12 +10,12 @@
   register: unarchive_result
   ignore_errors: true
   when:
-    - i.archive
+    - i.archive | default(false)
     - i.creates | dirname != ''
 
 - name: Decompress block if unarchive failed
   when:
-    - i.archive
+    - i.archive | default(false)
     - not ansible_check_mode
     - unarchive_result.failed | default(true)
   block:
@@ -38,7 +38,7 @@
 
 - name: Apply filesystem modes
   when:
-    - i.archive
+    - i.archive | default(false)
     - not unarchive_result.failed | default(true)
     - unarchive_result.changed | default(false)
   block:
@@ -62,7 +62,7 @@
         /usr/bin/env chmod {{ i.file_mode | default('0644') }}
 
 - name: Copy and set attrs
-  when: not i.archive and 'dest' in i
+  when: not i.archive | default(false) and 'dest' in i
   block:
     - name: Copy downloaded file to destination if not archive
       ansible.builtin.copy:

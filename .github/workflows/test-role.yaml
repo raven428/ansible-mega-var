@@ -16,6 +16,7 @@ jobs:
     timeout-minutes: 33
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         d_type:
           - simple
