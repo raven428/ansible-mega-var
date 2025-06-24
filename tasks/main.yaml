@@ -35,12 +35,6 @@
     loop_var: i
   loop: "{{ meva_files2upload }}"
 
-- name: Upload some content
-  ansible.builtin.include_tasks: _content.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_content2upload }}"
-
 - name: Rsync some files
   ansible.builtin.include_tasks: _rsync.yaml
   loop_control:
