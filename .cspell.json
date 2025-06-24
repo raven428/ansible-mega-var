@@ -84,7 +84,10 @@
     "userns",
     "lzma",
     "notdefined",
-    "startswith"
+    "startswith",
+    "drwx",
+    "reexec",
+    "lstrip"
   ],
   "enabled": true
 }

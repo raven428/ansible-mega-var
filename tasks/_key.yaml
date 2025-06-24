@@ -1,14 +1,14 @@
 ---
 - name: Ensure some keys
   ansible.posix.authorized_key:
-    user: "{{ i.user | mandatory }}"
-    key: "{{ i.key | mandatory }}"
-    exclusive: "{{ i.state | default(true) }}"
-    state: "{{ i.state | default('present') }}"
     comment: "{{ i.comment | default(omit) }}"
+    exclusive: "{{ i.state | default(true) }}"
     follow: "{{ i.follow | default(omit) }}"
     key_options: "{{ i.key_options | default(omit) }}"
+    key: "{{ i.key | mandatory }}"
     manage_dir: "{{ i.manage_dir | default(omit) }}"
     path: "{{ i.path | default(omit) }}"
+    state: "{{ i.state | default('present') }}"
+    user: "{{ i.user | mandatory }}"
     validate_certs: "{{ i.validate_certs | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"

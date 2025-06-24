@@ -193,17 +193,17 @@ There are a lot of options to upload by `files:` (shown as `f.` below) the full 
 
 - Both `dest` and `f.dest` are either relative or undefined or empty will raise error
 - If `dest` is defined, it should be absolute otherwise error will be raised. Other options are similar as above:
-  - Here `f.dest` can be empty or undefined, so `result = i.dest ~ '/' ~ f.name` w/o `basename`
-  - If `f.dest` ended by `/`, `result = i.dest ~ '/' ~ f.dest ~ '/' ~ f.name | basename`
-  - If `f.dest` is not ended by `/` then treated as file name: `result = i.dest ~ '/' ~ f.dest`
-- If `dest` is empty the result should be defined by `f.dest` and `f.name`:
-  - If `f.dest` finished by `/`, `result = f.dest ~ '/' ~ f.name | basename`
-  - If `f.dest` is not finished by `/` then treated as path with filename: `result = f.dest`
+  - (`0.0.0`) Here `f.dest` can be empty or undefined, so `result = i.dest ~ '/' ~ f.name` w/o `basename`
+  - (`0.0.1`) If `f.dest` ended by `/`, `result = i.dest ~ '/' ~ f.dest ~ '/' ~ f.name | basename`
+  - (`0.0.2`) If `f.dest` is not ended by `/` then treated as file name: `result = i.dest ~ '/' ~ f.dest`
+- Either `dest` is empty or `f.dest` starts with `/` the result defined by `f.dest` and `f.name` only:
+  - (`0.1.0`) If `f.dest` finished by `/`, `result = f.dest ~ '/' ~ f.name | basename`
+  - (`0.1.1`) If `f.dest` is not finished by `/` then treated as path with filename: `result = f.dest`
 
-Parameter `f.name` can be directory and will be recursively propagated. In this case two options of `f.name` are available to upload: w/ and w/o trailing `/`. Other rules are same as above multiplied on these options:
+Parameter `f.name` can be directory then will be propagated recursively. In this case two options of `f.name` are available to upload: w/ and w/o trailing `/`. Other rules are same as above multiplied on these options:
 
-- If `f.name` ended by `/` only content of directory will be uploaded to the result
-- Else the whole directory with content will be uploaded
+- (`0.2.0`) If `f.name` ended by `/` only content of directory will be uploaded to the result
+- (`0.2.1`) Else the whole directory with content will be uploaded
 
 This is the `ansible.builtin.copy` behavior. In both cases destination directory will be automatically created despite the result ended with `/` or not
 

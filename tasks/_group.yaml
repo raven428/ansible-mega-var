@@ -1,10 +1,12 @@
 ---
 - name: Ensure some groups
   ansible.builtin.group:
-    name: "{{ i.name | mandatory }}"
+    force: "{{ i.force | default(omit) }}"
+    gid_max: "{{ i.gid_max | default(omit) }}"
     gid: "{{ i.gid | default(omit) }}"
     local: "{{ i.local | default(omit) }}"
+    name: "{{ i.name | mandatory }}"
+    non_unique: "{{ i.non_unique | default(omit) }}"
     state: "{{ i.state | default('present') }}"
     system: "{{ i.system | default(omit) }}"
-    non_unique: "{{ i.non_unique | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"

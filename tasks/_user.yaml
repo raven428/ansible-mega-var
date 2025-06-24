@@ -2,8 +2,6 @@
 ---
 - name: Ensure some users
   ansible.builtin.user:
-    name: "{{ i.name | mandatory }}"
-    state: "{{ i.state | default('present') }}"
     append: "{{ i.append | default(omit) }}"
     authorization: "{{ i.authorization | default(omit) }}"
     comment: "{{ i.comment | default(omit) }}"
@@ -18,11 +16,15 @@
     local: "{{ i.local | default(omit) }}"
     login_class: "{{ i.login_class | default(omit) }}"
     move_home: "{{ i.move_home | default(omit) }}"
+    name: "{{ i.name | mandatory }}"
     non_unique: "{{ i.non_unique | default(omit) }}"
-    password: "{{ i.password | default(omit) }}"
+    password_expire_account_disable: >-
+      {{ i.password_expire_account_disable | default(omit) }}"
     password_expire_max: "{{ i.password_expire_max | default(omit) }}"
     password_expire_min: "{{ i.password_expire_min | default(omit) }}"
+    password_expire_warn: "{{ i.password_expire_warn | default(omit) }}"
     password_lock: "{{ i.password_lock | default(omit) }}"
+    password: "{{ i.password | default(omit) }}"
     profile: "{{ i.profile | default(omit) }}"
     remove: "{{ i.remove | default(omit) }}"
     role: "{{ i.role | default(omit) }}"
@@ -34,7 +36,11 @@
     ssh_key_file: "{{ i.ssh_key_file | default(omit) }}"
     ssh_key_passphrase: "{{ i.ssh_key_passphrase | default(omit) }}"
     ssh_key_type: "{{ i.ssh_key_type | default(omit) }}"
+    state: "{{ i.state | default('present') }}"
     system: "{{ i.system | default(omit) }}"
+    uid_max: "{{ i.uid_max | default(omit) }}"
+    uid_min: "{{ i.uid_min | default(omit) }}"
     uid: "{{ i.uid | default(omit) }}"
+    umask: "{{ i.umask | default(omit) }}"
     update_password: "{{ i.update_password | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"
