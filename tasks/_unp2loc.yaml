@@ -41,25 +41,12 @@
     - i.archive | default(false)
     - not unarchive_result.failed | default(true)
     - unarchive_result.changed | default(false)
-  block:
-    - name: Apply mode to directories
-      # noqa no-changed-when risky-shell-pipe
-      ansible.builtin.shell: >-
-        /usr/bin/env find '{{ i.dest }}' -type d |
-        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
-        /usr/bin/env chmod {{ i.dir_mode | default('0755') }}
-    - name: Apply mode to executable files
-      # noqa no-changed-when risky-shell-pipe
-      ansible.builtin.shell: >-
-        /usr/bin/env find '{{ i.dest }}' -type f -executable |
-        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
-        /usr/bin/env chmod {{ i.exec_mode | default('0755') }}
-    - name: Apply mode to non-executable files
-      # noqa no-changed-when risky-shell-pipe
-      ansible.builtin.shell: >-
-        /usr/bin/env find '{{ i.dest }}' -type f ! -executable |
-        /usr/bin/env sed 's/.*/"&"/g' | /usr/bin/env xargs -r
-        /usr/bin/env chmod {{ i.file_mode | default('0644') }}
+  chmod_tree:
+    path: "{{ i.dest }}"
+    dir_mode: "{{ i.dir_mode | default('0755') }}"
+    file_mode: "{{ i.file_mode | default('0644') }}"
+    exec_mode: "{{ i.exec_mode | default('0755') }}"
+    verbose: "{{ i.chmod_verbose | default(false) }}"
 
 - name: Copy and set attrs
   when: not i.archive | default(false) and 'dest' in i
