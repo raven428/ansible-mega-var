@@ -55,13 +55,11 @@ jobs:
           BRA: master
         run: |
           curl -sL \
-          https://raw.githubusercontent.com/raven428/container-images/${{ env.none
-          }}refs/heads/${{ env.BRA }}/sources/linters-ubuntu-22_04/check-dir.sh |
-          bash
+          https://raw.githubusercontent.com/raven428/container-images/refs/heads/${{
+          env.BRA }}/sources/linters-ubuntu-22_04/check-dir.sh | bash
           curl -sL \
-          https://raw.githubusercontent.com/raven428/container-images/${{ env.none
-          }}refs/heads/${{ env.BRA }}/sources/ansible-ubuntu/check-dir.sh |
-          bash
+          https://raw.githubusercontent.com/raven428/container-images/refs/heads/${{
+          env.BRA }}/sources/ansible-ubuntu/check-dir.sh | bash
   MegaLinter:
     name: MegaLinter
     timeout-minutes: 11
