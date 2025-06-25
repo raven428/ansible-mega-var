@@ -35,19 +35,14 @@
         {%- endif -%}
       {%- endif -%}
       {{ result }}
-
-- name: Set variable for creates check
-  ansible.builtin.set_fact:
     _meva_check4creates: >-
       {%- if 'delegate_to' in i -%}
-        {%- set result = _meva_down_name ~ '-dir/' ~ i.creates -%}
+        {%- set result = _meva_down_name ~ '-dir/' ~ i.creates | default('') -%}
       {%- else -%}
         {%- set result = (i.dest | regex_replace('/*$', '') ~ '/' if i.dest |
-        default('') | length > 0 else 'dest-not-set/') ~ i.creates -%}
+        default('') | length > 0 else 'dest-not-set/') ~ i.creates | default('') -%}
       {%- endif -%}
       {{ result }}
-  when:
-    - i.archive | default(false)
 
 - name: Github release download
   ansible.builtin.include_tasks: _ghr2down.yaml
