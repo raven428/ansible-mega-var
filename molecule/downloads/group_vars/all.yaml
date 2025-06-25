@@ -45,6 +45,7 @@ download_types:
 download_paths:
   single: "single"
   compress: "compress"
+  arch_full: "arch-full"
   arch_tree: "arch-tree"
 download_options:
   direct: "direct-download"
@@ -71,10 +72,11 @@ tests_meva_file2down:
   - url: "{{ download_files.simple_uri }}"
     dest: >-
       {{ download_root }}/{{ download_types.simple }}/{{ download_paths.single
-      }}/{{ download_options.direct }}/{{ download_file_name }}
+      }}/{{ download_options.direct }}
     down_name: >-
       {{ download_types.simple }}-{{ download_paths.single
       }}-{{ download_options.direct }}.xz
+    creates: "{{ download_file_name }}"
     down_mode: "0641"
     modification_time: "{{ default_time }}"
   # 1. simple HTTPS connection by URI
@@ -83,10 +85,11 @@ tests_meva_file2down:
   - url: "{{ download_files.simple_uri }}"
     dest: >-
       {{ download_root }}/{{ download_types.simple }}/{{ download_paths.single
-      }}/{{ download_options.con_copy }}/{{ download_file_name }}
+      }}/{{ download_options.con_copy }}
     down_name: >-
       {{ download_types.simple }}-{{ download_paths.single
       }}-{{ download_options.con_copy }}.xz
+    creates: "{{ download_file_name }}"
     down_mode: "0641"
     modification_time: "{{ default_time }}"
     delegate_to: localhost # DevSkim: ignore DS162092
@@ -104,33 +107,33 @@ tests_meva_file2down:
     down_mode: "0641"
     modification_time: "{{ default_time }}"
     archive: true
+    files: []
   # 1. simple HTTPS connection by URI
   #   2. single compressed
   #     2. at the Ansible controller with `copy:`
   - url: "{{ download_files.simple_uri }}"
+    dest: >-
+      {{ download_root }}/{{ download_types.simple }}/{{ download_paths.compress
+      }}/{{ download_options.con_copy }}
     down_name: >-
       {{ download_types.simple }}-{{ download_paths.compress
       }}-{{ download_options.con_copy }}.xz
     # file name to decompress:
     creates: "{{ decompressed_file_name }}"
     delegate_to: localhost # DevSkim: ignore DS162092
+    down_mode: "0642"
+    modification_time: "{{ default_time }}"
     archive: true
-    files:
-      # file name to upload (should be same as in "creates:" above):
-      - name: "{{ decompressed_file_name }}"
-        dest: >-
-          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.compress
-          }}/{{ download_options.con_copy }}/
-        file_mode: "0641"
+    files: []
   # 1. simple HTTPS connection by URI
   #   3. archive with directory tree
   #     1. directly to target host
   - url: "{{ download_files.simple_uri }}"
     dest: >-
-      {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+      {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_full
       }}/{{ download_options.direct }}
     down_name: >-
-      {{ download_types.simple }}-{{ download_paths.arch_tree
+      {{ download_types.simple }}-{{ download_paths.arch_full
       }}-{{ download_options.direct }}-{{ ver2down }}.tar.xz
     creates: "pyenv/build-{{ ver2down }}"
     dir_mode: "0750"
@@ -140,6 +143,107 @@ tests_meva_file2down:
     archive: true
   # 1. simple HTTPS connection by URI
   #   3. archive with directory tree
+  #     2. at the Ansible controller with `unarchive:`
+  - url: "{{ download_files.simple_uri }}"
+    dest: >-
+      {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_full
+      }}/{{ download_options.con_copy }}
+    down_name: >-
+      {{ download_types.simple }}-{{ download_paths.arch_full
+      }}-{{ download_options.con_copy }}-{{ ver2down }}.tar.xz
+    creates: "pyenv/build-{{ ver2down }}"
+    delegate_to: localhost # DevSkim: ignore DS162092
+    dir_mode: "0751"
+    exec_mode: "0703"
+    file_mode: "0602"
+    modification_time: "{{ default_time }}"
+    archive: true
+
+  # # 1. simple HTTPS connection by URI
+  # #   4. archive with directory tree
+  # #     1. directly to target host
+  # - url: "{{ download_files.simple_uri }}"
+  #   down_name: >-
+  #     {{ download_types.simple }}-{{ download_paths.arch_tree
+  #     }}-{{ download_options.con_copy }}-{{ ver2down }}.tar.xz
+  #   creates: "pyenv/build-{{ ver2down }}"
+  #   dest: >-
+  #     {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+  #     }}/{{ download_options.con_copy }}
+  #   archive: true
+  #   files:
+  #     # 0.0.0 result = /i.dest/pyenv/Makefile
+  #     - name: "pyenv/Makefile"
+  #       file_mode: "0640"
+  #     # 0.0.1 result = /i.dest/f.dest-dir/Makefile
+  #     - name: "pyenv/Makefile"
+  #       dest: "f.dest-dir1/"
+  #       file_mode: "0641"
+  #     # 0.0.2 result = /i.dest/f.dest-dir/Makefile-in-f.dest
+  #     - name: "pyenv/Makefile"
+  #       dest: "f.dest-dir2/in-f.dest-Makefile"
+  #       file_mode: "0642"
+  #     # 0.1.0 result = /f.dest/Makefile
+  #     - name: "pyenv/Makefile"
+  #       dest: >-
+  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+  #         }}/{{ download_options.con_copy }}/f.dest-abs1/
+  #       file_mode: "0640"
+  #     # 0.1.1 result = f.dest
+  #     - name: "pyenv/pyenv.d/rehash/conda.d/default.list"
+  #       dest: >-
+  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+  #         }}/{{ download_options.con_copy }}/f.dest-abs2/file-default.list
+  #       file_mode: "0640"
+  #     # 0.2.0/0.0.0 result = /i.dest/pyenv/bin/pyenv
+  #     - name: "pyenv/bin/"
+  #       file_mode: "0755"
+  #     # 0.2.0/0.0.1 result = /i.dest/relative-f.dest-trailing-slash-yes/
+  #     - name: "pyenv/bin/"
+  #       dest: "relative-f.dest-trailing-slash-yes/"
+  #       file_mode: "0543"
+  #     # 0.2.0/0.0.2 result = /i.dest/relative-f.dest-trailing-slash-no/
+  #     - name: "pyenv/bin/"
+  #       dest: "relative-f.dest-trailing-slash-no"
+  #       file_mode: "0643"
+  #     # 0.2.0/0.1.0 result = /i.dest/absolute-f.dest-trailing-slash-yes/pyenv
+  #     - name: "pyenv/bin/"
+  #       dest: >-
+  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+  #         }}/{{ download_options.con_copy }}/absolute-f.dest-trailing-slash-yes/
+  #       file_mode: "0755"
+  #     # 0.2.0/0.1.1 result = /i.dest/absolute-f.dest-trailing-slash-no/pyenv
+  #     - name: "pyenv/bin/"
+  #       dest: >-
+  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+  #         }}/{{ download_options.con_copy }}/absolute-f.dest-trailing-slash-no
+  #       file_mode: "0752"
+  #     # 0.2.1/0.0.0 result = /i.dest/pyenv/pyenv.d/install
+  #     - name: "pyenv/pyenv.d/install"
+  #       file_mode: "0755"
+  #     # 0.2.1/0.0.1 result = /i.dest/relative-f.dest-trailing-yes/bin/pyenv
+  #     - name: "pyenv/bin"
+  #       dest: "relative-f.dest-trailing-yes/"
+  #       file_mode: "0754"
+  #     # 0.2.1/0.0.2 result = /i.dest/relative-f.dest-trailing-no/bin/pyenv
+  #     - name: "pyenv/bin"
+  #       dest: "relative-f.dest-trailing-no"
+  #       file_mode: "0743"
+  #     # 0.2.1/0.1.0 result = /i.dest/absolute-f.dest-trailing-yes/bin/pyenv
+  #     - name: "pyenv/bin"
+  #       dest: >-
+  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+  #         }}/{{ download_options.con_copy }}/absolute-f.dest-trailing-yes/
+  #       file_mode: "0742"
+  #     # 0.2.1/0.1.1 result = /i.dest/absolute-f.dest-trailing-no/bin/pyenv
+  #     - name: "pyenv/bin"
+  #       dest: >-
+  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+  #         }}/{{ download_options.con_copy }}/absolute-f.dest-no
+  #       file_mode: "0731"
+
+  # 1. simple HTTPS connection by URI
+  #   4. archive with directory tree
   #     2. at the Ansible controller with `copy:`
   - url: "{{ download_files.simple_uri }}"
     down_name: >-
@@ -201,7 +305,7 @@ tests_meva_file2down:
       # 0.2.1/0.0.0 result = /i.dest/pyenv/pyenv.d/install
       - name: "pyenv/pyenv.d/install"
         file_mode: "0755"
-      # 0.2.1/0.0.1 result = /i.dest/relative-f.dest-trailing-yes/bin/bin/pyenv
+      # 0.2.1/0.0.1 result = /i.dest/relative-f.dest-trailing-yes/bin/pyenv
       - name: "pyenv/bin"
         dest: "relative-f.dest-trailing-yes/"
         file_mode: "0754"
@@ -209,7 +313,7 @@ tests_meva_file2down:
       - name: "pyenv/bin"
         dest: "relative-f.dest-trailing-no"
         file_mode: "0743"
-      # 0.2.1/0.1.0 result = /i.dest/absolute-f.dest-trailing-yes/bin/bin/pyenv
+      # 0.2.1/0.1.0 result = /i.dest/absolute-f.dest-trailing-yes/bin/pyenv
       - name: "pyenv/bin"
         dest: >-
           {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
@@ -356,35 +460,34 @@ download_prefix: >-
     download_tag
   }}/pyenv2decompress-2_2_4-linux-amd64.tar
 delegate_placeholder: "127.0.0.1" # DevSkim: ignore DS162092
-local_meva_file2down: |
-  {%  set result = [] %}
-  {%  for format in compression_formats | flatten %}
-  {%    do result.append({
-          'url': download_prefix ~ '.' ~ format,
-          'dest': download_root ~ '/local',
-          'down_name': decompressed_file_name ~ '2local.' ~ format,
-          'creates': decompressed_file_name,
-          'delegate_to': delegate_placeholder,
-          'archive': 'true',
-          'files': [{
-            'name': decompressed_file_name,
-            'dest': format ~ '/',
-            'file_mode': '0642',
-          }]
-        }) %}
-  {%  endfor %}
+remote_meva_file2down: >-
+  {%- set result = [] -%}
+  {%- for format in compression_formats | flatten -%}
+    {%- do result.append({
+      'url': download_prefix ~ '.' ~ format,
+      'dest': download_root ~ '/remote/' ~ format,
+      'down_name': decompressed_file_name ~ '2remote.' ~ format,
+      'creates': decompressed_file_name,
+      'archive': 'true',
+      'down_mode': '0641',
+      'modification_time': default_time,
+      'files': [],
+    }) -%}
+  {%- endfor -%}
   {{ result }}
-remote_meva_file2down: |
-  {%  set result = [] %}
-  {%  for format in compression_formats | flatten %}
-  {%    do result.append({
-          'url': download_prefix ~ '.' ~ format,
-          'dest': download_root ~ '/remote/' ~ format,
-          'down_name': decompressed_file_name ~ '2remote.' ~ format,
-          'creates': decompressed_file_name,
-          'archive': 'true',
-          'down_mode': '0641',
-          'modification_time': default_time,
-        }) %}
-  {%  endfor %}
+local_meva_file2down: >-
+  {%- set result = [] -%}
+  {%- for format in compression_formats | flatten -%}
+    {%- do result.append({
+      'url': download_prefix ~ '.' ~ format,
+      'dest': download_root ~ '/local/' ~ format,
+      'down_name': decompressed_file_name ~ '2local.' ~ format,
+      'creates': decompressed_file_name,
+      'delegate_to': delegate_placeholder,
+      'archive': 'true',
+      'down_mode': '0642',
+      'modification_time': default_time,
+      'files': [],
+    }) -%}
+  {%- endfor -%}
   {{ result }}
