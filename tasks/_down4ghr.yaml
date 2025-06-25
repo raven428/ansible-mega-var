@@ -31,7 +31,7 @@
     owner: "{{ i.down_owner | default(omit) }}"
     group: "{{ i.down_owner | default(omit) }}"
     timeout: "{{ i.timeout | default(omit) }}"
-    dest: "{{ _meva_down_name }}"
+    dest: "{{ _meva_keys.download_name }}"
     headers:
       Accept: "application/octet-stream"
       Authorization: "token {{ i.gh_token }}"

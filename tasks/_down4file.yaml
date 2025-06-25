@@ -8,7 +8,7 @@
     ciphers: "{{ i.ciphers | default(omit) }}"
     client_cert: "{{ i.client_cert | default(omit) }}"
     client_key: "{{ i.client_key | default(omit) }}"
-    dest: "{{ _meva_down_name }}"
+    dest: "{{ _meva_keys.download_name }}"
     force_basic_auth: "{{ i.force_basic_auth | default(omit) }}"
     force: "{{ i.force | default(true) }}"
     group: "{{ i.down_owner | default(omit) }}"

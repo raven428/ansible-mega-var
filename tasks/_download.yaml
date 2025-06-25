@@ -1,48 +1,47 @@
 ---
-- name: Set temporary name for download
+- name: Set multiple variables
   ansible.builtin.set_fact:
-    _meva_down_name: >-
-      /tmp/ansible-
-      {%-
-        set login =
-          lookup('env', 'ANSIBLE_REMOTE_USER') |
-          default(lookup('env', 'USER')) |
-          default('file2down_login')
-      -%}
-      {%- if login | length > 0 -%}
-      {{    login }}
-      {%- else -%}
-      {{    lookup('env', 'USER') }}
-      {%- endif -%}-{{
-        i.down_name |
-        default(i.url) |
-        default(i.creates) |
-        regex_replace('[^a-z0-9\\.]', '_', ignorecase=True)
-      }}
+    _meva_keys: >-
+      {#- temporary path and name where file will be initially downloaded: -#}
+      {%- set download_name = '/tmp/ansible-' ~ lookup('env', 'ANSIBLE_REMOTE_USER') |
+      default(lookup('env', 'USER')) ~ i.down_name | default(i.url) |
+      default(i.creates) | regex_replace('[^a-z0-9\\.]', '_', ignorecase=True) -%}
 
-- name: Set destination path
-  ansible.builtin.set_fact:
-    _meva_dest_path: >-
-      {%- set result = i.dest | regex_replace('/*$', '') ~ '/' if i.dest | default('') |
-      length > 0 else 'dest-not-set/' -%}
-      {%- if 'delegate_to' in i -%}
-        {%- set result = _meva_down_name ~ '-dir' -%}
-      {%- elif 'creates' in i -%}
-        {%- if i.creates | dirname == '' -%}
-          {%- set result = result ~ i.creates -%}
-        {%- else -%}
-          {%- set result = result ~ i.creates | dirname -%}
-        {%- endif -%}
-      {%- endif -%}
-      {{ result }}
-    _meva_check4creates: >-
-      {%- if 'delegate_to' in i -%}
-        {%- set result = _meva_down_name ~ '-dir/' ~ i.creates | default('') -%}
+      {#- directory where files will be stored after decompress or unarchive: -#}
+      {%- if 'delegate_to' in i and i.creates | default('') | dirname == '' or
+      i.files | default([]) | length > 0 and i.creates | default('') | dirname != '' or
+      'files' in i -%}
+        {%- set dest_dir = download_name ~ '-dir' -%}
       {%- else -%}
-        {%- set result = (i.dest | regex_replace('/*$', '') ~ '/' if i.dest |
-        default('') | length > 0 else 'dest-not-set/') ~ i.creates | default('') -%}
+        {%- set dest_dir = i.dest | regex_replace('/*$', '') |
+        default('none-of-i.dest') -%}
       {%- endif -%}
-      {{ result }}
+
+      {#- path with filename to check before remove dest_dir in case of update -#}
+      {%- set dest_path = dest_dir ~ '/' ~ i.creates -%}
+
+      {#- unarchive condition for the delegate_to -#}
+      {%- set unarchive_delegation = (
+        'delegate_to' in i and (
+          i.creates | default('') | dirname == '' or
+          i.files | default([]) | length > 0 and
+          i.creates | default('') | dirname != ''
+        )
+      ) | bool -%}
+
+      {#- unarchive condition for the check_mode -#}
+      {%- set unarchive_check_mode = (
+        'delegate_to' in i and i.creates | default('') | dirname == '' or
+        i.files | default([]) | length > 0 and i.creates | default('') | dirname != ''
+      ) | bool -%}
+
+      {{ {
+        'download_name': download_name,
+        'dest_dir': dest_dir,
+        'dest_path': dest_path,
+        'unarchive_delegation': unarchive_delegation,
+        'unarchive_check_mode': unarchive_check_mode,
+      } }}
 
 - name: Github release download
   ansible.builtin.include_tasks: _down4ghr.yaml
@@ -52,33 +51,137 @@
   ansible.builtin.include_tasks: _down4file.yaml
   when: "'gh_tag' not in i"
 
-- name: "Check creates [{{ _meva_check4creates }}] exists" # noqa name[template]
+- name: "Check creates [{{ _meva_keys.dest_path }}] exists" # noqa name[template]
   ansible.builtin.stat:
-    path: "{{ _meva_check4creates }}"
-  delegate_to: "{{ i.delegate_to | default(omit) }}"
+    path: "{{ _meva_keys.dest_path }}"
+  delegate_to: "{{ i.delegate_to if _meva_keys.unarchive_delegation else omit }}"
   register: _file_creates
   when:
     - i.archive | default(false)
 
-- name: >-
-    Ensure [{{ _meva_dest_path }}] absent for upgrade due creates [{{
-      (i.dest | regex_replace('/*$', '') ~ '/' if i.dest | default('') |
-      length > 0 else '') ~ i.creates
-    }}] missed or new [{{ _download_archive.changed }}] downloaded checksum
+- name:
+    Ensure [{{ _meva_keys.dest_path | dirname }}] absent for upgrade due creates
+    [{{ _meva_keys.dest_path }}] missed or updated=[{{ _download_archive.changed }}] by
+    downloaded checksum # noqa name[template]
   ansible.builtin.file:
     state: absent
-    path: "{{ _meva_dest_path }}"
-  delegate_to: "{{ i.delegate_to | default(omit) }}"
+    path: "{{ _meva_keys.dest_path | dirname }}"
+  delegate_to: "{{ i.delegate_to if _meva_keys.unarchive_delegation else omit }}"
+  notify: "{{ i.notify | default(omit) }}"
   no_log: true
   diff: false
   when:
     - i.archive | default(false)
+    - i.files | default([]) | length > 0 or
+      'files' not in i and i.creates | default('') | dirname != ''
     - not _file_creates.stat.exists | default(false) or _download_archive.changed
 
-- name: Unpack downloaded archive and propagate files
-  ansible.builtin.include_tasks: _unp4pro.yaml
-  when: "'delegate_to' in i"
+- name: Unpack archive block
+  when: i.archive | default(false)
+  block:
+    - name: Ensure target directory exists
+      ansible.builtin.file:
+        path: "{{ _meva_keys.dest_dir }}"
+        state: directory
+        mode: "0755"
+        owner: "{{ i.owner | default(omit) if 'delegate_to' not in i else omit }}"
+        group: "{{ i.group | default(omit) if 'delegate_to' not in i else omit }}"
+      become: "{{ ('delegate_to' not in i) | bool }}"
+      check_mode: "{{ false if _meva_keys.unarchive_check_mode else omit }}"
+      delegate_to: "{{ i.delegate_to if _meva_keys.unarchive_delegation else omit }}"
+      notify: "{{ i.notify | default(omit) }}"
 
-- name: Unpack downloaded archive at the destination
-  ansible.builtin.include_tasks: _unp2loc.yaml
-  when: "'delegate_to' not in i"
+    - name: Unpack from archive
+      ansible.builtin.unarchive:
+        src: "{{ _meva_keys.download_name }}"
+        dest: "{{ _meva_keys.dest_dir }}"
+        creates: "{{ _meva_keys.dest_path }}"
+        remote_src: "{{ ('delegate_to' not in i) | bool }}"
+        owner: "{{ i.owner | default(omit) if 'delegate_to' not in i else omit }}"
+        group: "{{ i.group | default(omit) if 'delegate_to' not in i else omit }}"
+      become: "{{ ('delegate_to' not in i) | bool }}"
+      check_mode: "{{ false if _meva_keys.unarchive_check_mode else omit }}"
+      register: unarchive_result
+      ignore_errors: true
+      when: i.creates | default('') | dirname != ''
+      delegate_to: "{{ i.delegate_to if _meva_keys.unarchive_delegation else omit }}"
+      notify: "{{ i.notify | default(omit) }}"
+
+    - name: Apply filesystem modes
+      chmod_tree:
+        path: "{{ _meva_keys.dest_dir }}"
+        dir_mode: "{{ i.dir_mode | default('0755') }}"
+        file_mode: "{{ i.file_mode | default('0644') }}"
+        exec_mode: "{{ i.exec_mode | default('0755') }}"
+        verbose: "{{ i.chmod_verbose | default(false) }}"
+      when:
+        - not unarchive_result.failed | default(true)
+        - unarchive_result.changed | default(false)
+      delegate_to: "{{ i.delegate_to if _meva_keys.unarchive_delegation else omit }}"
+      notify: "{{ i.notify | default(omit) }}"
+
+    - name: Unarchive isn't performed, trying to decompress
+      decompress:
+        src: "{{ _meva_keys.download_name }}"
+        dst: "{{ _meva_keys.dest_path }}"
+        force: "{{ i.force | default(_download_archive.changed) }}"
+      become: false
+      check_mode: false
+      delegate_to: "{{ i.delegate_to | default(omit) }}"
+      notify: "{{ i.notify | default(omit) }}"
+      when:
+        - unarchive_result.failed | default(true)
+
+- name: Propagate and set attrs
+  ansible.builtin.include_tasks: _down2unp.yaml
+  loop_control:
+    loop_var: f
+  loop: >-
+    {%- if 'files' not in i and 'archive' in i -%}
+      {%- set result = [] -%}
+    {%- elif i.files | default([]) | length == 0 -%}
+      {%- set result = [{
+        'src': _meva_keys.download_name if not i.archive | default(false)
+          else _meva_keys.dest_path,
+        'name': _meva_keys.dest_path | basename,
+        'follow': i.follow | default(omit),
+        'owner': i.owner | default(i.down_owner | default(omit)),
+        'group': i.group | default(i.down_owner | default(omit)),
+        'file_mode': i.file_mode | default(i.down_mode | default(omit)),
+        'access_time': i.access_time | default(omit),
+        'access_time_format': i.access_time_format | default(omit),
+        'modification_time': i.modification_time | default(omit),
+        'modification_time_format': i.modification_time_format | default(omit),
+        'attributes': i.attributes | default(omit),
+        'follow': i.follow | default(omit),
+        'backup': i.backup | default(omit),
+        'checksum': i.checksum | default(omit),
+        'decrypt': i.decrypt | default(omit),
+        'directory_mode': i.directory_mode | default(omit),
+        'local_follow': i.local_follow | default(omit),
+        'selevel': i.selevel | default(omit),
+        'serole': i.serole | default(omit),
+        'setype': i.setype | default(omit),
+        'seuser': i.seuser | default(omit),
+        'unsafe_writes': i.unsafe_writes | default(omit),
+        'validate': i.validate | default(omit),
+        'dir_mode': i.dir_mode | default(omit),
+        'dir_owner': i.dir_owner | default(omit),
+        'dir_group': i.dir_group | default(omit),
+        'dir_force': i.dir_force | default(omit),
+        'dir_atime': i.dir_atime | default(omit),
+        'dir_atime_format': i.dir_atime_format | default(omit),
+        'dir_mtime': i.dir_mtime | default(omit),
+        'dir_mtime_format': i.dir_mtime_format | default(omit),
+        'dir_attributes': i.dir_attributes | default(omit),
+        'dir_follow': i.dir_follow | default(omit),
+        'dir_selevel': i.dir_selevel | default(omit),
+        'dir_serole': i.dir_serole | default(omit),
+        'dir_setype': i.dir_setype | default(omit),
+        'dir_seuser': i.dir_seuser | default(omit),
+        'notify': i.notify | default(omit),
+      } | dict2items | selectattr('value', 'ne', omit) | items2dict] -%}
+    {%- else -%}
+      {%- set result = i.files | default([]) | list -%}
+    {%- endif -%}
+    {{ result }}
