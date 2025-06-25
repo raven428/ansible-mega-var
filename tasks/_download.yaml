@@ -45,11 +45,11 @@
       {{ result }}
 
 - name: Github release download
-  ansible.builtin.include_tasks: _ghr2down.yaml
+  ansible.builtin.include_tasks: _down4ghr.yaml
   when: "'gh_tag' in i"
 
 - name: Simple file download
-  ansible.builtin.include_tasks: _file2down.yaml
+  ansible.builtin.include_tasks: _down4file.yaml
   when: "'gh_tag' not in i"
 
 - name: "Check creates [{{ _meva_check4creates }}] exists" # noqa name[template]
