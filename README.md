@@ -114,7 +114,7 @@ There are [the molecule tests](molecule/downloads/group_vars/all.yaml) cases des
 
 #### Single raw download (remote and local)
 
-Cases `1.1.1` and `1.1.2`:
+##### Case `1.1.1`
 
 ```yaml
 - url: "http://url.to/download.ext"
@@ -122,11 +122,13 @@ Cases `1.1.1` and `1.1.2`:
   delegate_to: localhost
 ```
 
-With `delegate_to` is set either to `localhost` or `127.0.0.1` file from `url` will be downloaded to Ansible controller first. Then `ansible.builtin.copy` will spread file to destination hosts. This can be useful when `url` source isn't able to handle a lot of requests from hosts in configuration
+##### Case `1.1.2`
 
-#### Single compressed download to remote
+With `delegate_to: localhost` is set, file from `url` will be downloaded to Ansible controller first. Then `ansible.builtin.copy` will spread file to destination hosts. This can be useful when `url` source isn't able to handle a lot of requests from hosts in configuration
 
-Case `1.2.1`:
+#### Single compressed download
+
+##### Case `1.2.1`
 
 ```yaml
 - url: "http://url.to/download.ext.gz"
@@ -137,47 +139,44 @@ Case `1.2.1`:
 
 This option will decompress downloaded file. Parameter `dest` should contain the destination directory name only, without a filename.
 
-Filename part of the decompressed file separated to `creates` key. The `archive: true` indicates that downloaded file should be decompressed extension from `uri`. Extension `gz`, `bz2`, `lz4`, `zst`, `lzma`, `xz` supported by [decompress](library/decompress.py) module. It can recognize file format only by extension, no content scan will be performed
+Filename part of the decompressed file should be in `creates` key. The `archive: true` indicates that downloaded file should be decompressed extension from `uri`. Extension `gz`, `bz2`, `lz4`, `zst`, `lzma`, `xz` supported by [decompress](library/decompress.py) module. It can recognize file format only by extension, no content scan will be performed
 
 Sometimes `uri` couldn't contain extension or even reliable filename. In this case you may set it by hand in `down_name` key. Temporary download will be placed to file in temporary directory with this name. Thus, decompress module able to handle file by extension
 
-#### Single compressed download through controller
+##### Case `1.2.2`
 
-Case `1.2.2`:
+If `delegate_to: localhost` is set, then downloading will be performed on the Ansible controller, decompressed, then propagated to a remote host after decompress
 
-```yaml
-- url: "http://url.to/download.ext.gz"
-  creates: "filename.ext"
-  delegate_to: "localhost"
-  archive: true
-  files:
-    - name: "filename.ext"
-      dest: "/dir/on/target/host/with/"
-```
+##### Case `1.2.3`
 
-Same stuff with decompress, but like `1.1.2` there will be performed a single download to Ansible controller. Either after successful download or updated `url` Ansible controller will decompress it to name from `creates` parameter. Then `ansible.builtin.copy` will spread file to destination hosts as the single element from `files:` list
+If, in additional, `remote_deco: true` is set, then downloading will be performed on the Ansible controller then downloaded result will be propagated to a remote host before decompress and decompressed on the remote host. Note an appropriate decompress module for python should be installed at the destination host
 
-#### Archive with a directory tree download to remote
+#### Archive with a directory tree: complete unarchive
 
-Case `1.3.1`:
+##### Case `1.3.1`
 
 ```yaml
 - url: "http://url.to/download.tar.gz"
   creates: "filename.ext"
   dest: "/dir/on/target/host"
   archive: true
+  delegate_to: localhost
+  files: []
 ```
 
-This will download a file to a remote host, perform `ansible.builtin.unarchive` and then traverse directory result directory with `chmod` directories to `dir_mode`, files with executive bit to `exec_mode` and non-executive files to `file_mode`
+This will download a file to a host, perform `ansible.builtin.unarchive` and then traverse result directory with [chmod_tree](library/chmod_tree.py) module: directories to `dir_mode`, files with executive bit to `exec_mode` and non-executive files to `file_mode`
 
-#### Archive with a directory tree download through controller
+##### Case `1.3.2`
 
-Case `1.3.2`:
+If `delegate_to: localhost` is set, then downloading will be performed on the Ansible controller then downloaded result will be propagated to the remote host before unarchive
+
+#### Archive with a directory tree: pick-me something
+
+##### Case `1.4.1` (was `1.3.2`)
 
 ```yaml
 - url: "http://url.to/download.tar.gz"
   creates: "filename.ext"
-  delegate_to: localhost
   dest: "/dir/on/target/host"
   archive: true
   files:
@@ -189,7 +188,13 @@ Case `1.3.2`:
       dest: "/one/more/dir/picture.jpg"
 ```
 
-There are a lot of options to upload by `files:` (shown as `f.` below) the full list:
+This will download the file to a target host, perform `ansible.builtin.unarchive`, then pick elements from list of `files:` and propagate it to certain path
+
+##### Case `1.4.2`
+
+If `delegate_to: localhost` is set, then downloading will be performed on the Ansible controller, perform `ansible.builtin.unarchive` also there, then pick elements from list of `files:` and propagate it to certain path
+
+There are a lot of options in `files:` definitions (shown as `f.` below) the full list:
 
 - Both `dest` and `f.dest` are either relative or undefined or empty will raise error
 - If `dest` is defined, it should be absolute otherwise error will be raised. Other options are similar as above:
