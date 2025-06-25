@@ -31,15 +31,6 @@
         {{ prefix ~ f_dest }}
       {%- endif -%}
 
-- name: Debug
-  ansible.builtin.debug:
-    msg:
-      - "i.dest: [{{ i.dest | default('') }}]"
-      - "f.dest: [{{ f.dest | default('') }}]"
-      - "f.name: [{{ f.name | default('') }}]"
-      - "_meva_dest_path: {{ _meva_dest_path }}"
-      - "_meva_prof_name: {{ _meva_prof_name }}"
-
 - name: Ensure destination directory exist
   ansible.builtin.file:
     state: "directory"

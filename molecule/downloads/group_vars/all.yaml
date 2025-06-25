@@ -307,6 +307,7 @@ tests_meva_ghr2down:
       }}-{{ download_options.direct }}-{{ ver2down }}.tar.xz
     creates: "pyenv/build-{{ ver2down }}"
     file_mode: "0641"
+    chmod_verbose: true
     archive: true
     dest: >-
       {{ download_root }}/{{ download_types.release }}/{{ download_paths.arch_tree

@@ -56,7 +56,7 @@
 /tmp/molecule/simple/arch-tree/controller-copy/relative-f.dest-trailing-yes/bin/bin/pyenv -rwxr-xr-- root root 16
 /tmp/molecule/simple/arch-tree/controller-copy/relative-f.dest-trailing-yes/bin/bin/pyenv 0d40c329f4a212791651d6bd630c9e4d
 /tmp/molecule/simple/arch-tree/controller-rsync drwxr-xr-x root root
-/tmp/molecule/simple/arch-tree/direct-download drwxr-x--- root root
+/tmp/molecule/simple/arch-tree/direct-download drwxr-xr-x root root
 /tmp/molecule/simple/arch-tree/direct-download/pyenv drwxr-x--- root root
 /tmp/molecule/simple/arch-tree/direct-download/pyenv/.agignore -rwx---r-x root root 19
 /tmp/molecule/simple/arch-tree/direct-download/pyenv/.agignore 751e052da74c6273356ffd32bf6162b1
