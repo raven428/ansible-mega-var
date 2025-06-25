@@ -27,12 +27,6 @@
       length > 0 else 'dest-not-set/' -%}
       {%- if 'delegate_to' in i -%}
         {%- set result = _meva_down_name ~ '-dir' -%}
-      {%- elif 'creates' in i -%}
-        {%- if i.creates | dirname == '' -%}
-          {%- set result = result ~ i.creates -%}
-        {%- else -%}
-          {%- set result = result ~ i.creates | dirname -%}
-        {%- endif -%}
       {%- endif -%}
       {{ result }}
     _meva_check4creates: >-
@@ -76,9 +70,4 @@
     - not _file_creates.stat.exists | default(false) or _download_archive.changed
 
 - name: Unpack downloaded archive and propagate files
-  ansible.builtin.include_tasks: _unp4pro.yaml
-  when: "'delegate_to' in i"
-
-- name: Unpack downloaded archive at the destination
-  ansible.builtin.include_tasks: _unp2loc.yaml
-  when: "'delegate_to' not in i"
+  ansible.builtin.include_tasks: _unp0.yaml

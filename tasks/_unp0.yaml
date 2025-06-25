@@ -2,34 +2,68 @@
 - name: Unpack archive block
   when: i.archive | default(false)
   block:
-    - name: Recursive create directory
+    - name: Ensure target directory exists
       ansible.builtin.file:
         path: "{{ _meva_dest_path }}"
         state: directory
         mode: "0755"
-      become: false
-      check_mode: false
-      delegate_to: "{{ i.delegate_to }}"
+        owner: "{{ i.owner | default(omit) if 'delegate_to' not in i else omit }}"
+        group: "{{ i.group | default(omit) if 'delegate_to' not in i else omit }}"
+      become: "{{ ('delegate_to' not in i) | bool }}"
+      check_mode: "{{ false if 'delegate_to' in i else omit }}"
+      delegate_to: "{{ i.delegate_to | default(omit) }}"
     - name: Unpack from archive
       ansible.builtin.unarchive:
         src: "{{ _meva_down_name }}"
         dest: "{{ _meva_dest_path }}"
         creates: "{{ _meva_check4creates }}"
-      become: false
-      check_mode: false
-      delegate_to: "{{ i.delegate_to }}"
+        remote_src: "{{ ('delegate_to' not in i) | bool }}"
+        owner: "{{ i.owner | default(omit) if 'delegate_to' not in i else omit }}"
+        group: "{{ i.group | default(omit) if 'delegate_to' not in i else omit }}"
+      become: "{{ ('delegate_to' not in i) | bool }}"
+      check_mode: "{{ false if 'delegate_to' in i else omit }}"
       register: unarchive_result
       ignore_errors: true
       when: i.creates | dirname != ''
-    - name: Unarchive failed, trying to decompress
-      decompress:
-        src: "{{ _meva_down_name }}"
-        dst: "{{ _meva_check4creates }}"
-        force: "{{ i.force | default(_download_archive.changed) }}"
-      become: false
-      check_mode: false
-      delegate_to: "{{ i.delegate_to }}"
-      when: unarchive_result.failed | default(true)
+      delegate_to: "{{ i.delegate_to | default(omit) }}"
+
+    - name: Decompress block if unarchive failed
+      when:
+        - unarchive_result.failed | default(true)
+        - "'delegate_to' in i or not ansible_check_mode"
+      block:
+        - name: Unarchive failed, trying to decompress
+          decompress:
+            src: "{{ _meva_down_name }}"
+            dst: "{{ _meva_check4creates }}"
+            force: "{{ i.force | default(_download_archive.changed) }}"
+          become: false
+          check_mode: "{{ false if 'delegate_to' in i else omit }}"
+          delegate_to: "{{ i.delegate_to | default(omit) }}"
+        - name: Set owner, group and mode after decompress
+          ansible.builtin.file:
+            path: "{{ _meva_check4creates }}"
+            mode: "{{ i.file_mode | default(omit) }}"
+            owner: "{{ i.owner | default(omit) }}"
+            group: "{{ i.group | default(omit) }}"
+            access_time: "{{ i.access_time | default(omit) }}"
+            access_time_format: "{{ i.access_time_format | default(omit) }}"
+            modification_time: "{{ i.modification_time | default(omit) }}"
+            modification_time_format: "{{ i.modification_time_format | default(omit) }}"
+          notify: "{{ i.notify | default(omit) }}"
+          delegate_to: "{{ i.delegate_to | default(omit) }}"
+
+    - name: Apply filesystem modes
+      when:
+        - not unarchive_result.failed | default(true)
+        - unarchive_result.changed | default(false)
+      chmod_tree:
+        path: "{{ _meva_dest_path }}"
+        dir_mode: "{{ i.dir_mode | default('0755') }}"
+        file_mode: "{{ i.file_mode | default('0644') }}"
+        exec_mode: "{{ i.exec_mode | default('0755') }}"
+        verbose: "{{ i.chmod_verbose | default(false) }}"
+      delegate_to: "{{ i.delegate_to | default(omit) }}"
 
 - name: Propagate and set attrs
   ansible.builtin.include_tasks: _unp1.yaml
@@ -75,6 +109,7 @@
         'dir_serole': i.dir_serole | default(omit),
         'dir_setype': i.dir_setype | default(omit),
         'dir_seuser': i.dir_seuser | default(omit),
+        'remote_src': 'delegate_to' not in i,
       }] -%}
     {%- else -%}
       {%- set result = i.files | default([]) | list -%}
