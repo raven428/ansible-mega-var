@@ -145,11 +145,11 @@ Sometimes `uri` couldn't contain extension or even reliable filename. In this ca
 
 ##### Case `1.2.2`
 
-If `delegate_to: localhost` is set, then downloading will be performed on the Ansible controller then downloaded result will be propagated to a remote host before decompress and decompressed on the remote host. Note an appropriate decompress module for python should be installed at the destination host
+If `delegate_to: localhost` is set, then downloading will be performed on the Ansible controller, decompressed, then propagated to a remote host after decompress
 
 ##### Case `1.2.3`
 
-If `something` is set, then downloading will be performed on the Ansible controller, decompressed, then propagated to a remote host before decompress
+If `something` is set, then downloading will be performed on the Ansible controller then downloaded result will be propagated to a remote host before decompress and decompressed on the remote host. Note an appropriate decompress module for python should be installed at the destination host
 
 #### Archive with a directory tree: complete unarchive
 
