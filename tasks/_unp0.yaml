@@ -109,7 +109,6 @@
         'dir_serole': i.dir_serole | default(omit),
         'dir_setype': i.dir_setype | default(omit),
         'dir_seuser': i.dir_seuser | default(omit),
-        'remote_src': 'delegate_to' not in i,
       }] -%}
     {%- else -%}
       {%- set result = i.files | default([]) | list -%}

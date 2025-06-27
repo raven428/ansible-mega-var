@@ -77,7 +77,7 @@
     seuser: "{{ f.seuser | default(omit) }}"
     unsafe_writes: "{{ f.unsafe_writes | default(omit) }}"
     validate: "{{ f.validate | default(omit) }}"
-    remote_src: "{{ f.remote_src | default(omit) }}"
+    remote_src: "{{ f.remote_src | default(('delegate_to' not in i) | bool) }}"
   notify: "{{ f.notify | default(omit) }}"
   register: copy_result
 
