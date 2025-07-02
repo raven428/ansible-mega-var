@@ -78,6 +78,7 @@ tests_meva_file2down:
       }}-{{ download_options.direct }}.xz
     creates: "{{ download_file_name }}"
     down_mode: "0641"
+    exec_bit: "0000"
     modification_time: "{{ default_time }}"
   # 1. simple HTTPS connection by URI
   #   1. single raw
@@ -91,6 +92,7 @@ tests_meva_file2down:
       }}-{{ download_options.con_copy }}.xz
     creates: "{{ download_file_name }}"
     down_mode: "0641"
+    exec_bit: "0000"
     modification_time: "{{ default_time }}"
     delegate_to: localhost # DevSkim: ignore DS162092
   # 1. simple HTTPS connection by URI
@@ -105,6 +107,7 @@ tests_meva_file2down:
       }}-{{ download_options.direct }}.xz
     creates: "{{ decompressed_file_name }}"
     down_mode: "0641"
+    exec_bit: "0000"
     modification_time: "{{ default_time }}"
     archive: true
     files: []
@@ -159,88 +162,101 @@ tests_meva_file2down:
     modification_time: "{{ default_time }}"
     archive: true
 
-  # # 1. simple HTTPS connection by URI
-  # #   4. archive with directory tree
-  # #     1. directly to target host
-  # - url: "{{ download_files.simple_uri }}"
-  #   down_name: >-
-  #     {{ download_types.simple }}-{{ download_paths.arch_tree
-  #     }}-{{ download_options.con_copy }}-{{ ver2down }}.tar.xz
-  #   creates: "pyenv/build-{{ ver2down }}"
-  #   dest: >-
-  #     {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
-  #     }}/{{ download_options.con_copy }}
-  #   archive: true
-  #   files:
-  #     # 0.0.0 result = /i.dest/pyenv/Makefile
-  #     - name: "pyenv/Makefile"
-  #       file_mode: "0640"
-  #     # 0.0.1 result = /i.dest/f.dest-dir/Makefile
-  #     - name: "pyenv/Makefile"
-  #       dest: "f.dest-dir1/"
-  #       file_mode: "0641"
-  #     # 0.0.2 result = /i.dest/f.dest-dir/Makefile-in-f.dest
-  #     - name: "pyenv/Makefile"
-  #       dest: "f.dest-dir2/in-f.dest-Makefile"
-  #       file_mode: "0642"
-  #     # 0.1.0 result = /f.dest/Makefile
-  #     - name: "pyenv/Makefile"
-  #       dest: >-
-  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
-  #         }}/{{ download_options.con_copy }}/f.dest-abs1/
-  #       file_mode: "0640"
-  #     # 0.1.1 result = f.dest
-  #     - name: "pyenv/pyenv.d/rehash/conda.d/default.list"
-  #       dest: >-
-  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
-  #         }}/{{ download_options.con_copy }}/f.dest-abs2/file-default.list
-  #       file_mode: "0640"
-  #     # 0.2.0/0.0.0 result = /i.dest/pyenv/bin/pyenv
-  #     - name: "pyenv/bin/"
-  #       file_mode: "0755"
-  #     # 0.2.0/0.0.1 result = /i.dest/relative-f.dest-trailing-slash-yes/
-  #     - name: "pyenv/bin/"
-  #       dest: "relative-f.dest-trailing-slash-yes/"
-  #       file_mode: "0543"
-  #     # 0.2.0/0.0.2 result = /i.dest/relative-f.dest-trailing-slash-no/
-  #     - name: "pyenv/bin/"
-  #       dest: "relative-f.dest-trailing-slash-no"
-  #       file_mode: "0643"
-  #     # 0.2.0/0.1.0 result = /i.dest/absolute-f.dest-trailing-slash-yes/pyenv
-  #     - name: "pyenv/bin/"
-  #       dest: >-
-  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
-  #         }}/{{ download_options.con_copy }}/absolute-f.dest-trailing-slash-yes/
-  #       file_mode: "0755"
-  #     # 0.2.0/0.1.1 result = /i.dest/absolute-f.dest-trailing-slash-no/pyenv
-  #     - name: "pyenv/bin/"
-  #       dest: >-
-  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
-  #         }}/{{ download_options.con_copy }}/absolute-f.dest-trailing-slash-no
-  #       file_mode: "0752"
-  #     # 0.2.1/0.0.0 result = /i.dest/pyenv/pyenv.d/install
-  #     - name: "pyenv/pyenv.d/install"
-  #       file_mode: "0755"
-  #     # 0.2.1/0.0.1 result = /i.dest/relative-f.dest-trailing-yes/bin/pyenv
-  #     - name: "pyenv/bin"
-  #       dest: "relative-f.dest-trailing-yes/"
-  #       file_mode: "0754"
-  #     # 0.2.1/0.0.2 result = /i.dest/relative-f.dest-trailing-no/bin/pyenv
-  #     - name: "pyenv/bin"
-  #       dest: "relative-f.dest-trailing-no"
-  #       file_mode: "0743"
-  #     # 0.2.1/0.1.0 result = /i.dest/absolute-f.dest-trailing-yes/bin/pyenv
-  #     - name: "pyenv/bin"
-  #       dest: >-
-  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
-  #         }}/{{ download_options.con_copy }}/absolute-f.dest-trailing-yes/
-  #       file_mode: "0742"
-  #     # 0.2.1/0.1.1 result = /i.dest/absolute-f.dest-trailing-no/bin/pyenv
-  #     - name: "pyenv/bin"
-  #       dest: >-
-  #         {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
-  #         }}/{{ download_options.con_copy }}/absolute-f.dest-no
-  #       file_mode: "0731"
+  # 1. simple HTTPS connection by URI
+  #   4. archive with directory tree
+  #     1. directly to target host
+  - url: "{{ download_files.simple_uri }}"
+    down_name: >-
+      {{ download_types.simple }}-{{ download_paths.arch_tree
+      }}-{{ download_options.direct }}-{{ ver2down }}.tar.xz
+    creates: "pyenv/build-{{ ver2down }}"
+    dest: >-
+      {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+      }}/{{ download_options.direct }}
+    archive: true
+    files:
+      # 0.0.0 result = /i.dest/pyenv/Makefile
+      - name: "pyenv/Makefile"
+        file_mode: "0640"
+      # 0.0.1 result = /i.dest/f.dest-dir/Makefile
+      - name: "pyenv/Makefile"
+        dest: "f.dest-dir1/"
+        exec_mode: "0641"
+        file_mode: "0641"
+      # 0.0.2 result = /i.dest/f.dest-dir/Makefile-in-f.dest
+      - name: "pyenv/Makefile"
+        dest: "f.dest-dir2/in-f.dest-Makefile"
+        file_mode: "0642"
+      # 0.1.0 result = /f.dest/Makefile
+      - name: "pyenv/Makefile"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+          }}/{{ download_options.direct }}/f.dest-abs1/
+        file_mode: "0640"
+      # 0.1.1 result = f.dest
+      - name: "pyenv/pyenv.d/rehash/conda.d/default.list"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+          }}/{{ download_options.direct }}/f.dest-abs2/file-default.list
+        file_mode: "0640"
+      # 0.2.0/0.0.0 result = /i.dest/pyenv/bin/pyenv
+      - name: "pyenv/bin/"
+        file_mode: "0755"
+      # 0.2.0/0.0.1 result = /i.dest/relative-f.dest-trailing-slash-yes/
+      - name: "pyenv/bin/"
+        dest: "relative-f.dest-trailing-slash-yes/"
+        dir_mode: "0543"
+        exec_mode: "0755"
+        file_mode: "0543"
+      # 0.2.0/0.0.2 result = /i.dest/relative-f.dest-trailing-slash-no/
+      - name: "pyenv/bin/"
+        dest: "relative-f.dest-trailing-slash-no"
+        dir_mode: "0643"
+        exec_mode: "0755"
+        file_mode: "0643"
+      # 0.2.0/0.1.0 result = /i.dest/absolute-f.dest-trailing-slash-yes/pyenv
+      - name: "pyenv/bin/"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+          }}/{{ download_options.direct }}/absolute-f.dest-trailing-slash-yes/
+        file_mode: "0755"
+      # 0.2.0/0.1.1 result = /i.dest/absolute-f.dest-trailing-slash-no/pyenv
+      - name: "pyenv/bin/"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+          }}/{{ download_options.direct }}/absolute-f.dest-trailing-slash-no
+        dir_mode: "0752"
+        exec_mode: "0755"
+        file_mode: "0752"
+      # 0.2.1/0.0.0 result = /i.dest/pyenv/pyenv.d/install
+      - name: "pyenv/pyenv.d/install"
+        file_mode: "0755"
+      # 0.2.1/0.0.1 result = /i.dest/relative-f.dest-trailing-yes/bin/pyenv
+      - name: "pyenv/bin"
+        dest: "relative-f.dest-trailing-yes/"
+        file_mode: "0754"
+      # 0.2.1/0.0.2 result = /i.dest/relative-f.dest-trailing-no/bin/pyenv
+      - name: "pyenv/bin"
+        dest: "relative-f.dest-trailing-no"
+        dir_mode: "0743"
+        exec_mode: "0755"
+        file_mode: "0743"
+      # 0.2.1/0.1.0 result = /i.dest/absolute-f.dest-trailing-yes/bin/pyenv
+      - name: "pyenv/bin"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+          }}/{{ download_options.direct }}/absolute-f.dest-trailing-yes/
+        dir_mode: "0731"
+        exec_mode: "0731"
+        file_mode: "0742"
+      # 0.2.1/0.1.1 result = /i.dest/absolute-f.dest-trailing-no/bin/pyenv
+      - name: "pyenv/bin"
+        dest: >-
+          {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
+          }}/{{ download_options.direct }}/absolute-f.dest-no
+        dir_mode: "0731"
+        exec_mode: "0755"
+        file_mode: "0731"
 
   # 1. simple HTTPS connection by URI
   #   4. archive with directory tree
@@ -262,6 +278,7 @@ tests_meva_file2down:
       # 0.0.1 result = /i.dest/f.dest-dir/Makefile
       - name: "pyenv/Makefile"
         dest: "f.dest-dir1/"
+        exec_mode: "0641"
         file_mode: "0641"
       # 0.0.2 result = /i.dest/f.dest-dir/Makefile-in-f.dest
       - name: "pyenv/Makefile"
@@ -285,10 +302,14 @@ tests_meva_file2down:
       # 0.2.0/0.0.1 result = /i.dest/relative-f.dest-trailing-slash-yes/
       - name: "pyenv/bin/"
         dest: "relative-f.dest-trailing-slash-yes/"
+        dir_mode: "0543"
+        exec_mode: "0755"
         file_mode: "0543"
       # 0.2.0/0.0.2 result = /i.dest/relative-f.dest-trailing-slash-no/
       - name: "pyenv/bin/"
         dest: "relative-f.dest-trailing-slash-no"
+        dir_mode: "0643"
+        exec_mode: "0755"
         file_mode: "0643"
       # 0.2.0/0.1.0 result = /i.dest/absolute-f.dest-trailing-slash-yes/pyenv
       - name: "pyenv/bin/"
@@ -301,6 +322,8 @@ tests_meva_file2down:
         dest: >-
           {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
           }}/{{ download_options.con_copy }}/absolute-f.dest-trailing-slash-no
+        dir_mode: "0752"
+        exec_mode: "0755"
         file_mode: "0752"
       # 0.2.1/0.0.0 result = /i.dest/pyenv/pyenv.d/install
       - name: "pyenv/pyenv.d/install"
@@ -312,18 +335,24 @@ tests_meva_file2down:
       # 0.2.1/0.0.2 result = /i.dest/relative-f.dest-trailing-no/bin/pyenv
       - name: "pyenv/bin"
         dest: "relative-f.dest-trailing-no"
+        dir_mode: "0743"
+        exec_mode: "0755"
         file_mode: "0743"
       # 0.2.1/0.1.0 result = /i.dest/absolute-f.dest-trailing-yes/bin/pyenv
       - name: "pyenv/bin"
         dest: >-
           {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
           }}/{{ download_options.con_copy }}/absolute-f.dest-trailing-yes/
+        dir_mode: "0731"
+        exec_mode: "0731"
         file_mode: "0742"
       # 0.2.1/0.1.1 result = /i.dest/absolute-f.dest-trailing-no/bin/pyenv
       - name: "pyenv/bin"
         dest: >-
           {{ download_root }}/{{ download_types.simple }}/{{ download_paths.arch_tree
           }}/{{ download_options.con_copy }}/absolute-f.dest-no
+        dir_mode: "0731"
+        exec_mode: "0755"
         file_mode: "0731"
 tests_meva_ghr2down:
   # 2. release from GitHub for platform and version lookup using auth token
@@ -470,6 +499,7 @@ remote_meva_file2down: >-
       'creates': decompressed_file_name,
       'archive': 'true',
       'down_mode': '0641',
+      'exec_bit': '0000',
       'modification_time': default_time,
       'files': [],
     }) -%}
@@ -486,6 +516,7 @@ local_meva_file2down: >-
       'delegate_to': delegate_placeholder,
       'archive': 'true',
       'down_mode': '0642',
+      'exec_bit': '0000',
       'modification_time': default_time,
       'files': [],
     }) -%}

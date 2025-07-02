@@ -51,7 +51,7 @@
   ansible.builtin.include_tasks: _down4file.yaml
   when: "'gh_tag' not in i"
 
-- name: "Check creates [{{ _meva_keys.dest_path }}] exists" # noqa name[template]
+- name: "Check creates '{{ _meva_keys.dest_path }}' exists" # noqa name[template]
   ansible.builtin.stat:
     path: "{{ _meva_keys.dest_path }}"
   delegate_to: "{{ i.delegate_to if _meva_keys.unarchive_delegation else omit }}"
@@ -60,8 +60,8 @@
     - i.archive | default(false)
 
 - name:
-    Ensure [{{ _meva_keys.dest_path | dirname }}] absent for upgrade due creates
-    [{{ _meva_keys.dest_path }}] missed or updated=[{{ _download_archive.changed }}] by
+    Ensure '{{ _meva_keys.dest_path | dirname }}' absent for upgrade due creates
+    '{{ _meva_keys.dest_path }}' missed or updated='{{ _download_archive.changed }}' by
     downloaded checksum # noqa name[template]
   ansible.builtin.file:
     state: absent
@@ -147,7 +147,10 @@
         'follow': i.follow | default(omit),
         'owner': i.owner | default(i.down_owner | default(omit)),
         'group': i.group | default(i.down_owner | default(omit)),
-        'file_mode': i.file_mode | default(i.down_mode | default(omit)),
+        'dir_mode': i.dir_mode | default(omit),
+        'exec_mode': i.exec_mode | default(omit),
+        'file_mode': i.file_mode | default(i.down_mode) | default(omit),
+        'exec_bit': i.exec_bit | default(omit),
         'access_time': i.access_time | default(omit),
         'access_time_format': i.access_time_format | default(omit),
         'modification_time': i.modification_time | default(omit),
