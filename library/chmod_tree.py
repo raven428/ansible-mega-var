@@ -125,7 +125,11 @@ def main() -> None:
   follow = module.params["follow"]
   verbose = module.params["verbose"]
 
-  changed_count = 0
+  changed_count = {
+    "dir": 0,
+    "exec": 0,
+    "other": 0,
+  }
   changed_files = []
   changed = False
 
@@ -144,12 +148,12 @@ def main() -> None:
         if not module.check_mode:
           full_path.chmod(dir_mode, follow_symlinks=follow)
         changed = True
-        changed_count += 1
+        changed_count["dir"] += 1
         if verbose:
           changed_files.append({
             "path": str(full_path),
-            "before": oct(current_mode),
-            "after": oct(dir_mode),
+            "after": f"{dir_mode:o}",
+            "before": f"{current_mode:o}",
           })
 
     # Files
@@ -165,18 +169,22 @@ def main() -> None:
         if not module.check_mode:
           full_path.chmod(target_mode, follow_symlinks=follow)
         changed = True
-        changed_count += 1
+        if is_exec:
+          changed_count["exec"] += 1
+        else:
+          changed_count["other"] += 1
         if verbose:
           changed_files.append({
             "path": str(full_path),
-            "before": oct(current_mode),
-            "after": oct(target_mode),
+            "after": f"{target_mode:o}",
+            "before": f"{current_mode:o}",
           })
 
   module.exit_json(
     changed=changed,
     message=f"Changed [{changed_count}] file modes: {changed_files}"
-    if verbose else f"Changed [{changed_count}] file modes"
+    if verbose else f"Changed [{changed_count}] dir ({dir_mode:o}), " +
+    f"exec ({exec_mode:o}) and other ({file_mode:o})  modes"
   )
 
 
