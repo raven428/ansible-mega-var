@@ -1,0 +1,21 @@
+# initial directories
+/tmp/molecule drwxr-xr-x root root
+/tmp/molecule/arch-full drwxr-xr-x root root
+/tmp/molecule/arch-full/controller-copy drwxr-xr-x root root
+/tmp/molecule/arch-full/controller-rsync drwxr-xr-x root root
+/tmp/molecule/arch-full/direct-download drwxr-xr-x root root
+/tmp/molecule/arch-tree drwxr-xr-x root root
+/tmp/molecule/arch-tree/controller-copy drwxr-xr-x root root
+/tmp/molecule/arch-tree/controller-rsync drwxr-xr-x root root
+/tmp/molecule/arch-tree/direct-download drwxr-xr-x root root
+/tmp/molecule/compress drwxr-xr-x root root
+/tmp/molecule/compress/controller-copy drwxr-xr-x root root
+/tmp/molecule/compress/controller-rsync drwxr-xr-x root root
+/tmp/molecule/compress/direct-download drwxr-xr-x root root
+/tmp/molecule/single drwxr-xr-x root root
+/tmp/molecule/single/controller-copy drwxr-xr-x root root
+/tmp/molecule/single/controller-rsync drwxr-xr-x root root
+/tmp/molecule/single/direct-download drwxr-xr-x root root
+
+# flag
+/tmp/molecule/to-notify-verifier-that-converged-in-check-mode drwxr-xr-x root root

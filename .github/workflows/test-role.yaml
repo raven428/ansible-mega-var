@@ -18,17 +18,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        d_type:
-          - simple
-          - release
-          - compress
+        prop_type:
+          - simple_other
+          - simple_target
+          - simple_controller
+          # - release_other
+          # - release_target
+          # - release_controller
+          - compress # (full=remote, split=local)
         call_mode:
           - full
           - split
         ansible_ver:
-          - "6_7_0"
-          - "9_9_0"
-          - "11_1_0"
+          - "07"
+          - "09"
+          - "11"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,7 +40,7 @@ jobs:
           submodules: true
       - name: test role
         env:
-          ANSIBLE_D_TYPE: ${{ matrix.d_type }}
+          ANSIBLE_PROP_TYPE: ${{ matrix.prop_type }}
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
           IMAGE_NAME: ansible-${{ matrix.ansible_ver }}:latest
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}

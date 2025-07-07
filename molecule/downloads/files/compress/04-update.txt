@@ -1,0 +1,19 @@
+/tmp/molecule drwxr-xr-x root root
+/tmp/molecule/bz2 drwxr-xr-x root root
+/tmp/molecule/bz2/decompressed-file-name -rw-r----x root root 71680
+/tmp/molecule/bz2/decompressed-file-name 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/gz drwxr-xr-x root root
+/tmp/molecule/gz/decompressed-file-name -rw-r----x root root 71680
+/tmp/molecule/gz/decompressed-file-name 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/lz4 drwxr-xr-x root root
+/tmp/molecule/lz4/decompressed-file-name -rw-r----x root root 71680
+/tmp/molecule/lz4/decompressed-file-name 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/lzma drwxr-xr-x root root
+/tmp/molecule/lzma/decompressed-file-name -rw-r----x root root 71680
+/tmp/molecule/lzma/decompressed-file-name 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/xz drwxr-xr-x root root
+/tmp/molecule/xz/decompressed-file-name -rw-r----x root root 71680
+/tmp/molecule/xz/decompressed-file-name 06829be1a582e580e0425823fdc1edc7
+/tmp/molecule/zst drwxr-xr-x root root
+/tmp/molecule/zst/decompressed-file-name -rw-r----x root root 71680
+/tmp/molecule/zst/decompressed-file-name 06829be1a582e580e0425823fdc1edc7

@@ -74,7 +74,7 @@
   when: "'size' in copy_result or
     _meva_unp.stat.exists | default(false)"
   block:
-    - name: Set owner, group attrs and mode
+    - name: Set owner, group and attrs
       ansible.builtin.file:
         state: "{{ 'directory' if meva_pro.src_is_dir | default(false) else omit }}"
         recurse: "{{ true if meva_pro.src_is_dir | default(false) else omit }}"

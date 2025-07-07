@@ -10,13 +10,12 @@
     - name: Upload etalon output
       ansible.builtin.copy:
         src: >-
-          {%- set dir = d_type -%}
-          {%- if d_type == 'compress' -%}
-            {%- if call_mode == 'full' -%}
-              {%- set dir = 'local' -%}
-            {%- else -%}
-              {%- set dir = 'remote' -%}
-            {%- endif -%}
+          {%- if prop_type.endswith('_target') or prop_type.endswith('_controller') -%}
+            {%- set dir = 'pickup' -%}
+          {%- elif prop_type == 'compress' -%}
+            {%- set dir = 'compress' -%}
+          {%- else -%}
+            {%- set dir = 'other' -%}
           {%- endif -%}
           files/{{ dir }}/{{ file_name }}.txt
         dest: "/tmp/{{ file_name }}"
