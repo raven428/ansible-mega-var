@@ -1,0 +1,106 @@
+---
+- name: Set params for propagation
+  meva_pro:
+    src_dir: "{{ _meva_keys.dest_dir | default(omit) }}"
+    f_name: "{{ f.name | default(omit) }}"
+    f_dest: "{{ f.dest | default(omit) }}"
+    i_dest: "{{ i.dest | default(omit) }}"
+    f_src: "{{ f.src | default(omit) }}"
+  register: meva_pro
+  delegate_to: "{{ i.delegate_to | default(omit) }}"
+
+- name: Ensure destination directory exist
+  ansible.builtin.file:
+    state: "directory"
+    path: "{{ meva_pro.dest4dir }}"
+    mode: "{{ f.dir_mode | default(omit) }}"
+    owner: "{{ f.dir_owner | default(f.owner) | default(omit) }}"
+    group: "{{ f.dir_group | default(f.group) | default(omit) }}"
+    force: "{{ f.dir_force | default(f.force) | default(_download_archive.changed) }}"
+    access_time: "{{ f.dir_atime | default(omit) }}"
+    access_time_format: "{{ f.dir_atime_format | default(omit) }}"
+    modification_time: "{{ f.dir_mtime | default(omit) }}"
+    modification_time_format: "{{ f.dir_mtime_format | default(omit) }}"
+    attributes: "{{ f.dir_attributes | default(omit) }}"
+    follow: "{{ f.dir_follow | default(omit) }}"
+    selevel: "{{ f.dir_selevel | default(f.selevel) | default(omit) }}"
+    serole: "{{ f.dir_serole | default(f.serole) | default(omit) }}"
+    setype: "{{ f.dir_setype | default(f.setype) | default(omit) }}"
+    seuser: "{{ f.dir_seuser | default(f.seuser) | default(omit) }}"
+  notify: "{{ f.notify | default(omit) }}"
+  register: directory_result
+  when: >-
+    meva_pro.dest4dir != ''
+
+- name: Propagate unpacked files
+  ansible.builtin.copy:
+    src: "{{ meva_pro.src4copy }}"
+    dest: "{{ meva_pro.dest4copy }}"
+    force: "{{ f.force | default(_download_archive.changed or
+      meva_pro.src4copy.endswith('/')) }}"
+    owner: "{{ f.owner | default(omit) }}"
+    group: "{{ f.group | default(omit) }}"
+    mode: "{{ omit }}" # performed by chmod_tree
+    attributes: "{{ f.attributes | default(omit) }}"
+    follow: "{{ f.follow | default(omit) }}"
+    backup: "{{ f.backup | default(omit) }}"
+    checksum: "{{ f.checksum | default(omit) }}"
+    decrypt: "{{ f.decrypt | default(omit) }}"
+    directory_mode: "{{ f.dir_mode | default(omit) }}"
+    local_follow: "{{ f.local_follow | default(omit) }}"
+    selevel: "{{ f.selevel | default(omit) }}"
+    serole: "{{ f.serole | default(omit) }}"
+    setype: "{{ f.setype | default(omit) }}"
+    seuser: "{{ f.seuser | default(omit) }}"
+    unsafe_writes: "{{ f.unsafe_writes | default(omit) }}"
+    validate: "{{ f.validate | default(omit) }}"
+    remote_src: "{{ f.remote_src | default(('delegate_to' not in i) | bool) }}"
+  notify: "{{ f.notify | default(omit) }}"
+  register: copy_result
+  # mode with --check is failing here with non-existent destination directory,
+  # so, skipping this case by condition:
+  when: >-
+    f.remote_src | default('delegate_to' not in i) and not ansible_check_mode or
+    not f.remote_src | default('delegate_to' not in i) or
+    'state' in directory_result or
+    meva_pro.dest4dir == ''
+
+- name: "Check propagation '{{ meva_pro.dest4path }}' exists" # noqa name[template]
+  ansible.builtin.stat:
+    path: "{{ meva_pro.dest4path }}"
+  register: _meva_unp
+
+- name: Settings block
+  when: "'size' in copy_result or
+    _meva_unp.stat.exists | default(false)"
+  block:
+    - name: Set owner, group and attrs
+      ansible.builtin.file:
+        state: "{{ 'directory' if meva_pro.src_is_dir | default(false) else omit }}"
+        recurse: "{{ true if meva_pro.src_is_dir | default(false) else omit }}"
+        path: "{{ meva_pro.dest4path }}"
+        owner: "{{ f.owner | default(omit) }}"
+        group: "{{ f.group | default(omit) }}"
+        force: "{{ f.force | default(_download_archive.changed) }}"
+        access_time: "{{ f.access_time | default(omit) }}"
+        access_time_format: "{{ f.access_time_format | default(omit) }}"
+        modification_time: "{{ f.modification_time | default(omit) }}"
+        modification_time_format: "{{ f.modification_time_format | default(omit) }}"
+        attributes: "{{ f.attributes | default(omit) }}"
+        follow: "{{ f.follow | default(omit) }}"
+        selevel: "{{ f.selevel | default(omit) }}"
+        serole: "{{ f.serole | default(omit) }}"
+        setype: "{{ f.setype | default(omit) }}"
+        seuser: "{{ f.seuser | default(omit) }}"
+      notify: "{{ f.notify | default(omit) }}"
+    - name: Apply filesystem modes
+      chmod_tree:
+        path: "{{ meva_pro.dest4path }}"
+        dir_mode: "{{ f.dir_mode | default(omit) }}"
+        file_mode: "{{ f.file_mode | default(omit) }}"
+        exec_mode: "{{ f.exec_mode | default(omit) }}"
+        verbose: "{{ f.chmod_verbose | default(omit) }}"
+        exec_bit: "{{ f.exec_bit | default(omit) }}"
+        skip_entry: false
+        always_unchanged: true
+      notify: "{{ f.notify | default(omit) }}"

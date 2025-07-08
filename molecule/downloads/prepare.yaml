@@ -36,6 +36,4 @@
       loop_control:
         loop_var: i
       loop: "{{ dirs2prepare }}"
-      when:
-        - d_type == 'simple' or d_type == 'release'
-        - call_mode == 'full' or call_mode == 'split'
+      when: "prop_type.endswith('_other')"

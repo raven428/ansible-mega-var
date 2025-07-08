@@ -1,6 +1,5 @@
 ---
 extends: default
-
 rules:
   indentation:
     level: error
@@ -8,19 +7,25 @@ rules:
   document-start:
     level: error
   truthy:
+    level: error
     allowed-values: ["true", "false", "yes", "no", "on", "off"]
     check-keys: true
   braces:
     level: error
-    min-spaces-inside: 1
+    min-spaces-inside: 0
     max-spaces-inside: 1
     min-spaces-inside-empty: 0
-    max-spaces-inside-empty: 0
+    max-spaces-inside-empty: 1
   comments:
+    level: error
     require-starting-space: true
     ignore-shebangs: true
     min-spaces-from-content: 1
-    level: error
   line-length:
+    level: error
     max: 90
     allow-non-breakable-inline-mappings: true
+  octal-values:
+    level: error
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true

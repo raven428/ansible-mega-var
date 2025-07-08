@@ -1,0 +1,55 @@
+# initial directories
+/tmp/molecule drwxr-xr-x root root
+
+# 1.4.*
+/tmp/molecule/absolute-f.dest-no drwx-wx--x root root
+/tmp/molecule/absolute-f.dest-no/bin drwx-wx--x root root
+/tmp/molecule/absolute-f.dest-no/bin/pyenv -rwxr-xr-x root root 16
+/tmp/molecule/absolute-f.dest-no/bin/pyenv 0d40c329f4a212791651d6bd630c9e4d
+/tmp/molecule/absolute-f.dest-trailing-slash-no drwxr-x-w- root root
+/tmp/molecule/absolute-f.dest-trailing-slash-no/pyenv -rwxr-xr-x root root 16
+/tmp/molecule/absolute-f.dest-trailing-slash-no/pyenv 0d40c329f4a212791651d6bd630c9e4d
+/tmp/molecule/absolute-f.dest-trailing-slash-yes drwxr-xr-x root root
+/tmp/molecule/absolute-f.dest-trailing-slash-yes/pyenv -rwxr-xr-x root root 16
+/tmp/molecule/absolute-f.dest-trailing-slash-yes/pyenv 0d40c329f4a212791651d6bd630c9e4d
+/tmp/molecule/absolute-f.dest-trailing-yes drwx-wx--x root root
+/tmp/molecule/absolute-f.dest-trailing-yes/bin drwx-wx--x root root
+/tmp/molecule/absolute-f.dest-trailing-yes/bin/pyenv -rwx-wx--x root root 16
+/tmp/molecule/absolute-f.dest-trailing-yes/bin/pyenv 0d40c329f4a212791651d6bd630c9e4d
+/tmp/molecule/f.dest-abs1 drwxr-xr-x root root
+/tmp/molecule/f.dest-abs1/Makefile -rw-r----- root root 852
+/tmp/molecule/f.dest-abs1/Makefile 4786e31109e1f9abccd36f6838134232
+/tmp/molecule/f.dest-abs2 drwxr-xr-x root root
+/tmp/molecule/f.dest-abs2/file-default.list -rw-r----- root root 1547
+/tmp/molecule/f.dest-abs2/file-default.list f088914a958ad65d8aabcfa41512bfd2
+/tmp/molecule/f.dest-dir1 drwxr-xr-x root root
+/tmp/molecule/f.dest-dir1/Makefile -rw-r----x root root 852
+/tmp/molecule/f.dest-dir1/Makefile 4786e31109e1f9abccd36f6838134232
+/tmp/molecule/f.dest-dir2 drwxr-xr-x root root
+/tmp/molecule/f.dest-dir2/in-f.dest-Makefile -rw-r---w- root root 852
+/tmp/molecule/f.dest-dir2/in-f.dest-Makefile 4786e31109e1f9abccd36f6838134232
+/tmp/molecule/pyenv drwxr-xr-x root root
+/tmp/molecule/pyenv/bin drwxr-xr-x root root
+/tmp/molecule/pyenv/bin/pyenv -rwxr-xr-x root root 16
+/tmp/molecule/pyenv/bin/pyenv 0d40c329f4a212791651d6bd630c9e4d
+/tmp/molecule/pyenv/Makefile -rw-r----- root root 852
+/tmp/molecule/pyenv/Makefile 4786e31109e1f9abccd36f6838134232
+/tmp/molecule/pyenv/pyenv.d drwxr-xr-x root root
+/tmp/molecule/pyenv/pyenv.d/install drwxr-xr-x root root
+/tmp/molecule/pyenv/pyenv.d/install/install drwxr-xr-x root root
+/tmp/molecule/pyenv/pyenv.d/install/install/latest.bash -rwxr-xr-x root root 449
+/tmp/molecule/pyenv/pyenv.d/install/install/latest.bash aa1cf89421574acb6c5fd38dce8c0b64
+/tmp/molecule/relative-f.dest-trailing-no drwxr---wx root root
+/tmp/molecule/relative-f.dest-trailing-no/bin drwxr---wx root root
+/tmp/molecule/relative-f.dest-trailing-no/bin/pyenv -rwxr-xr-x root root 16
+/tmp/molecule/relative-f.dest-trailing-no/bin/pyenv 0d40c329f4a212791651d6bd630c9e4d
+/tmp/molecule/relative-f.dest-trailing-slash-no drw-r---wx root root
+/tmp/molecule/relative-f.dest-trailing-slash-no/pyenv -rwxr-xr-x root root 16
+/tmp/molecule/relative-f.dest-trailing-slash-no/pyenv 0d40c329f4a212791651d6bd630c9e4d
+/tmp/molecule/relative-f.dest-trailing-slash-yes dr-xr---wx root root
+/tmp/molecule/relative-f.dest-trailing-slash-yes/pyenv -rwxr-xr-x root root 16
+/tmp/molecule/relative-f.dest-trailing-slash-yes/pyenv 0d40c329f4a212791651d6bd630c9e4d
+/tmp/molecule/relative-f.dest-trailing-yes drwxr-xr-x root root
+/tmp/molecule/relative-f.dest-trailing-yes/bin drwxr-xr-x root root
+/tmp/molecule/relative-f.dest-trailing-yes/bin/pyenv -rwxr-xr-x root root 16
+/tmp/molecule/relative-f.dest-trailing-yes/bin/pyenv 0d40c329f4a212791651d6bd630c9e4d

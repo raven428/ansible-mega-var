@@ -151,16 +151,14 @@ def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912
         f_out.write(lz4.decompress(f_in.read()))
     else:
       result = [
-        True, False,
-        "The file type [" + ext + "] is not supported by this module. " +
-        "Supported file formats are .xz .gz, .bz2 .lzma .lz .lzip " +
-        ".zst .zstd .lz4", orig_file_path
+        True, False, "The file type [" + ext + "] is not supported by this module. " +
+        "Supported file formats are .xz .gz, .bz2 .lzma .lz .lzip " + ".zst .zstd .lz4",
+        orig_file_path
       ]
     if result == []:
       result = [
         False, True, "File decompressed successfully" +
-        (" and replaced because Force: true" if dst_exists else "") + ": " +
-        dst, dst
+        (" and replaced because Force: true" if dst_exists else "") + ": " + dst, dst
       ]
     return result[0], result[1], result[2], result[3]
   except Exception as e:  # noqa: BLE001
