@@ -198,7 +198,7 @@ There are a lot of options in `files:` definitions (shown as `f.` below) the ful
 
 - Both `dest` and `f.dest` are either relative or undefined or empty will raise error
 - If `dest` is defined, it should be absolute otherwise error will be raised. Other options are similar as above:
-  - (`0.0.0`) Here `f.dest` can be empty or undefined, so `result = i.dest ~ '/' ~ f.name` w/o `basename`
+  - (`0.0.0`) Here `f.dest` can be empty or undefined, so `result = i.dest ~ '/' ~ f.name | basename`
   - (`0.0.1`) If `f.dest` ended by `/`, `result = i.dest ~ '/' ~ f.dest ~ '/' ~ f.name | basename`
   - (`0.0.2`) If `f.dest` is not ended by `/` then treated as file name: `result = i.dest ~ '/' ~ f.dest`
 - Either `dest` is empty or `f.dest` starts with `/` the result defined by `f.dest` and `f.name` only:
