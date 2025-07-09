@@ -3,6 +3,7 @@ set -ueo pipefail
 umask 0022
 MY_BIN="$(readlink -f "$0")"
 MY_PATH="$(dirname "${MY_BIN}")"
+cd "${MY_PATH}/../.."
 # shellcheck disable=1091
 source "${MY_PATH}/../prepare.sh"
 sce='-s downloads'
