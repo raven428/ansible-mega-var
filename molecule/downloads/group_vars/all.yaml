@@ -68,7 +68,7 @@ meva_packages:
 
 # for 1.4.*
 meva_pickup_files:
-  # 0.0.0 result = /i.dest/pyenv/Makefile
+  # 0.0.0 result = /i.dest/Makefile
   - name: "pyenv/Makefile"
     file_mode: "0640"
   # 0.0.1 result = /i.dest/f.dest-dir/Makefile
@@ -88,7 +88,7 @@ meva_pickup_files:
   - name: "pyenv/pyenv.d/rehash/conda.d/default.list"
     dest: "{{ download_root }}/f.dest-abs2/file-default.list"
     file_mode: "0640"
-  # 0.2.0/0.0.0 result = /i.dest/pyenv/bin/pyenv
+  # 0.2.0/0.0.0 result = /i.dest/pyenv
   - name: "pyenv/bin/"
     file_mode: "0755"
   # 0.2.0/0.0.1 result = /i.dest/relative-f.dest-trailing-slash-yes/
@@ -113,7 +113,7 @@ meva_pickup_files:
     dir_mode: "0752"
     exec_mode: "0755"
     file_mode: "0752"
-  # 0.2.1/0.0.0 result = /i.dest/pyenv/pyenv.d/install
+  # 0.2.1/0.0.0 result = /i.dest/install
   - name: "pyenv/pyenv.d/install"
     file_mode: "0755"
   # 0.2.1/0.0.1 result = /i.dest/relative-f.dest-trailing-yes/bin/pyenv
