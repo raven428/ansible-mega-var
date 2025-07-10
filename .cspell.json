@@ -89,7 +89,8 @@
     "drwx",
     "reexec",
     "lstrip",
-    "followlinks"
+    "followlinks",
+    "pytest"
   ],
   "enabled": true
 }
