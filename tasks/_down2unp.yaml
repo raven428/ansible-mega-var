@@ -29,8 +29,7 @@
     seuser: "{{ f.dir_seuser | default(f.seuser) | default(omit) }}"
   notify: "{{ f.notify | default(omit) }}"
   register: directory_result
-  when: >-
-    meva_pro.dest4dir != ''
+  when: "meva_pro.dest4dir != ''"
 
 - name: Propagate unpacked files
   ansible.builtin.copy:
@@ -65,42 +64,20 @@
     'state' in directory_result or
     meva_pro.dest4dir == ''
 
-- name: "Check propagation '{{ meva_pro.dest4path }}' exists" # noqa name[template]
-  ansible.builtin.stat:
-    path: "{{ meva_pro.dest4path }}"
-  register: _meva_unp
-
-- name: Settings block
-  when: "'size' in copy_result or
-    _meva_unp.stat.exists | default(false)"
-  block:
-    - name: Set owner, group and attrs
-      ansible.builtin.file:
-        state: "{{ 'directory' if meva_pro.src_is_dir | default(false) else omit }}"
-        recurse: "{{ true if meva_pro.src_is_dir | default(false) else omit }}"
-        path: "{{ meva_pro.dest4path }}"
-        owner: "{{ f.owner | default(omit) }}"
-        group: "{{ f.group | default(omit) }}"
-        force: "{{ f.force | default(_download_archive.changed) }}"
-        access_time: "{{ f.access_time | default(omit) }}"
-        access_time_format: "{{ f.access_time_format | default(omit) }}"
-        modification_time: "{{ f.modification_time | default(omit) }}"
-        modification_time_format: "{{ f.modification_time_format | default(omit) }}"
-        attributes: "{{ f.attributes | default(omit) }}"
-        follow: "{{ f.follow | default(omit) }}"
-        selevel: "{{ f.selevel | default(omit) }}"
-        serole: "{{ f.serole | default(omit) }}"
-        setype: "{{ f.setype | default(omit) }}"
-        seuser: "{{ f.seuser | default(omit) }}"
-      notify: "{{ f.notify | default(omit) }}"
-    - name: Apply filesystem modes
-      chmod_tree:
-        path: "{{ meva_pro.dest4path }}"
-        dir_mode: "{{ f.dir_mode | default(omit) }}"
-        file_mode: "{{ f.file_mode | default(omit) }}"
-        exec_mode: "{{ f.exec_mode | default(omit) }}"
-        verbose: "{{ f.chmod_verbose | default(omit) }}"
-        exec_bit: "{{ f.exec_bit | default(omit) }}"
-        skip_entry: false
-        always_unchanged: true
-      notify: "{{ f.notify | default(omit) }}"
+- name: Sett attrs to dirs and files
+  ansible.builtin.include_tasks: _down2attr.yaml
+  loop_control:
+    loop_var: c
+  loop: >-
+    {%- set result = [] -%}
+    {%- if meva_pro.dest4path == '' -%}
+      {%- set result = meva_pro.list4path['f'] | map('community.general.dict_kv',
+      'path') | map('combine', {'is_dir': false}) + meva_pro.list4path['d'] |
+      map('community.general.dict_kv', 'path') | map('combine', {'is_dir': true}) -%}
+    {%- else -%}
+      {%- set result = [{
+        'path': meva_pro.dest4path,
+        'is_dir': meva_pro.src_is_dir,
+      }] -%}
+    {%- endif -%}
+    {{ result | list }}

@@ -1,0 +1,40 @@
+---
+- name: "Check propagation '{{ c.path }}' exists" # noqa name[template]
+  ansible.builtin.stat:
+    path: "{{ c.path }}"
+  register: _meva_unp
+
+- name: Settings block
+  when: "_meva_unp.stat.exists | default(false)"
+  block:
+    - name: Set owner, group and attrs
+      ansible.builtin.file:
+        state: "{{ 'directory' if c.is_dir | default(false) else omit }}"
+        recurse: "{{ true if c.is_dir | default(false) else omit }}"
+        path: "{{ c.path }}"
+        owner: "{{ f.owner | default(omit) }}"
+        group: "{{ f.group | default(omit) }}"
+        force: "{{ f.force | default(_download_archive.changed) }}"
+        access_time: "{{ f.access_time | default(omit) }}"
+        access_time_format: "{{ f.access_time_format | default(omit) }}"
+        modification_time: "{{ f.modification_time | default(omit) }}"
+        modification_time_format: "{{ f.modification_time_format | default(omit) }}"
+        attributes: "{{ f.attributes | default(omit) }}"
+        follow: "{{ f.follow | default(omit) }}"
+        selevel: "{{ f.selevel | default(omit) }}"
+        serole: "{{ f.serole | default(omit) }}"
+        setype: "{{ f.setype | default(omit) }}"
+        seuser: "{{ f.seuser | default(omit) }}"
+      notify: "{{ f.notify | default(omit) }}"
+
+    - name: Apply filesystem modes
+      chmod_tree:
+        path: "{{ c.path }}"
+        dir_mode: "{{ f.dir_mode | default(omit) }}"
+        file_mode: "{{ f.file_mode | default(omit) }}"
+        exec_mode: "{{ f.exec_mode | default(omit) }}"
+        verbose: "{{ f.chmod_verbose | default(omit) }}"
+        exec_bit: "{{ f.exec_bit | default(omit) }}"
+        skip_entry: false
+        always_unchanged: true
+      notify: "{{ f.notify | default(omit) }}"

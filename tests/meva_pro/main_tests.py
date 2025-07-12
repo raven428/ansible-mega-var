@@ -35,4 +35,5 @@ def test_resolve_paths(case: dict[str, Any]) -> None:
     "src_is_dir": case["src_is_dir"],
   }
   result.pop("a", None)
+  result.pop("list4path", None)
   assert result == expected  # noqa: S101
