@@ -66,8 +66,9 @@ changed:
   type: bool
 '''
 
-import re
+import os
 from pathlib import Path
+from typing import Iterator
 
 # pylint: disable=import-error
 from ansible.module_utils.basic import (  # type: ignore[reportMissingImports]
@@ -75,34 +76,58 @@ from ansible.module_utils.basic import (  # type: ignore[reportMissingImports]
 )
 
 
-def resolve_paths(
+def ww2_file(
+  path: Path,
+  *,
+  followlinks: bool = False,
+) -> Iterator[tuple[str, list[str], list[str]]]:
+  if path.is_file():
+    yield str(path), [], []
+  else:
+    yield from os.walk(path, followlinks=followlinks)
+
+
+def resolve_paths(  # noqa: C901,PLR0912
   src_dir: str,
   f_name: str,
   f_dest: str,
   i_dest: str,
   f_src: str,
 ) -> dict[str, object]:
-  src_path = f_src if f_src else (re.sub(r'/+$', '', src_dir) + '/' + f_name)
+  src_path = f_src if f_src else (src_dir.rstrip('/') + '/' + f_name)
   if not f_name:
     f_name = Path(src_path).name
 
+  # Determine prefix
   prefix = ''
-  if f_dest.startswith('/') and i_dest:
-    prefix = ''
-  elif i_dest:
-    prefix = re.sub(r'/+$', '', i_dest) + '/'
-  dest4copy = prefix + f_dest if f_dest else prefix + f_name
-
-  if f_dest and f_dest.endswith('/'):
-    dest4path = prefix + re.sub(r'/+$', '', f_dest)
-    if not f_name.endswith('/'):
-      dest4path = dest4path + '/' + Path(f_name).name
-  elif f_dest:
-    dest4path = prefix + f_dest
-  else:
-    dest4path = prefix + f_name
-
+  if i_dest and not f_dest.startswith('/'):
+    prefix = i_dest.rstrip('/') + '/'
   src_is_dir = Path(src_path).is_dir()
+
+  # Compute dest4copy
+  if f_dest:
+    dest4copy = prefix + f_dest
+  elif not src_is_dir:
+    dest4copy = prefix + Path(f_name).name
+  else:
+    dest4copy = prefix
+
+  # Compute dest4path
+  list4path: dict[str, list[str]] = {}
+  if f_dest:
+    dest4path = prefix + f_dest.rstrip('/')
+    if f_dest.endswith('/') and not f_name.endswith('/'):
+      dest4path += '/' + Path(f_name).name
+  elif f_name.endswith('/'):
+    dest4path = ''
+    for _root, dirs, files in ww2_file(Path(src_path), followlinks=True):
+      prefix = dest4copy.rstrip('/') + '/'
+      list4path["d"] = [prefix + d for d in dirs]
+      list4path["f"] = [prefix + f for f in files]
+  else:
+    dest4path = prefix + Path(f_name).name
+
+  # Compute dest4dir
   if dest4copy.endswith('/') or src_is_dir:
     dest4dir = ''
     if not dest4copy.endswith('/'):
@@ -125,6 +150,7 @@ def resolve_paths(
     "dest4dir": dest4dir,
     "dest4copy": dest4copy,
     "dest4path": dest4path,
+    "list4path": list4path,
     "src4copy": src_path,
     "src_is_dir": src_is_dir,
   }
