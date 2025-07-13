@@ -6,7 +6,7 @@ from unittest.mock import patch
 # pylint: disable=import-error
 import pytest  # type: ignore[reportMissingImports]
 
-from library.meva_pro import resolve_paths
+from module_utils.mega_var import resolve_paths
 from tests.meva_pro.main_data import cases_resolve_paths, mock_dirs_list
 
 if TYPE_CHECKING:
@@ -17,7 +17,7 @@ def mock_is_dir(self: Path) -> bool:
   return str(self) in mock_dirs_list
 
 
-@patch('library.meva_pro.Path.is_dir', new=mock_is_dir)
+@patch('module_utils.mega_var.Path.is_dir', new=mock_is_dir)
 @pytest.mark.parametrize("case", cases_resolve_paths)
 def test_resolve_paths(case: dict[str, Any]) -> None:
   result = resolve_paths(

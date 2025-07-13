@@ -75,14 +75,15 @@ changed:
   type: bool
 '''
 
-import os
 import stat
 from pathlib import Path
-from typing import Iterator
 
 # pylint: disable=import-error
 from ansible.module_utils.basic import (  # type: ignore[reportMissingImports]
   AnsibleModule,
+)
+from ansible.module_utils.mega_var import (  # type: ignore[reportMissingImports]
+  ww2_file,
 )
 
 
@@ -104,17 +105,6 @@ def update_mode(  # noqa: PLR0913
       })
     return True
   return False
-
-
-def ww2_file(
-  path: Path,
-  *,
-  followlinks: bool = False,
-) -> Iterator[tuple[str, list[str], list[str]]]:
-  if path.is_file():
-    yield str(path), [], []
-  else:
-    yield from os.walk(path, followlinks=followlinks)
 
 
 def main() -> None:  # noqa: C901
