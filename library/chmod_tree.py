@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 ANSIBLE_METADATA = {
-  'metadata_version': '1.0',
+  'metadata_version': '1.0.0',
   'status': ['preview'],
   'supported_by': 'community',
 }
@@ -47,6 +47,24 @@ options:
   verbose:
     description:
       - Return detailed list of changed files.
+    required: false
+    type: bool
+    default: false
+  skip_entry:
+    description:
+      - Skip entry record from chmod.
+    required: false
+    type: bool
+    default: true
+  exec_bit:
+    description:
+      - Apply this mask to filemode for executive files.
+    required: false
+    type: str
+    default: '0111'
+  always_unchanged:
+    description:
+      - Return always not changed result.
     required: false
     type: bool
     default: false
@@ -109,52 +127,17 @@ def update_mode(  # noqa: PLR0913
 
 def main() -> None:  # noqa: C901
   module = AnsibleModule(
-    argument_spec={
-      "path": {
-        "required": True,
-        "type": "str"
-      },
-      "dir_mode": {
-        "required": False,
-        "type": "str",
-        "default": None,
-      },
-      "file_mode": {
-        "required": False,
-        "type": "str",
-        "default": "0644",
-      },
-      "exec_mode": {
-        "required": False,
-        "type": "str",
-        "default": None,
-      },
-      "follow": {
-        "required": False,
-        "type": "bool",
-        "default": False,
-      },
-      "verbose": {
-        "required": False,
-        "type": "bool",
-        "default": False,
-      },
-      "skip_entry": {
-        "required": False,
-        "type": "bool",
-        "default": True,
-      },
-      "exec_bit": {
-        "required": False,
-        "type": "str",
-        "default": "0111",
-      },
-      "always_unchanged": {
-        "required": False,
-        "type": "bool",
-        "default": False,
-      },
-    },
+    argument_spec=dict(
+      path=dict(type="str", required=True),
+      dir_mode=dict(type="str", required=False, default=None),
+      file_mode=dict(type="str", required=False, default="0644"),
+      exec_mode=dict(type="str", required=False, default=None),
+      follow=dict(type="bool", required=False, default=False),
+      verbose=dict(type="bool", required=False, default=False),
+      skip_entry=dict(type="bool", required=False, default=True),
+      exec_bit=dict(type="str", required=False, default="0111"),
+      always_unchanged=dict(type="bool", required=False, default=False),
+    ),
     supports_check_mode=True,
   )
   file_mode = int(module.params["file_mode"], 8)
@@ -165,11 +148,7 @@ def main() -> None:  # noqa: C901
   exec_mode = int(param, 8) if param is not None else file_mode | exec_bit
   follow = module.params["follow"]
   verbose = module.params["verbose"]
-  changed_count = {
-    "d": 0,
-    "e": 0,
-    "f": 0,
-  }
+  changed_count = dict(d=0, e=0, f=0)
   traverse_count = changed_count.copy()
   changed_files: list[dict[str, str]] = []
   changed = False
