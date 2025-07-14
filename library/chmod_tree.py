@@ -106,23 +106,31 @@ from ansible.module_utils.mega_var import (  # type: ignore[reportMissingImports
 
 
 def update_mode(  # noqa: PLR0913
-  module: AnsibleModule, path: Path, current_mode: int, target_mode: int, key: str,
-  traverse_count: dict[str, int], changed_count: dict[str, int],
+  module: AnsibleModule, path: Path, current_mode: int, target_mode: int | None,
+  key: str, traverse_count: dict[str, int], changed_count: dict[str, int],
   changed_files: list[dict[str, str]], *, follow: bool, verbose: bool
 ) -> bool:
   traverse_count[key] += 1
-  if current_mode != target_mode:
+  changed = False
+  log_change = False
+  after = "None"
+  if target_mode is None:
+    changed_count[key] += 1
+    log_change = True
+  elif current_mode != target_mode:
+    changed_count[key] += 1
+    changed = True
+    log_change = True
+    after = f"{target_mode:o}"
     if not module.check_mode:
       path.chmod(target_mode, follow_symlinks=follow)
-    changed_count[key] += 1
-    if verbose:
-      changed_files.append({
-        "path": str(path),
-        "after": f"{target_mode:o}",
-        "before": f"{current_mode:o}",
-      })
-    return True
-  return False
+  if verbose and log_change:
+    changed_files.append({
+      "path": str(path),
+      "before": f"{current_mode:o}",
+      "after": after,
+    })
+  return changed
 
 
 def main() -> None:  # noqa: C901
@@ -130,7 +138,7 @@ def main() -> None:  # noqa: C901
     argument_spec=dict(
       path=dict(type="str", required=True),
       dir_mode=dict(type="str", required=False, default=None),
-      file_mode=dict(type="str", required=False, default="0644"),
+      file_mode=dict(type="str", required=False, default=None),
       exec_mode=dict(type="str", required=False, default=None),
       follow=dict(type="bool", required=False, default=False),
       verbose=dict(type="bool", required=False, default=False),
@@ -140,12 +148,17 @@ def main() -> None:  # noqa: C901
     ),
     supports_check_mode=True,
   )
-  file_mode = int(module.params["file_mode"], 8)
+  dir_mode = None
+  file_mode = None
+  exec_mode = None
   exec_bit = int(module.params["exec_bit"], 8)
-  param = module.params.get("dir_mode")
-  dir_mode = int(param, 8) if param is not None else file_mode | exec_bit
-  param = module.params.get("exec_mode")
-  exec_mode = int(param, 8) if param is not None else file_mode | exec_bit
+  param = module.params.get("file_mode")
+  if param is not None:
+    file_mode = int(param, 8)
+    param = module.params.get("dir_mode")
+    dir_mode = int(param, 8) if param is not None else file_mode | exec_bit
+    param = module.params.get("exec_mode")
+    exec_mode = int(param, 8) if param is not None else file_mode | exec_bit
   follow = module.params["follow"]
   verbose = module.params["verbose"]
   changed_count = dict(d=0, e=0, f=0)
