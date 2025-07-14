@@ -9,28 +9,34 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = r'''
 ---
 module: meva_pro
-short_description: calculate files and directories names for _down2unp.yaml
+short_description: Calculate files and directories names for _down2unp.yaml
 version_added: "1.0.0"
-description: calculate files and directories names for _down2unp.yaml
+description:
+  - Calculate files and directories names for _down2unp.yaml
 options:
   src_dir:
-    description: path of f.name location
+    description:
+      - Path of f.name location
     required: false
     type: str
   f_name:
-    description: value of f.name
+    description:
+      - Value of f.name
     required: false
     type: str
   f_dest:
-    description: value of f.dest, can be any even undefined
+    description:
+      - Value of f.dest, can be any even undefined
     required: false
     type: str
   i_dest:
-    description: value of i.dest, should be absolute if defined
+    description:
+      - Value of i.dest, should be absolute if defined
     required: false
     type: str
   f_src:
-    description: source path replacing src_dir+f_name
+    description:
+      - Source path replacing src_dir+f_name
     required: false
     type: str
 author:
@@ -76,14 +82,16 @@ from ansible.module_utils.mega_var import (  # type: ignore[reportMissingImports
 
 
 def main() -> None:
-  module_args = dict(
-    src_dir=dict(type='str', required=False, default=''),
-    f_name=dict(type='str', required=False, default=''),
-    f_dest=dict(type='str', required=False, default=''),
-    i_dest=dict(type='str', required=False, default=''),
-    f_src=dict(type='str', required=False, default=''),
+  module = AnsibleModule(
+    argument_spec=dict(
+      src_dir=dict(type='str', required=False, default=''),
+      f_name=dict(type='str', required=False, default=''),
+      f_dest=dict(type='str', required=False, default=''),
+      i_dest=dict(type='str', required=False, default=''),
+      f_src=dict(type='str', required=False, default=''),
+    ),
+    supports_check_mode=True
   )
-  module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
   f_src = module.params['f_src']
   f_name = module.params['f_name']
   f_dest = module.params['f_dest']
