@@ -147,10 +147,6 @@ Sometimes `uri` couldn't contain extension or even reliable filename. In this ca
 
 If `delegate_to: localhost` is set, then downloading will be performed on the Ansible controller, decompressed, then propagated to a remote host after decompress
 
-##### Case `1.2.3`
-
-If, in additional, `remote_deco: true` is set, then downloading will be performed on the Ansible controller then downloaded result will be propagated to a remote host before decompress and decompressed on the remote host. Note an appropriate decompress module for python should be installed at the destination host
-
 #### Archive with a directory tree: complete unarchive
 
 ##### Case `1.3.1`
@@ -172,7 +168,7 @@ If `delegate_to: localhost` is set, then downloading will be performed on the An
 
 #### Archive with a directory tree: pick-me something
 
-##### Case `1.4.1` (was `1.3.2`)
+##### Case `1.4.1`
 
 ```yaml
 - url: "http://url.to/download.tar.gz"

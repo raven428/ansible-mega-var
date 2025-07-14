@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 ANSIBLE_METADATA = {
-  'metadata_version': '1.0',
+  'metadata_version': '1.0.0',
   'status': ['preview'],
   'supported_by': 'community',
 }
@@ -50,6 +50,24 @@ options:
     required: false
     type: bool
     default: false
+  skip_entry:
+    description:
+      - Skip entry record from chmod.
+    required: false
+    type: bool
+    default: true
+  exec_bit:
+    description:
+      - Apply this mask to filemode for executive files.
+    required: false
+    type: str
+    default: '0111'
+  always_unchanged:
+    description:
+      - Return always not changed result.
+    required: false
+    type: bool
+    default: false
 author:
   - ChatGPT (https://chatgpt.com)
   - Dmitry Sukhodoyev (https://github.com/raven428/ansible-mega-var)
@@ -75,111 +93,75 @@ changed:
   type: bool
 '''
 
-import os
 import stat
 from pathlib import Path
-from typing import Iterator
 
 # pylint: disable=import-error
 from ansible.module_utils.basic import (  # type: ignore[reportMissingImports]
   AnsibleModule,
 )
+from ansible.module_utils.mega_var import (  # type: ignore[reportMissingImports]
+  ww2_file,
+)
 
 
 def update_mode(  # noqa: PLR0913
-  module: AnsibleModule, path: Path, current_mode: int, target_mode: int, key: str,
-  traverse_count: dict[str, int], changed_count: dict[str, int],
+  module: AnsibleModule, path: Path, current_mode: int, target_mode: int | None,
+  key: str, traverse_count: dict[str, int], changed_count: dict[str, int],
   changed_files: list[dict[str, str]], *, follow: bool, verbose: bool
 ) -> bool:
   traverse_count[key] += 1
-  if current_mode != target_mode:
+  changed = False
+  log_change = False
+  after = "None"
+  if target_mode is None:
+    changed_count[key] += 1
+    log_change = True
+  elif current_mode != target_mode:
+    changed_count[key] += 1
+    changed = True
+    log_change = True
+    after = f"{target_mode:o}"
     if not module.check_mode:
       path.chmod(target_mode, follow_symlinks=follow)
-    changed_count[key] += 1
-    if verbose:
-      changed_files.append({
-        "path": str(path),
-        "after": f"{target_mode:o}",
-        "before": f"{current_mode:o}",
-      })
-    return True
-  return False
-
-
-def ww2_file(
-  path: Path,
-  *,
-  followlinks: bool = False,
-) -> Iterator[tuple[str, list[str], list[str]]]:
-  if path.is_file():
-    yield str(path), [], []
-  else:
-    yield from os.walk(path, followlinks=followlinks)
+  if verbose and log_change:
+    changed_files.append({
+      "path": str(path),
+      "before": f"{current_mode:o}",
+      "after": after,
+    })
+  return changed
 
 
 def main() -> None:  # noqa: C901
   module = AnsibleModule(
-    argument_spec={
-      "path": {
-        "required": True,
-        "type": "str"
-      },
-      "dir_mode": {
-        "required": False,
-        "type": "str",
-        "default": None,
-      },
-      "file_mode": {
-        "required": False,
-        "type": "str",
-        "default": "0644",
-      },
-      "exec_mode": {
-        "required": False,
-        "type": "str",
-        "default": None,
-      },
-      "follow": {
-        "required": False,
-        "type": "bool",
-        "default": False,
-      },
-      "verbose": {
-        "required": False,
-        "type": "bool",
-        "default": False,
-      },
-      "skip_entry": {
-        "required": False,
-        "type": "bool",
-        "default": True,
-      },
-      "exec_bit": {
-        "required": False,
-        "type": "str",
-        "default": "0111",
-      },
-      "always_unchanged": {
-        "required": False,
-        "type": "bool",
-        "default": False,
-      },
-    },
+    argument_spec=dict(
+      path=dict(type="str", required=True),
+      dir_mode=dict(type="str", required=False, default=None),
+      file_mode=dict(type="str", required=False, default=None),
+      exec_mode=dict(type="str", required=False, default=None),
+      follow=dict(type="bool", required=False, default=False),
+      verbose=dict(type="bool", required=False, default=False),
+      skip_entry=dict(type="bool", required=False, default=True),
+      exec_bit=dict(type="str", required=False, default="0111"),
+      always_unchanged=dict(type="bool", required=False, default=False),
+    ),
     supports_check_mode=True,
   )
-  file_mode = int(module.params["file_mode"], 8)
+  dir_mode = None
+  file_mode = None
+  exec_mode = None
   exec_bit = int(module.params["exec_bit"], 8)
-  param = module.params.get("dir_mode")
-  dir_mode = int(param, 8) if param is not None else file_mode | exec_bit
-  param = module.params.get("exec_mode")
-  exec_mode = int(param, 8) if param is not None else file_mode | exec_bit
+  param = module.params.get("file_mode")
+  if param is not None:
+    file_mode = int(param, 8)
+    param = module.params.get("dir_mode")
+    dir_mode = int(param, 8) if param is not None else file_mode | exec_bit
+    param = module.params.get("exec_mode")
+    exec_mode = int(param, 8) if param is not None else file_mode | exec_bit
   follow = module.params["follow"]
   verbose = module.params["verbose"]
-  changed_count = {
-    "d": 0,
-    "e": 0,
-    "f": 0,
-  }
+  changed_count = dict(d=0, e=0, f=0)
   traverse_count = changed_count.copy()
   changed_files: list[dict[str, str]] = []
   changed = False
