@@ -21,7 +21,7 @@ ver2down: >-
 download_tag: "v{{ ver2down }}"
 download_root: "/tmp/molecule"
 download_topic: "pyenv-emtpy"
-download_version_file: "2.2.4"
+download_version_file: "2.2.5"
 download_file_name: >-
   {{ download_topic }}-{{
     download_version_file |
