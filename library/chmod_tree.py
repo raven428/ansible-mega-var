@@ -148,17 +148,14 @@ def main() -> None:  # noqa: C901
     ),
     supports_check_mode=True,
   )
-  dir_mode = None
-  file_mode = None
-  exec_mode = None
+  dir_mode = module.params.get("dir_mode")
+  file_mode = module.params.get("file_mode")
+  exec_mode = module.params.get("exec_mode")
   exec_bit = int(module.params["exec_bit"], 8)
-  param = module.params.get("file_mode")
-  if param is not None:
-    file_mode = int(param, 8)
-    param = module.params.get("dir_mode")
-    dir_mode = int(param, 8) if param is not None else file_mode | exec_bit
-    param = module.params.get("exec_mode")
-    exec_mode = int(param, 8) if param is not None else file_mode | exec_bit
+  if file_mode is not None:
+    file_mode = int(file_mode, 8)
+    exec_mode = int(exec_mode, 8) if exec_mode is not None else file_mode | exec_bit
+    dir_mode = int(dir_mode, 8) if dir_mode is not None else file_mode | int("0111", 8)
   follow = module.params["follow"]
   verbose = module.params["verbose"]
   changed_count = dict(d=0, e=0, f=0)
@@ -228,7 +225,7 @@ def main() -> None:  # noqa: C901
   module.exit_json(
     changed=False if module.params["always_unchanged"] else changed,
     message=f"Changed {changed_count} of {traverse_count} file modes: {changed_files}"
-    if verbose else f"Changed {changed_count} modes of  {traverse_count} for d: "
+    if verbose else f"Changed {changed_count} modes of {traverse_count} to d:"
     f"{dir_mode:o} e:{exec_mode:o} f:{file_mode:o} for '{root_path}' directory tree"
   )
 
