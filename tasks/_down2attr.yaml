@@ -36,5 +36,5 @@
         verbose: "{{ f.chmod_verbose | default(omit) }}"
         exec_bit: "{{ f.exec_bit | default(omit) }}"
         skip_entry: false
-        always_unchanged: true
+        always_unchanged: false
       notify: "{{ f.notify | default(omit) }}"

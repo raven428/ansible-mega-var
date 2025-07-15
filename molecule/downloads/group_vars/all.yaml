@@ -96,48 +96,49 @@ meva_pickup_files:
     dest: "relative-f.dest-trailing-slash-yes/"
     dir_mode: "0543"
     exec_mode: "0755"
-    file_mode: "0543"
+    file_mode: "0755"
   # 0.2.0/0.0.2 result = /i.dest/relative-f.dest-trailing-slash-no/
   - name: "pyenv/bin/"
     dest: "relative-f.dest-trailing-slash-no"
     dir_mode: "0643"
     exec_mode: "0755"
-    file_mode: "0643"
+    file_mode: "0755"
   # 0.2.0/0.1.0 result = /i.dest/absolute-f.dest-trailing-slash-yes/pyenv
   - name: "pyenv/bin/"
     dest: "{{ download_root }}/absolute-f.dest-trailing-slash-yes/"
     file_mode: "0755"
   # 0.2.0/0.1.1 result = /i.dest/absolute-f.dest-trailing-slash-no/pyenv
   - name: "pyenv/bin/"
-    dest: "{{ download_root }}//absolute-f.dest-trailing-slash-no"
+    dest: "{{ download_root }}/absolute-f.dest-trailing-slash-no"
     dir_mode: "0752"
     exec_mode: "0755"
-    file_mode: "0752"
+    file_mode: "0755"
   # 0.2.1/0.0.0 result = /i.dest/install
   - name: "pyenv/pyenv.d/install"
     file_mode: "0755"
   # 0.2.1/0.0.1 result = /i.dest/relative-f.dest-trailing-yes/bin/pyenv
   - name: "pyenv/bin"
     dest: "relative-f.dest-trailing-yes/"
-    file_mode: "0754"
+    exec_mode: "0755"
+    file_mode: "0755"
   # 0.2.1/0.0.2 result = /i.dest/relative-f.dest-trailing-no/bin/pyenv
   - name: "pyenv/bin"
     dest: "relative-f.dest-trailing-no"
     dir_mode: "0743"
     exec_mode: "0755"
-    file_mode: "0743"
+    file_mode: "0755"
   # 0.2.1/0.1.0 result = /i.dest/absolute-f.dest-trailing-yes/bin/pyenv
   - name: "pyenv/bin"
     dest: "{{ download_root }}/absolute-f.dest-trailing-yes/"
     dir_mode: "0731"
     exec_mode: "0731"
-    file_mode: "0742"
+    file_mode: "0731"
   # 0.2.1/0.1.1 result = /i.dest/absolute-f.dest-trailing-no/bin/pyenv
   - name: "pyenv/bin"
-    dest: "{{ download_root }}//absolute-f.dest-no"
+    dest: "{{ download_root }}/absolute-f.dest-no"
     dir_mode: "0731"
     exec_mode: "0755"
-    file_mode: "0731"
+    file_mode: "0755"
 
 meva_other_files:
   # x. -"-
