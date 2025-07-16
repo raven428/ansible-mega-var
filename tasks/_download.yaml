@@ -84,8 +84,10 @@
         path: "{{ _meva_keys.dest_dir }}"
         state: directory
         mode: "0755"
-        owner: "{{ i.owner | default(omit) if 'delegate_to' not in i else omit }}"
-        group: "{{ i.group | default(omit) if 'delegate_to' not in i else omit }}"
+        owner: "{{ omit if _meva_keys.unarchive_delegation else i.owner |
+          default(omit)  }}"
+        group: "{{ omit if _meva_keys.unarchive_delegation else i.owner |
+          default(omit)  }}"
       become: "{{ ('delegate_to' not in i) | bool }}"
       check_mode: "{{ false if _meva_keys.unarchive_check_mode else omit }}"
       delegate_to: "{{ i.delegate_to if _meva_keys.unarchive_delegation else omit }}"
@@ -97,8 +99,10 @@
         dest: "{{ _meva_keys.dest_dir }}"
         creates: "{{ _meva_keys.dest_path }}"
         remote_src: "{{ ('delegate_to' not in i) | bool }}"
-        owner: "{{ i.owner | default(omit) if 'delegate_to' not in i else omit }}"
-        group: "{{ i.group | default(omit) if 'delegate_to' not in i else omit }}"
+        owner: "{{ omit if _meva_keys.unarchive_delegation else i.owner |
+          default(omit)  }}"
+        group: "{{ omit if _meva_keys.unarchive_delegation else i.owner |
+          default(omit)  }}"
       become: "{{ ('delegate_to' not in i) | bool }}"
       check_mode: "{{ false if _meva_keys.unarchive_check_mode else omit }}"
       register: unarchive_result
@@ -115,8 +119,9 @@
         exec_mode: "{{ i.exec_mode | default('0755') }}"
         verbose: "{{ i.chmod_verbose | default(false) }}"
       when:
-        - not unarchive_result.failed | default(true)
+        - not _meva_keys.unarchive_delegation
         - unarchive_result.changed | default(false)
+        - not unarchive_result.failed | default(true)
       delegate_to: "{{ i.delegate_to if _meva_keys.unarchive_delegation else omit }}"
       notify: "{{ i.notify | default(omit) }}"
 
