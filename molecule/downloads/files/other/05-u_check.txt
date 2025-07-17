@@ -18,130 +18,156 @@
 /tmp/molecule/single/direct-download drwxr-xr-x root root
 
 # 1.1.1 – 1.2.3
-/tmp/molecule/compress/controller-copy/decompressed-file-name -rw-r---w- root root 71680
-/tmp/molecule/compress/controller-copy/decompressed-file-name 06829be1a582e580e0425823fdc1edc7
-/tmp/molecule/compress/direct-download/decompressed-file-name -rw-r----x root root 71680
-/tmp/molecule/compress/direct-download/decompressed-file-name 06829be1a582e580e0425823fdc1edc7
-/tmp/molecule/single/controller-copy/pyenv-emtpy-2_2_4-linux-amd64.tar.xz -rw-r----x root root 14920
-/tmp/molecule/single/controller-copy/pyenv-emtpy-2_2_4-linux-amd64.tar.xz 94ab0d4c1bea12974a09013693bcaef9
-/tmp/molecule/single/direct-download/pyenv-emtpy-2_2_4-linux-amd64.tar.xz -rw-r----x root root 14920
-/tmp/molecule/single/direct-download/pyenv-emtpy-2_2_4-linux-amd64.tar.xz 94ab0d4c1bea12974a09013693bcaef9
+/tmp/molecule/compress/controller-copy/decompressed-file-name -rw-r---w- root root 102400
+/tmp/molecule/compress/controller-copy/decompressed-file-name 65b723bc22ff6d00c98a5728e013813b
+/tmp/molecule/compress/direct-download/decompressed-file-name -rw-r----x root root 102400
+/tmp/molecule/compress/direct-download/decompressed-file-name 65b723bc22ff6d00c98a5728e013813b
+/tmp/molecule/single/controller-copy/pyenv-emtpy-2_2_5-linux-amd64.tar.xz -rw-r----x root root 20768
+/tmp/molecule/single/controller-copy/pyenv-emtpy-2_2_5-linux-amd64.tar.xz 466cf70db71d164b3555613a6b1129b3
+/tmp/molecule/single/direct-download/pyenv-emtpy-2_2_5-linux-amd64.tar.xz -rw-r----x root root 20768
+/tmp/molecule/single/direct-download/pyenv-emtpy-2_2_5-linux-amd64.tar.xz 466cf70db71d164b3555613a6b1129b3
 
 # 1.3.1
 /tmp/molecule/arch-full/direct-download/pyenv drwxr-x--- root root
-/tmp/molecule/arch-full/direct-download/pyenv/.agignore -rwx---r-x root root 19
+/tmp/molecule/arch-full/direct-download/pyenv/.agignore -rw----r-- root root 19
 /tmp/molecule/arch-full/direct-download/pyenv/.agignore 751e052da74c6273356ffd32bf6162b1
-/tmp/molecule/arch-full/direct-download/pyenv/.travis.yml -rwx---r-x root root 1784
+/tmp/molecule/arch-full/direct-download/pyenv/.travis.yml -rw----r-- root root 1784
 /tmp/molecule/arch-full/direct-download/pyenv/.travis.yml 22b3cf3fd6f9e0bf141a11ffe3139a7a
-/tmp/molecule/arch-full/direct-download/pyenv/.vimrc -rwx---r-x root root 35
+/tmp/molecule/arch-full/direct-download/pyenv/.vimrc -rw----r-- root root 35
 /tmp/molecule/arch-full/direct-download/pyenv/.vimrc 37121414203ecc94f137fa2c7eeac155
-/tmp/molecule/arch-full/direct-download/pyenv/COMMANDS.md -rwx---r-x root root 10261
+/tmp/molecule/arch-full/direct-download/pyenv/COMMANDS.md -rw----r-- root root 10261
 /tmp/molecule/arch-full/direct-download/pyenv/COMMANDS.md 2e311dac65615f3e483e9cfbd53eb1c0
-/tmp/molecule/arch-full/direct-download/pyenv/LICENSE -rwx---r-x root root 1092
+/tmp/molecule/arch-full/direct-download/pyenv/LICENSE -rw----r-- root root 1092
 /tmp/molecule/arch-full/direct-download/pyenv/LICENSE c00080c6a955a9c15eb6e8f3b5e88e45
-/tmp/molecule/arch-full/direct-download/pyenv/Makefile -rwx---r-x root root 852
-/tmp/molecule/arch-full/direct-download/pyenv/Makefile 4786e31109e1f9abccd36f6838134232
-/tmp/molecule/arch-full/direct-download/pyenv/README.md -rwx---r-x root root 23408
+/tmp/molecule/arch-full/direct-download/pyenv/Makefile -rw----r-- root root 852
+/tmp/molecule/arch-full/direct-download/pyenv/Makefile 31218fcbafdfd7695ac9ab87c118c9c9
+/tmp/molecule/arch-full/direct-download/pyenv/README.md -rw----r-- root root 23408
 /tmp/molecule/arch-full/direct-download/pyenv/README.md 8b8a96a24114f70d49838ecb32bc3906
 /tmp/molecule/arch-full/direct-download/pyenv/bin drwxr-x--- root root
-/tmp/molecule/arch-full/direct-download/pyenv/bin/pyenv -rwx---r-x root root 16
-/tmp/molecule/arch-full/direct-download/pyenv/bin/pyenv 0d40c329f4a212791651d6bd630c9e4d
-/tmp/molecule/arch-full/direct-download/pyenv/build-001 -rwx---r-x root root 0
+/tmp/molecule/arch-full/direct-download/pyenv/bin/pyenv -rwx---r-x root root 3187
+/tmp/molecule/arch-full/direct-download/pyenv/bin/pyenv c1266b07fcb315a7a112246f79180996
+/tmp/molecule/arch-full/direct-download/pyenv/bin/pyenv-which -rw----r-- root root 2324
+/tmp/molecule/arch-full/direct-download/pyenv/bin/pyenv-which 47b9bf7f2604f88f438cf42eb07a9fc6
+/tmp/molecule/arch-full/direct-download/pyenv/build-001 -rw----r-- root root 0
 /tmp/molecule/arch-full/direct-download/pyenv/build-001 d41d8cd98f00b204e9800998ecf8427e
 /tmp/molecule/arch-full/direct-download/pyenv/completions drwxr-x--- root root
-/tmp/molecule/arch-full/direct-download/pyenv/completions/pyenv.bash -rwx---r-x root root 406
+/tmp/molecule/arch-full/direct-download/pyenv/completions/pyenv.bash -rw----r-- root root 406
 /tmp/molecule/arch-full/direct-download/pyenv/completions/pyenv.bash 0509dbefb6f7f1110af47a84352cf169
-/tmp/molecule/arch-full/direct-download/pyenv/completions/pyenv.fish -rwx---r-x root root 541
+/tmp/molecule/arch-full/direct-download/pyenv/completions/pyenv.fish -rw----r-- root root 541
 /tmp/molecule/arch-full/direct-download/pyenv/completions/pyenv.fish b4bd7720a8378b0dea242b5e5d300745
-/tmp/molecule/arch-full/direct-download/pyenv/completions/pyenv.zsh -rwx---r-x root root 298
+/tmp/molecule/arch-full/direct-download/pyenv/completions/pyenv.zsh -rw----r-- root root 298
 /tmp/molecule/arch-full/direct-download/pyenv/completions/pyenv.zsh dfd1c306762abe17c2786ce6102613d0
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d drwxr-x--- root root
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec drwxr-x--- root root
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash drwxr-x--- root root
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash.bash -rwx---r-x root root 533
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash.bash 0048c498e10e0397e4c88cc5218cf150
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash.bash -rw----r-- root root 533
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash.bash f2a863ba0b13b5aa7675913aeac027b2
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash/conda -rwx---r-x root root 711
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash/conda 92c02113b702f8f30f0e206886e3b0d9
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash/conda 546483b93416586be45f750932c9bc75
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash/easy_install -rwx---r-x root root 651
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash/easy_install ecac9a7bd83c27482de0e80491418cff
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash/easy_install 7d755f888474db6467f522b34ab39e33
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash/pip -rwx---r-x root root 752
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/exec/pip-rehash/pip 26e232977f53a888e79117c9e28f8ff7
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/install drwxr-x--- root root
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/install/latest.bash -rwx---r-x root root 449
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/install/latest.bash aa1cf89421574acb6c5fd38dce8c0b64
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/install/latest.bash -rw----r-- root root 449
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/install/latest.bash 5f050b1498c894fce0c2f005680c82d9
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash drwxr-x--- root root
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/conda.bash -rwx---r-x root root 1719
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/conda.bash -rw----r-- root root 1719
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/conda.bash 37b05126244c50aadd8a840e03e938e3
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/conda.d drwxr-x--- root root
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/conda.d/.gitignore -rwx---r-x root root 30
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/conda.d/.gitignore -rw----r-- root root 30
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/conda.d/.gitignore cc6889e9b4574711f99c580255c32c6a
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/conda.d/default.list -rwx---r-x root root 1547
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/conda.d/default.list -rw----r-- root root 1547
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/conda.d/default.list f088914a958ad65d8aabcfa41512bfd2
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/source.bash -rwx---r-x root root 870
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/source.bash -rw----r-- root root 870
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/source.bash 5da8b2c2ae7512a0d11133a5b656496d
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/source.d drwxr-x--- root root
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/source.d/.gitignore -rwx---r-x root root 30
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/source.d/.gitignore -rw----r-- root root 30
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/source.d/.gitignore cc6889e9b4574711f99c580255c32c6a
-/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/source.d/default.list -rwx---r-x root root 77
+/tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/source.d/default.list -rw----r-- root root 77
 /tmp/molecule/arch-full/direct-download/pyenv/pyenv.d/rehash/source.d/default.list 47a491be6cef5d69636459d7e07c3bcb
+/tmp/molecule/arch-full/direct-download/pyenv/src drwxr-x--- root root
+/tmp/molecule/arch-full/direct-download/pyenv/src/Makefile.in -rw----r-- root root 576
+/tmp/molecule/arch-full/direct-download/pyenv/src/Makefile.in a6cab623e095de60223e80daf18fff92
+/tmp/molecule/arch-full/direct-download/pyenv/src/bash.h -rw----r-- root root 496
+/tmp/molecule/arch-full/direct-download/pyenv/src/bash.h e71e34db8d3b6e5eb3cf18dea2e41756
+/tmp/molecule/arch-full/direct-download/pyenv/src/configure -rwx---r-x root root 954
+/tmp/molecule/arch-full/direct-download/pyenv/src/configure 7a8e696bd5b5c95882b46adc1b1e30db
+/tmp/molecule/arch-full/direct-download/pyenv/src/realpath.c -rw----r-- root root 832
+/tmp/molecule/arch-full/direct-download/pyenv/src/realpath.c 82ea7690da6c071f63c2b04dd5563525
+/tmp/molecule/arch-full/direct-download/pyenv/src/shobj-conf -rwx---r-x root root 14696
+/tmp/molecule/arch-full/direct-download/pyenv/src/shobj-conf e17c9d2e129181903eb5fd69b275a1b5
 
 # 1.3.2
 /tmp/molecule/arch-full/controller-copy/pyenv drwxr-x--x root root
-/tmp/molecule/arch-full/controller-copy/pyenv/.agignore -rwx----wx root root 19
+/tmp/molecule/arch-full/controller-copy/pyenv/.agignore -rw-----w- root root 19
 /tmp/molecule/arch-full/controller-copy/pyenv/.agignore 751e052da74c6273356ffd32bf6162b1
-/tmp/molecule/arch-full/controller-copy/pyenv/.travis.yml -rwx----wx root root 1784
+/tmp/molecule/arch-full/controller-copy/pyenv/.travis.yml -rw-----w- root root 1784
 /tmp/molecule/arch-full/controller-copy/pyenv/.travis.yml 22b3cf3fd6f9e0bf141a11ffe3139a7a
-/tmp/molecule/arch-full/controller-copy/pyenv/.vimrc -rwx----wx root root 35
+/tmp/molecule/arch-full/controller-copy/pyenv/.vimrc -rw-----w- root root 35
 /tmp/molecule/arch-full/controller-copy/pyenv/.vimrc 37121414203ecc94f137fa2c7eeac155
-/tmp/molecule/arch-full/controller-copy/pyenv/COMMANDS.md -rwx----wx root root 10261
+/tmp/molecule/arch-full/controller-copy/pyenv/COMMANDS.md -rw-----w- root root 10261
 /tmp/molecule/arch-full/controller-copy/pyenv/COMMANDS.md 2e311dac65615f3e483e9cfbd53eb1c0
-/tmp/molecule/arch-full/controller-copy/pyenv/LICENSE -rwx----wx root root 1092
+/tmp/molecule/arch-full/controller-copy/pyenv/LICENSE -rw-----w- root root 1092
 /tmp/molecule/arch-full/controller-copy/pyenv/LICENSE c00080c6a955a9c15eb6e8f3b5e88e45
-/tmp/molecule/arch-full/controller-copy/pyenv/Makefile -rwx----wx root root 852
-/tmp/molecule/arch-full/controller-copy/pyenv/Makefile 4786e31109e1f9abccd36f6838134232
-/tmp/molecule/arch-full/controller-copy/pyenv/README.md -rwx----wx root root 23408
+/tmp/molecule/arch-full/controller-copy/pyenv/Makefile -rw-----w- root root 852
+/tmp/molecule/arch-full/controller-copy/pyenv/Makefile 31218fcbafdfd7695ac9ab87c118c9c9
+/tmp/molecule/arch-full/controller-copy/pyenv/README.md -rw-----w- root root 23408
 /tmp/molecule/arch-full/controller-copy/pyenv/README.md 8b8a96a24114f70d49838ecb32bc3906
 /tmp/molecule/arch-full/controller-copy/pyenv/bin drwxr-x--x root root
-/tmp/molecule/arch-full/controller-copy/pyenv/bin/pyenv -rwx----wx root root 16
-/tmp/molecule/arch-full/controller-copy/pyenv/bin/pyenv 0d40c329f4a212791651d6bd630c9e4d
-/tmp/molecule/arch-full/controller-copy/pyenv/build-001 -rwx----wx root root 0
+/tmp/molecule/arch-full/controller-copy/pyenv/bin/pyenv -rwx----wx root root 3187
+/tmp/molecule/arch-full/controller-copy/pyenv/bin/pyenv c1266b07fcb315a7a112246f79180996
+/tmp/molecule/arch-full/controller-copy/pyenv/bin/pyenv-which -rw-----w- root root 2324
+/tmp/molecule/arch-full/controller-copy/pyenv/bin/pyenv-which 47b9bf7f2604f88f438cf42eb07a9fc6
+/tmp/molecule/arch-full/controller-copy/pyenv/build-001 -rw-----w- root root 0
 /tmp/molecule/arch-full/controller-copy/pyenv/build-001 d41d8cd98f00b204e9800998ecf8427e
 /tmp/molecule/arch-full/controller-copy/pyenv/completions drwxr-x--x root root
-/tmp/molecule/arch-full/controller-copy/pyenv/completions/pyenv.bash -rwx----wx root root 406
+/tmp/molecule/arch-full/controller-copy/pyenv/completions/pyenv.bash -rw-----w- root root 406
 /tmp/molecule/arch-full/controller-copy/pyenv/completions/pyenv.bash 0509dbefb6f7f1110af47a84352cf169
-/tmp/molecule/arch-full/controller-copy/pyenv/completions/pyenv.fish -rwx----wx root root 541
+/tmp/molecule/arch-full/controller-copy/pyenv/completions/pyenv.fish -rw-----w- root root 541
 /tmp/molecule/arch-full/controller-copy/pyenv/completions/pyenv.fish b4bd7720a8378b0dea242b5e5d300745
-/tmp/molecule/arch-full/controller-copy/pyenv/completions/pyenv.zsh -rwx----wx root root 298
+/tmp/molecule/arch-full/controller-copy/pyenv/completions/pyenv.zsh -rw-----w- root root 298
 /tmp/molecule/arch-full/controller-copy/pyenv/completions/pyenv.zsh dfd1c306762abe17c2786ce6102613d0
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d drwxr-x--x root root
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec drwxr-x--x root root
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash drwxr-x--x root root
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash.bash -rwx----wx root root 533
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash.bash 0048c498e10e0397e4c88cc5218cf150
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash.bash -rw-----w- root root 533
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash.bash f2a863ba0b13b5aa7675913aeac027b2
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash/conda -rwx----wx root root 711
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash/conda 92c02113b702f8f30f0e206886e3b0d9
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash/conda 546483b93416586be45f750932c9bc75
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash/easy_install -rwx----wx root root 651
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash/easy_install ecac9a7bd83c27482de0e80491418cff
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash/easy_install 7d755f888474db6467f522b34ab39e33
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash/pip -rwx----wx root root 752
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/exec/pip-rehash/pip 26e232977f53a888e79117c9e28f8ff7
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/install drwxr-x--x root root
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/install/latest.bash -rwx----wx root root 449
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/install/latest.bash aa1cf89421574acb6c5fd38dce8c0b64
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/install/latest.bash -rw-----w- root root 449
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/install/latest.bash 5f050b1498c894fce0c2f005680c82d9
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash drwxr-x--x root root
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/conda.bash -rwx----wx root root 1719
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/conda.bash -rw-----w- root root 1719
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/conda.bash 37b05126244c50aadd8a840e03e938e3
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/conda.d drwxr-x--x root root
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/conda.d/.gitignore -rwx----wx root root 30
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/conda.d/.gitignore -rw-----w- root root 30
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/conda.d/.gitignore cc6889e9b4574711f99c580255c32c6a
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/conda.d/default.list -rwx----wx root root 1547
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/conda.d/default.list -rw-----w- root root 1547
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/conda.d/default.list f088914a958ad65d8aabcfa41512bfd2
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/source.bash -rwx----wx root root 870
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/source.bash -rw-----w- root root 870
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/source.bash 5da8b2c2ae7512a0d11133a5b656496d
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/source.d drwxr-x--x root root
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/source.d/.gitignore -rwx----wx root root 30
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/source.d/.gitignore -rw-----w- root root 30
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/source.d/.gitignore cc6889e9b4574711f99c580255c32c6a
-/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/source.d/default.list -rwx----wx root root 77
+/tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/source.d/default.list -rw-----w- root root 77
 /tmp/molecule/arch-full/controller-copy/pyenv/pyenv.d/rehash/source.d/default.list 47a491be6cef5d69636459d7e07c3bcb
+/tmp/molecule/arch-full/controller-copy/pyenv/src drwxr-x--x root root
+/tmp/molecule/arch-full/controller-copy/pyenv/src/Makefile.in -rw-----w- root root 576
+/tmp/molecule/arch-full/controller-copy/pyenv/src/Makefile.in a6cab623e095de60223e80daf18fff92
+/tmp/molecule/arch-full/controller-copy/pyenv/src/bash.h -rw-----w- root root 496
+/tmp/molecule/arch-full/controller-copy/pyenv/src/bash.h e71e34db8d3b6e5eb3cf18dea2e41756
+/tmp/molecule/arch-full/controller-copy/pyenv/src/configure -rwx----wx root root 954
+/tmp/molecule/arch-full/controller-copy/pyenv/src/configure 7a8e696bd5b5c95882b46adc1b1e30db
+/tmp/molecule/arch-full/controller-copy/pyenv/src/realpath.c -rw-----w- root root 832
+/tmp/molecule/arch-full/controller-copy/pyenv/src/realpath.c 82ea7690da6c071f63c2b04dd5563525
+/tmp/molecule/arch-full/controller-copy/pyenv/src/shobj-conf -rwx----wx root root 14696
+/tmp/molecule/arch-full/controller-copy/pyenv/src/shobj-conf e17c9d2e129181903eb5fd69b275a1b5
 
 # flag
 /tmp/molecule/to-notify-verifier-that-converged-in-check-mode drwxr-xr-x root root

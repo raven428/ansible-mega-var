@@ -21,7 +21,7 @@ ver2down: >-
 download_tag: "v{{ ver2down }}"
 download_root: "/tmp/molecule"
 download_topic: "pyenv-emtpy"
-download_version_file: "2.2.4"
+download_version_file: "2.2.5"
 download_file_name: >-
   {{ download_topic }}-{{
     download_version_file |
@@ -199,6 +199,8 @@ meva_other_files:
     exec_mode: "0705"
     file_mode: "0604"
     modification_time: "{{ default_time }}"
+    owner: "root"
+    group: "root"
     archive: true
   # x. -"-
   #   3. archive with directory tree
@@ -213,6 +215,8 @@ meva_other_files:
     exec_mode: "0703"
     file_mode: "0602"
     modification_time: "{{ default_time }}"
+    owner: "root"
+    group: "root"
     archive: true
 
 meva_release_addon:

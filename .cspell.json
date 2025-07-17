@@ -90,7 +90,9 @@
     "reexec",
     "lstrip",
     "followlinks",
-    "pytest"
+    "pytest",
+    "shobj",
+    "realpath"
   ],
   "enabled": true
 }

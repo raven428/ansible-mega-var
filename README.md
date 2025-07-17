@@ -42,7 +42,7 @@ In case you have most of the variables filled it's
 
 ### By separate calls
 
-In case you haven't filled most of the variables, the role call can be significantly speed up. Simple by using `tasks_from:` directive:
+In case you haven't filled most of the variables, a call of the role can be significantly speed up. Simple by using `tasks_from:` directive:
 
 ```yaml
 - name: Separate mega-var calls examples
@@ -209,6 +209,18 @@ Parameter `f.name` can be directory then will be propagated recursively. In this
 This is the `ansible.builtin.copy` behavior. In both cases destination directory will be automatically created despite the result ended with `/` or not
 
 ## Role development road-map
+
+### Add `rsync` ability to some cases of pick-me
+
+For cases `1.4.1` and `1.4.2` when source is a directory and destination already contain some other files it will not be deleted. Just the new files will be placed near with existing ones. It will be nice to support sync state of source and destination directories
+
+It can be achieved by using `ansible.posix.synchronize` module in `_down2unp.yaml` with the `when` condition near `ansible.builtin.copy`. The latter also should obtain `when` for avoiding simultaneous usage of both transfer modules
+
+### Add action plugin to decompress module
+
+Unarchive module perform the upload of file to targets before unarchive, but decompress is not. This is inaccurate behavior, because upload of decompressed files may consume more traffic data than compressed. Also, this will consume more time to operate and this can be avoided
+
+So, the better way is put compressed file to targets before decompress. This requires action plugin like done in unarchive. However, simple adding action plugin is not enough due to other role YAML-code expects decompressed file on the controller. So, these code also should be adapted
 
 ### Replace `docker` to `podman` driver in molecule
 
