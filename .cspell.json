@@ -92,7 +92,8 @@
     "followlinks",
     "pytest",
     "shobj",
-    "realpath"
+    "realpath",
+    "FURB"
   ],
   "enabled": true
 }
