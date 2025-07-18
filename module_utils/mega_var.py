@@ -23,7 +23,7 @@ def resolve_paths(  # noqa: C901,PLR0912
   i_dest: str,
   f_src: str,
 ) -> dict[str, object]:
-  src_path = f_src if f_src else (src_dir.rstrip('/') + '/' + f_name)
+  src_path = f_src or (src_dir.rstrip('/') + '/' + f_name)
   if not f_name:
     f_name = Path(src_path).name
 
@@ -51,8 +51,8 @@ def resolve_paths(  # noqa: C901,PLR0912
     dest4path = ''
     for _root, dirs, files in ww2_file(Path(src_path), followlinks=True):
       prefix = dest4copy.rstrip('/') + '/'
-      list4path["d"] = [prefix + d for d in dirs]
-      list4path["f"] = [prefix + f for f in files]
+      list4path['d'] = [prefix + d for d in dirs]
+      list4path['f'] = [prefix + f for f in files]
   else:
     dest4path = prefix + Path(f_name).name
 
@@ -73,13 +73,13 @@ def resolve_paths(  # noqa: C901,PLR0912
   # sed -e 's/\x1b\[[0-9;]*m//g' | sort | uniq
   # echo ']') | yapf >main-data.py
   return {
-    "a":
+    'a':
       f"'i_dest':'{i_dest}','f_dest':'{f_dest}','f_name':'{f_name}','f_src':'{f_src}',"
       f"'src_dir':'{src_dir}'",
-    "dest4dir": dest4dir,
-    "dest4copy": dest4copy,
-    "dest4path": dest4path,
-    "list4path": list4path,
-    "src4copy": src_path,
-    "src_is_dir": src_is_dir,
+    'dest4dir': dest4dir,
+    'dest4copy': dest4copy,
+    'dest4path': dest4path,
+    'list4path': list4path,
+    'src4copy': src_path,
+    'src_is_dir': src_is_dir,
   }
