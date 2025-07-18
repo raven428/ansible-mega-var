@@ -85,9 +85,9 @@
         state: directory
         mode: "0755"
         owner: "{{ omit if _meva_keys.unarchive_delegation else i.owner |
-          default(omit)  }}"
+          default(omit) }}"
         group: "{{ omit if _meva_keys.unarchive_delegation else i.owner |
-          default(omit)  }}"
+          default(omit) }}"
       become: "{{ ('delegate_to' not in i) | bool }}"
       check_mode: "{{ false if _meva_keys.unarchive_check_mode else omit }}"
       delegate_to: "{{ i.delegate_to if _meva_keys.unarchive_delegation else omit }}"
@@ -100,9 +100,9 @@
         creates: "{{ _meva_keys.dest_path }}"
         remote_src: "{{ ('delegate_to' not in i) | bool }}"
         owner: "{{ omit if _meva_keys.unarchive_delegation else i.owner |
-          default(omit)  }}"
+          default(omit) }}"
         group: "{{ omit if _meva_keys.unarchive_delegation else i.owner |
-          default(omit)  }}"
+          default(omit) }}"
       become: "{{ ('delegate_to' not in i) | bool }}"
       check_mode: "{{ false if _meva_keys.unarchive_check_mode else omit }}"
       register: unarchive_result

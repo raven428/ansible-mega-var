@@ -83,14 +83,34 @@ from ansible.module_utils.mega_var import (  # type: ignore[reportMissingImports
 
 def main() -> None:
   module = AnsibleModule(
-    argument_spec=dict(
-      src_dir=dict(type='str', required=False, default=''),
-      f_name=dict(type='str', required=False, default=''),
-      f_dest=dict(type='str', required=False, default=''),
-      i_dest=dict(type='str', required=False, default=''),
-      f_src=dict(type='str', required=False, default=''),
-    ),
-    supports_check_mode=True
+    argument_spec={
+      'src_dir': {
+        'type': 'str',
+        'required': False,
+        'default': '',
+      },
+      'f_name': {
+        'type': 'str',
+        'required': False,
+        'default': '',
+      },
+      'f_dest': {
+        'type': 'str',
+        'required': False,
+        'default': '',
+      },
+      'i_dest': {
+        'type': 'str',
+        'required': False,
+        'default': '',
+      },
+      'f_src': {
+        'type': 'str',
+        'required': False,
+        'default': '',
+      },
+    },
+    supports_check_mode=True,
   )
   f_src = module.params['f_src']
   f_name = module.params['f_name']
@@ -99,9 +119,9 @@ def main() -> None:
   src_dir = module.params['src_dir']
 
   if not i_dest and not f_dest:
-    module.fail_json(msg="Either i.dest or f.dest must be defined and non-empty")
+    module.fail_json(msg='Either i.dest or f.dest must be defined and non-empty')
   if i_dest and not i_dest.startswith('/'):
-    module.fail_json(msg="i_dest must be an absolute path")
+    module.fail_json(msg='i_dest must be an absolute path')
 
   module.exit_json(
     changed=False,

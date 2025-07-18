@@ -112,13 +112,13 @@ def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912
     if not destination:
       destination = path_list[0]
     elif not os.path.dirname(destination):  # noqa: PTH120
-      destination = original_file_dir + "/" + destination
+      destination = original_file_dir + '/' + destination
     elif not os.path.basename(destination):  # noqa: PTH119
-      destination = destination + os.path.basename(  # noqa: PTH119
-        path_list[0]
+      destination += os.path.basename(  # noqa: PTH119
+        path_list[0],
       )
     if not os.path.exists(os.path.dirname(destination)):  # noqa: PTH110,PTH120
-      os.makedirs(os.path.dirname(destination), 755)  # noqa: PTH103,PTH120
+      os.makedirs(os.path.dirname(destination), 0o755)  # noqa: PTH103,PTH120
     dst = destination
     if os.path.isdir(destination):  # noqa: PTH112
       dst = path_list[0]
@@ -126,63 +126,95 @@ def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912
     result = []
     if dst_exists and not force:
       result = [
-        False, False, "File [" + dst +
-        "] exists: skipping decompression. Use Force: true to overwrite)", dst
+        False,
+        False,
+        'File [' + dst +
+        '] exists: skipping decompression. Use Force: true to overwrite)',
+        dst,
       ]
-    elif ext in {".xz", ".lzma"}:
-      lzma = importlib.import_module("lzma")
-      with lzma.open(orig_file_path, "r") as f_in, open(dst, "wb") as f_out:
+    elif ext in {'.xz', '.lzma'}:
+      lzma = importlib.import_module('lzma')
+
+      with lzma.open(orig_file_path,
+                     'r') as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123
         shutil.copyfileobj(f_in, f_out)
-    elif ext == ".gz":
-      gzip = importlib.import_module("gzip")
-      with gzip.open(orig_file_path, "r") as f_in, open(dst, "wb") as f_out:
+    elif ext == '.gz':
+      gzip = importlib.import_module('gzip')
+      with gzip.open(orig_file_path,
+                     'r') as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123
         shutil.copyfileobj(f_in, f_out)
-    elif ext == ".bz2":
-      bz2 = importlib.import_module("bz2")
-      with bz2.BZ2File(orig_file_path, "r") as f_in, open(dst, "wb") as f_out:
+    elif ext == '.bz2':
+      bz2 = importlib.import_module('bz2')
+      with bz2.BZ2File(orig_file_path,
+                       'r') as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123
         shutil.copyfileobj(f_in, f_out)
-    elif ext in {".zst", ".zstd"}:
-      zstd = importlib.import_module("zstd")
-      with open(orig_file_path, "rb") as f_in, open(dst, "wb") as f_out:
+    elif ext in {'.zst', '.zstd'}:
+      zstd = importlib.import_module('zstd')
+      with open(  # noqa: PTH123,FURB101
+        orig_file_path,
+        'rb',
+      ) as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123,FURB103
         f_out.write(zstd.decompress(f_in.read()))
-    elif ext == ".lz4":
-      lz4 = importlib.import_module("lz4.frame")
-      with open(orig_file_path, "rb") as f_in, open(dst, "wb") as f_out:
+    elif ext == '.lz4':
+      lz4 = importlib.import_module('lz4.frame')
+      with open(  # noqa: PTH123,FURB101
+        orig_file_path,
+        'rb',
+      ) as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123,FURB103
         f_out.write(lz4.decompress(f_in.read()))
     else:
       result = [
-        True, False, "The file type [" + ext + "] is not supported by this module. " +
-        "Supported file formats are .xz .gz, .bz2 .lzma .lz .lzip " + ".zst .zstd .lz4",
-        orig_file_path
+        True,
+        False,
+        'The file type [' + ext + '] is not supported by this module. ' +
+        'Supported file formats are .xz .gz, .bz2 .lzma .lz .lzip ' + '.zst .zstd .lz4',
+        orig_file_path,
       ]
     if result == []:
       result = [
-        False, True, "File decompressed successfully" +
-        (" and replaced because Force: true" if dst_exists else "") + ": " + dst, dst
+        False,
+        True,
+        'File decompressed successfully' +
+        (' and replaced because Force: true' if dst_exists else '') + ': ' + dst,
+        dst,
       ]
     return result[0], result[1], result[2], result[3]
   except Exception as e:  # noqa: BLE001
-    message = f"Error {e} occurred"
+    message = f'Error {e} occurred'
     return True, False, message, {
-      'Error': str(e)
+      'Error': str(e),
     }
 
 
 def run_module() -> None:
-  module_args = dict(
-    src=dict(type='str', required=True),
-    dst=dict(type='str', required=False),
-    force=dict(type='bool', required=False, default=False),
-    update=dict(type='bool', required=False, default=True),
-  )
+  module_args = {
+    'src': {
+      'type': 'str',
+      'required': True,
+    },
+    'dst': {
+      'type': 'str',
+      'required': False,
+    },
+    'force': {
+      'type': 'bool',
+      'required': False,
+      'default': False,
+    },
+    'update': {
+      'type': 'bool',
+      'required': False,
+      'default': True,
+    },
+  }
   module = AnsibleModule(argument_spec=module_args)
   (error, is_changed, message, files) = decompress_file(module.params)
-  result = dict(
-    changed=is_changed,
-    message=message,
-    failed=error,
-    files=files,
-  )
+  result = {
+    'changed': is_changed,
+    'message': message,
+    'failed': error,
+    'files': files,
+  }
   module.exit_json(**result)
 
 

@@ -18,22 +18,22 @@ def mock_is_dir(self: Path) -> bool:
 
 
 @patch('module_utils.mega_var.Path.is_dir', new=mock_is_dir)
-@pytest.mark.parametrize("case", cases_resolve_paths)
+@pytest.mark.parametrize('case', cases_resolve_paths)
 def test_resolve_paths(case: dict[str, Any]) -> None:
   result = resolve_paths(
-    case["src_dir"],
-    case["f_name"],
-    case["f_dest"],
-    case["i_dest"],
-    case["f_src"],
+    case['src_dir'],
+    case['f_name'],
+    case['f_dest'],
+    case['i_dest'],
+    case['f_src'],
   )
   expected = {
-    "dest4dir": case["dest4dir"],
-    "dest4copy": case["dest4copy"],
-    "dest4path": case["dest4path"],
-    "src4copy": case["src4copy"],
-    "src_is_dir": case["src_is_dir"],
+    'dest4dir': case['dest4dir'],
+    'dest4copy': case['dest4copy'],
+    'dest4path': case['dest4path'],
+    'src4copy': case['src4copy'],
+    'src_is_dir': case['src_is_dir'],
   }
-  result.pop("a", None)
-  result.pop("list4path", None)
+  result.pop('a', None)
+  result.pop('list4path', None)
   assert result == expected  # noqa: S101
