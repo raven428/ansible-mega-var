@@ -59,8 +59,7 @@
   when:
     - i.archive | default(false)
 
-- name:
-    Ensure '{{ _meva_keys.dest_path | dirname }}' absent for upgrade due creates
+- name: Ensure '{{ _meva_keys.dest_path | dirname }}' absent for upgrade due creates
     '{{ _meva_keys.dest_path }}' missed or updated='{{ _download_archive.changed }}' by
     downloaded checksum # noqa name[template]
   ansible.builtin.file:

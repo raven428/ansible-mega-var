@@ -6,6 +6,7 @@
       ansible.builtin.file:
         path: "{{ check_flag }}"
         state: directory
+        mode: "0755"
       check_mode: false
       when: ansible_check_mode
     - name: Remove the check mode flag if not running in check mode
@@ -14,9 +15,10 @@
         state: absent
       when: not ansible_check_mode
   tasks:
-    - name: "Run call_mode='{{ call_mode }}', prop_type='{{ prop_type }}' upload"
+    - name: "Run call_mode='{{ call_mode }}', prop_type='{{ prop_type }}'
+        upload" # noqa name[template]
       ansible.builtin.include_role:
-        role: ansible-mega-var
+        name: ansible-mega-var
         tasks_from: _download.yaml
       loop_control:
         loop_var: i
@@ -25,7 +27,8 @@
         - call_mode == 'split'
         - prop_type != 'compress'
 
-    - name: "Run call_mode='{{ call_mode }}', prop_type='{{ prop_type }}' upload"
+    - name: "Run call_mode='{{ call_mode }}', prop_type='{{ prop_type }}'
+        upload" # noqa name[template]
       ansible.builtin.include_role:
         name: ansible-mega-var
       vars:
@@ -34,9 +37,10 @@
         - call_mode == 'full'
         - prop_type != 'compress'
 
-    - name: "Run call_mode='{{ call_mode }}', prop_type='{{ prop_type }}' compress"
+    - name: "Run call_mode='{{ call_mode }}', prop_type='{{ prop_type }}'
+        compress" # noqa name[template]
       ansible.builtin.include_role:
-        role: ansible-mega-var
+        name: ansible-mega-var
         tasks_from: _download.yaml
       loop_control:
         loop_var: i
