@@ -34,7 +34,7 @@ ANSIBLE_IMAGE_NAME="ghcr.io/raven428/container-images/${IMAGE_NAME}"
 export CONTENGI ANSIBLE_CONT_NAME ANSIBLE_IMAGE_NAME
 {
   ANSIBLE_CONT_ADDONS=" \
-     -u 0 --privileged --userns=keep-id \
+    -u 0 --privileged --userns=keep-id \
     --tmpfs /sys/fs/cgroup:rw,nosuid,noexec,nodev,mode=755 \
     -v ${HOME}/.cache:${HOME}/.cache:rw \
     -v ${HOME}/.ansible_async:${HOME}/.ansible_async:rw \
