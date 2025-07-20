@@ -101,26 +101,18 @@ cases_resolve_paths = [
     'src_is_dir': False,
   },
   {
-    'i_dest':
-      '/tmp/molecule',
-    'f_dest':
-      '/tmp/molecule/f.dest-abs2/file-default.list',
-    'f_name':
-      'pyenv/pyenv.d/rehash/conda.d/default.list',
-    'f_src':
-      '',
-    'src_dir':
-      '/tmp/ansible-controller_copy_000.tar.xz-dir',
-    'dest4copy':
-      '/tmp/molecule/f.dest-abs2/file-default.list',
-    'dest4dir':
-      '/tmp/molecule/f.dest-abs2',
-    'dest4path':
-      '/tmp/molecule/f.dest-abs2/file-default.list',
+    'i_dest': '/tmp/molecule',
+    'f_dest': '/tmp/molecule/f.dest-abs2/file-default.list',
+    'f_name': 'pyenv/pyenv.d/rehash/conda.d/default.list',
+    'f_src': '',
+    'src_dir': '/tmp/ansible-controller_copy_000.tar.xz-dir',
+    'dest4copy': '/tmp/molecule/f.dest-abs2/file-default.list',
+    'dest4dir': '/tmp/molecule/f.dest-abs2',
+    'dest4path': '/tmp/molecule/f.dest-abs2/file-default.list',
     'src4copy':
-      '/tmp/ansible-controller_copy_000.tar.xz-dir/pyenv/pyenv.d/rehash/conda.d/default.list',
-    'src_is_dir':
-      False,
+      '/tmp/ansible-controller_copy_000.tar.xz-dir/pyenv/pyenv.d/rehash'
+      '/conda.d/default.list',
+    'src_is_dir': False,
   },
   {
     'i_dest': '/tmp/molecule',
@@ -267,48 +259,36 @@ cases_resolve_paths = [
     'src_is_dir': False,
   },
   {
-    'i_dest':
-      '/tmp/molecule/single/controller-copy',
-    'f_dest':
-      '',
-    'f_name':
-      'pyenv-emtpy-2_2_4-linux-amd64.tar.xz',
-    'f_src':
-      '/tmp/ansible-single_controller_copy.xz',
-    'src_dir':
-      '/tmp/ansible-single_controller_copy.xz-dir',
+    'i_dest': '/tmp/molecule/single/controller-copy',
+    'f_dest': '',
+    'f_name': 'pyenv-emtpy-2_2_4-linux-amd64.tar.xz',
+    'f_src': '/tmp/ansible-single_controller_copy.xz',
+    'src_dir': '/tmp/ansible-single_controller_copy.xz-dir',
     'dest4copy':
-      '/tmp/molecule/single/controller-copy/pyenv-emtpy-2_2_4-linux-amd64.tar.xz',
-    'dest4dir':
-      '/tmp/molecule/single/controller-copy',
+      '/tmp/molecule/single/controller-copy/pyenv-emtpy-2_2_4-'
+      'linux-amd64.tar.xz',
+    'dest4dir': '/tmp/molecule/single/controller-copy',
     'dest4path':
-      '/tmp/molecule/single/controller-copy/pyenv-emtpy-2_2_4-linux-amd64.tar.xz',
-    'src4copy':
-      '/tmp/ansible-single_controller_copy.xz',
-    'src_is_dir':
-      False,
+      '/tmp/molecule/single/controller-copy/pyenv-emtpy-2_2_4-'
+      'linux-amd64.tar.xz',
+    'src4copy': '/tmp/ansible-single_controller_copy.xz',
+    'src_is_dir': False,
   },
   {
-    'i_dest':
-      '/tmp/molecule/single/direct-download',
-    'f_dest':
-      '',
-    'f_name':
-      'pyenv-emtpy-2_2_4-linux-amd64.tar.xz',
-    'f_src':
-      '/tmp/ansible-single_direct_download.xz',
-    'src_dir':
-      '/tmp/molecule/single/direct-download',
+    'i_dest': '/tmp/molecule/single/direct-download',
+    'f_dest': '',
+    'f_name': 'pyenv-emtpy-2_2_4-linux-amd64.tar.xz',
+    'f_src': '/tmp/ansible-single_direct_download.xz',
+    'src_dir': '/tmp/molecule/single/direct-download',
     'dest4copy':
-      '/tmp/molecule/single/direct-download/pyenv-emtpy-2_2_4-linux-amd64.tar.xz',
-    'dest4dir':
-      '/tmp/molecule/single/direct-download',
+      '/tmp/molecule/single/direct-download/pyenv-emtpy-2_2_4-'
+      'linux-amd64.tar.xz',
+    'dest4dir': '/tmp/molecule/single/direct-download',
     'dest4path':
-      '/tmp/molecule/single/direct-download/pyenv-emtpy-2_2_4-linux-amd64.tar.xz',
-    'src4copy':
-      '/tmp/ansible-single_direct_download.xz',
-    'src_is_dir':
-      False,
+      '/tmp/molecule/single/direct-download/pyenv-emtpy-2_2_4-'
+      'linux-amd64.tar.xz',
+    'src4copy': '/tmp/ansible-single_direct_download.xz',
+    'src_is_dir': False,
   },
   {
     'i_dest': '/tmp/molecule/xz',

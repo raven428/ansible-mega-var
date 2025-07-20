@@ -135,18 +135,24 @@ def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912
     elif ext in {'.xz', '.lzma'}:
       lzma = importlib.import_module('lzma')
 
-      with lzma.open(orig_file_path,
-                     'r') as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123
+      with lzma.open(
+        orig_file_path,
+        'r',
+      ) as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123
         shutil.copyfileobj(f_in, f_out)
     elif ext == '.gz':
       gzip = importlib.import_module('gzip')
-      with gzip.open(orig_file_path,
-                     'r') as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123
+      with gzip.open(
+        orig_file_path,
+        'r',
+      ) as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123
         shutil.copyfileobj(f_in, f_out)
     elif ext == '.bz2':
       bz2 = importlib.import_module('bz2')
-      with bz2.BZ2File(orig_file_path,
-                       'r') as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123
+      with bz2.BZ2File(
+        orig_file_path,
+        'r',
+      ) as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123
         shutil.copyfileobj(f_in, f_out)
     elif ext in {'.zst', '.zstd'}:
       zstd = importlib.import_module('zstd')

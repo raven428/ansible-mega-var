@@ -10,7 +10,8 @@ extend-ignore =
   E225, E226,
   # No extra spaces in dicts/lists (spaces_around_dict_delimiters=False, etc.)
   E231, E241, E242
-  # No blank lines before nested defs/classes (blank_line_before_nested_class_or_def=False)
+  # No blank lines before nested defs/classes
+  # (blank_line_before_nested_class_or_def=False)
   E301,
   # Allow 2 blank lines around top-level defs (blank_lines_around_top_level_definition=2)
   E302,
