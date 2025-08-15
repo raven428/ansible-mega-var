@@ -8,6 +8,7 @@ cd "${MY_PATH}/../.."
 source "${MY_PATH}/../prepare.sh"
 sce='-s downloads'
 LOG_PATH="/tmp/molecule-$(/usr/bin/env date '+%Y%m%d%H%M%S.%3N')"
+export ANSIBLE_ROLES_PATH="/tmp/ansible/roles2test"
 for action in create check converge; do
   printf "\n\n\nmolecule [%s] action\n" $action
   # shellcheck disable=2086
