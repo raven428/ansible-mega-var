@@ -5,7 +5,7 @@
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
   vars:
-    roles_dir: "{{ lookup('env', 'HOME') }}/.ansible/roles"
+    roles_dir: "{{ lookup('env', 'ANSIBLE_ROLES_PATH').split(':')[-1] }}"
   tasks:
     - name: Create molecule roles directory
       ansible.builtin.file:
