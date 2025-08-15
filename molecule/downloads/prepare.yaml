@@ -13,13 +13,16 @@
         state: directory
         force: true
         recurse: true
-    - name: Symbolic link to role
+    - name: Symbolic links to roles
       ansible.builtin.file:
-        src: /ansible
-        dest: "{{ roles_dir }}/ansible-mega-var"
+        src: "/ansible/deps/roles/{{ role }}"
+        dest: "{{ roles_dir }}/{{ role }}"
         state: link
         force: true
-
+      loop:
+        - "ansible-mega-var"
+      loop_control:
+        loop_var: role
 - name: Prepare targets
   hosts: all
   tasks:

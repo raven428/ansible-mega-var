@@ -30,7 +30,6 @@ provisioner:
     prepare: prepare.yaml
     converge: converge.yaml
     verify: verify.yaml
-    check: qwe.yaml
   config_options:
     defaults:
       remote_tmp: /tmp
