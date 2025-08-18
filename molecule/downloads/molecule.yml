@@ -2,13 +2,6 @@
 dependency:
   name: galaxy
   enabled: true
-  # hardcoded to "collections.yml"
-  # options:
-  #   requirements-file: requirements.yaml
-# lint: |
-#   set -e
-#   yamllint .
-#   ansible-lint
 driver:
   # see molecule_docker/playbooks for example
   name: docker
