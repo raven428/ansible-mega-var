@@ -1,15 +1,19 @@
 ---
 - name: Create some directories
   ansible.builtin.file:
-    access_time_format: "{{ i.access_time_format | default(omit) }}"
-    access_time: "{{ i.access_time | default(omit) }}"
+    access_time_format: "{{ i.access_time_format | default(omit) if ansible_version.full
+      is version('2.7', '>=') else omit }}"
+    access_time: "{{ i.access_time | default(omit) if ansible_version.full is
+      version('2.7', '>=') else omit }}"
     attributes: "{{ i.attributes | default(omit) }}"
     follow: "{{ i.follow | default(omit) }}"
     force: "{{ i.force | default(omit) }}"
     group: "{{ i.group | default(omit) }}"
     mode: "{{ i.mode | default('0755') }}"
-    modification_time_format: "{{ i.modification_time_format | default(omit) }}"
-    modification_time: "{{ i.modification_time | default(omit) }}"
+    modification_time_format: "{{ i.modification_time_format | default(omit) if
+      ansible_version.full is version('2.7', '>=') else omit }}"
+    modification_time: "{{ i.modification_time | default(omit) if ansible_version.full is
+      version('2.7', '>=') else omit }}"
     owner: "{{ i.owner | default(omit) }}"
     path: "{{ i.path | mandatory }}"
     recurse: "{{ i.recurse | default(omit) }}"

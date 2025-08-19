@@ -15,10 +15,14 @@
         owner: "{{ f.owner | default(omit) }}"
         group: "{{ f.group | default(omit) }}"
         force: "{{ f.force | default(_download_archive.changed) }}"
-        access_time: "{{ f.access_time | default(omit) }}"
-        access_time_format: "{{ f.access_time_format | default(omit) }}"
-        modification_time: "{{ f.modification_time | default(omit) }}"
-        modification_time_format: "{{ f.modification_time_format | default(omit) }}"
+        access_time: "{{ f.access_time | default(omit) if ansible_version.full is
+          version('2.7', '>=') else omit }}"
+        access_time_format: "{{ f.access_time_format | default(omit) if
+          ansible_version.full is version('2.7', '>=') else omit }}"
+        modification_time: "{{ f.modification_time | default(omit) if
+          ansible_version.full is version('2.7', '>=') else omit }}"
+        modification_time_format: "{{ f.modification_time_format | default(omit) if
+          ansible_version.full is version('2.7', '>=') else omit }}"
         attributes: "{{ f.attributes | default(omit) }}"
         follow: "{{ f.follow | default(omit) }}"
         selevel: "{{ f.selevel | default(omit) }}"

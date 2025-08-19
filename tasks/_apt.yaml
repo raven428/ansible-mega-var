@@ -1,29 +1,37 @@
 ---
 - name: Ensure some apt packages
   ansible.builtin.apt:
-    allow_change_held_packages: "{{ i.allow_change_held_packages | default(omit) }}"
-    allow_downgrade: "{{ i.allow_downgrade | default(omit) }}"
+    allow_change_held_packages: "{{ i.allow_change_held_packages | default(omit) if
+      ansible_version.full is version('2.13', '>=') else omit }}"
+    allow_downgrade: "{{ i.allow_downgrade | default(omit) if ansible_version.full is
+      version('2.12', '>=') else omit }}"
     allow_unauthenticated: "{{ i.allow_unauthenticated | default(omit) }}"
     autoclean: "{{ i.autoclean | default(omit) }}"
     autoremove: "{{ i.autoremove | default(omit) }}"
     cache_valid_time: "{{ i.cache_valid_time | default(omit) }}"
-    clean: "{{ i.clean | default(omit) }}"
+    clean: "{{ i.clean | default(omit) if ansible_version.full is version('2.13', '>=')
+      else omit }}"
     deb: "{{ i.deb | default(omit) }}"
     default_release: "{{ i.default_release | default(omit) }}"
     dpkg_options: "{{ i.dpkg_options | default(omit) }}"
-    fail_on_autoremove: "{{ i.fail_on_autoremove | default(omit) }}"
+    fail_on_autoremove: "{{ i.fail_on_autoremove | default(omit) if ansible_version.full
+      is version('2.11', '>=') else omit }}"
     force_apt_get: "{{ i.force_apt_get | default(omit) }}"
     force: "{{ i.force | default(omit) }}"
     install_recommends: "{{ i.install_recommends | default(omit) }}"
-    lock_timeout: "{{ i.lock_timeout | default(omit) }}"
+    lock_timeout: "{{ i.lock_timeout | default(omit) if ansible_version.full is
+      version('2.12', '>=') else omit }}"
     name: "{{ i.name | default(omit) }}"
     only_upgrade: "{{ i.only_upgrade | default(omit) }}"
     pkg: "{{ i.pkg | default(omit) }}"
-    policy_rc_d: "{{ i.policy_rc_d | default(omit) }}"
+    policy_rc_d: "{{ i.policy_rc_d | default(omit) if ansible_version.full is
+      version('2.8', '>=') else omit }}"
     purge: "{{ i.purge | default(omit) }}"
     state: "{{ i.state | default(omit) }}"
-    update_cache_retries: "{{ i.update_cache_retries | default(omit) }}"
-    update_cache_retry_max_delay: "{{ i.update_cache_retry_max_delay | default(omit) }}"
+    update_cache_retries: "{{ i.update_cache_retries | default(omit) if
+      ansible_version.full is version('2.10', '>=') else omit }}"
+    update_cache_retry_max_delay: "{{ i.update_cache_retry_max_delay | default(omit) if
+      ansible_version.full is version('2.10', '>=') else omit }}"
     update_cache: "{{ i.update_cache | default(omit) }}"
     upgrade: "{{ i.upgrade | default(omit) }}"
   when: ansible_pkg_mgr == 'apt'

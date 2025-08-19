@@ -17,10 +17,14 @@
     owner: "{{ f.dir_owner | default(f.owner) | default(omit) }}"
     group: "{{ f.dir_group | default(f.group) | default(omit) }}"
     force: "{{ f.dir_force | default(f.force) | default(_download_archive.changed) }}"
-    access_time: "{{ f.dir_atime | default(omit) }}"
-    access_time_format: "{{ f.dir_atime_format | default(omit) }}"
-    modification_time: "{{ f.dir_mtime | default(omit) }}"
-    modification_time_format: "{{ f.dir_mtime_format | default(omit) }}"
+    access_time: "{{ f.dir_atime | default(omit) if ansible_version.full is
+      version('2.7', '>=') else omit }}"
+    access_time_format: "{{ f.dir_atime_format | default(omit) if ansible_version.full is
+      version('2.7', '>=') else omit }}"
+    modification_time: "{{ f.dir_mtime | default(omit) if ansible_version.full is
+      version('2.7', '>=') else omit }}"
+    modification_time_format: "{{ f.dir_mtime_format | default(omit) if
+      ansible_version.full is version('2.7', '>=') else omit }}"
     attributes: "{{ f.dir_attributes | default(omit) }}"
     follow: "{{ f.dir_follow | default(omit) }}"
     selevel: "{{ f.dir_selevel | default(f.selevel) | default(omit) }}"

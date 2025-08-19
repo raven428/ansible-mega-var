@@ -3,7 +3,8 @@
 - name: Ensure some users
   ansible.builtin.user:
     append: "{{ i.append | default(omit) }}"
-    authorization: "{{ i.authorization | default(omit) }}"
+    authorization: "{{ i.authorization | default(omit) if ansible_version.full is
+      version('2.8', '>=') else omit }}"
     comment: "{{ i.comment | default(omit) }}"
     create_home: "{{ i.create_home | default('no') }}"
     expires: "{{ i.expires | default(omit) }}"
@@ -18,16 +19,21 @@
     move_home: "{{ i.move_home | default(omit) }}"
     name: "{{ i.name | mandatory }}"
     non_unique: "{{ i.non_unique | default(omit) }}"
-    password_expire_account_disable: >-
-      {{ i.password_expire_account_disable | default(omit) }}"
-    password_expire_max: "{{ i.password_expire_max | default(omit) }}"
-    password_expire_min: "{{ i.password_expire_min | default(omit) }}"
-    password_expire_warn: "{{ i.password_expire_warn | default(omit) }}"
+    password_expire_account_disable: "{{ i.password_expire_account_disable |
+      default(omit) if ansible_version.full is version('2.18', '>=') else omit }}"
+    password_expire_max: "{{ i.password_expire_max | default(omit) if
+      ansible_version.full is version('2.11', '>=') else omit }}"
+    password_expire_min: "{{ i.password_expire_min | default(omit) if
+      ansible_version.full is version('2.11', '>=') else omit }}"
+    password_expire_warn: "{{ i.password_expire_warn | default(omit) if
+      ansible_version.full is version('2.16', '>=') else omit }}"
     password_lock: "{{ i.password_lock | default(omit) }}"
     password: "{{ i.password | default(omit) }}"
-    profile: "{{ i.profile | default(omit) }}"
+    profile: "{{ i.profile | default(omit) if ansible_version.full is
+      version('2.8', '>=') else omit }}"
     remove: "{{ i.remove | default(omit) }}"
-    role: "{{ i.role | default(omit) }}"
+    role: "{{ i.role | default(omit) if ansible_version.full is version('2.8', '>=')
+      else omit }}"
     seuser: "{{ i.seuser | default(omit) }}"
     shell: "{{ i.shell | default(omit) }}"
     skeleton: "{{ i.skeleton | default(omit) }}"
@@ -38,9 +44,12 @@
     ssh_key_type: "{{ i.ssh_key_type | default(omit) }}"
     state: "{{ i.state | default('present') }}"
     system: "{{ i.system | default(omit) }}"
-    uid_max: "{{ i.uid_max | default(omit) }}"
-    uid_min: "{{ i.uid_min | default(omit) }}"
+    uid_max: "{{ i.uid_max | default(omit) if ansible_version.full is
+      version('2.18', '>=') else omit }}"
+    uid_min: "{{ i.uid_min | default(omit) if ansible_version.full is
+      version('2.18', '>=') else omit }}"
     uid: "{{ i.uid | default(omit) }}"
-    umask: "{{ i.umask | default(omit) }}"
+    umask: "{{ i.umask | default(omit) if ansible_version.full is
+      version('2.12', '>=') else omit }}"
     update_password: "{{ i.update_password | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"
