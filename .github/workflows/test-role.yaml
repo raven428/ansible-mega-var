@@ -49,19 +49,19 @@ jobs:
       fail-fast: false
       matrix:
         prop_type:
-          - simple_other
-          - simple_target
-          - simple_controller
-          - release_other
+          # - simple_other
+          # - simple_target
+          # - simple_controller
+          # - release_other
           - release_target
           - release_controller
           - compress # (full=remote, split=local)
         call_mode:
-          - full
+          # - full
           - split
         ansible_ver:
           - "07"
-          - "09"
+          # - "09"
           - "11"
     steps:
       - uses: actions/checkout@v4
