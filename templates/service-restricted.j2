@@ -1,0 +1,57 @@
+#
+# {{ ansible_managed }}
+#
+[Unit]
+After=network-online.target
+{%  if 'unit' in v and v.unit != {} %}
+{%    for k,v in v.unit.items() %}
+{{      k }}={{ v }}
+{%    endfor %}
+{%  endif %}
+
+[Service]
+{%
+set default_service = {
+  'AmbientCapabilities': '',
+  'CapabilityBoundingSet': '',
+  'EnvironmentFile': '/dev/null',
+  'ExecStart': '/usr/bin/env true',
+  'LimitNOFILE': "131072:524288",
+  'LimitNPROC': '32768:131072',
+  'LockPersonality': 'yes',
+  'MemoryDenyWriteExecute': 'yes',
+  'NoNewPrivileges': 'yes',
+  'PrivateDevices': 'yes',
+  'PrivateTmp': 'yes',
+  'PrivateUsers': 'yes',
+  'ProtectControlGroups': 'true',
+  'ProtectHome': 'read-only',
+  'ProtectKernelModules': 'true',
+  'ProtectKernelTunables': 'yes',
+  'ProtectSystem': 'strict',
+  'RemoveIPC': 'yes',
+  'Restart': 'always',
+  'RestartSec': '1',
+  'RestrictAddressFamilies': 'AF_INET AF_INET6 AF_UNIX',
+  'RestrictNamespaces': 'yes',
+  'RestrictRealtime': 'yes',
+  'RestrictSUIDSGID': 'yes',
+  'StartLimitInterval': '0',
+  'SystemCallArchitectures': 'native',
+  'SystemCallErrorNumber': 'ECANCELED',
+  'Type': 'oneshot',
+  'UMask':  '0077',
+  'SystemCallFilter': '@default @aio @basic-io @file-system @io-event @keyring ' ~
+  '@memlock @network-io @process @signal @sync @timer flock mprotect pipe2 uname',
+}
+%}
+{# SystemCallFilter memo: use "systemd-analyze syscall-filter", Luke #}
+{%  if 'service' in v and v.service != {} %}
+{%    do default_service.update(v.service) %}
+{%  endif %}
+{%  for k,v in default_service.items() if v is defined and v is not none %}
+{{    k }}={{ v }}
+{%  endfor %}
+
+[Install]
+WantedBy=multi-user.target
