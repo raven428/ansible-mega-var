@@ -25,7 +25,7 @@ options:
       - File mode to apply to directories.
     required: false
     type: str
-    default: '0755'
+    default: None
   file_mode:
     description:
       - File mode to apply to regular files.
@@ -37,7 +37,7 @@ options:
       - File mode to apply to executable files.
     required: false
     type: str
-    default: '0755'
+    default: None
   follow:
     description:
       - Follow symlinks.
@@ -61,7 +61,7 @@ options:
       - Apply this mask to filemode for executive files.
     required: false
     type: str
-    default: '0111'
+    default: '0000'
   always_unchanged:
     description:
       - Return always not changed result.
@@ -148,7 +148,7 @@ def main() -> None:  # noqa: C901,PLR0914
       'file_mode': {
         'type': 'str',
         'required': False,
-        'default': None,
+        'default': '0644',
       },
       'exec_mode': {
         'type': 'str',
@@ -173,7 +173,7 @@ def main() -> None:  # noqa: C901,PLR0914
       'exec_bit': {
         'type': 'str',
         'required': False,
-        'default': '0111',
+        'default': '0000',
       },
       'always_unchanged': {
         'type': 'bool',
