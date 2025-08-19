@@ -93,7 +93,17 @@
     "pytest",
     "shobj",
     "realpath",
-    "FURB"
+    "FURB",
+    "gaiad",
+    "nologin",
+    "NOFILE",
+    "Tunables",
+    "SUIDSGID",
+    "ECANCELED",
+    "oneshot",
+    "memlock",
+    "mprotect",
+    "syscall"
   ],
   "enabled": true
 }
