@@ -1,0 +1,46 @@
+---
+dependency:
+  name: galaxy
+  enabled: true
+driver:
+  # see molecule_docker/playbooks for example
+  name: docker
+platforms:
+  - name: "dkr4ans"
+    image: "ghcr.io/raven428/container-images/systemd-ubuntu-22_04:latest"
+    privileged: true
+    network_mode: host
+    cgroupns_mode: host
+    pre_build_image: true
+    override_command: false
+    mounts:
+      - type: bind
+        read_only: false
+        source: /sys/fs/cgroup
+        target: /sys/fs/cgroup
+provisioner:
+  name: ansible
+  log: true
+  env:
+    ANSIBLE_VERBOSITY: 1
+  inventory:
+    links:
+      group_vars: "group_vars"
+  playbooks:
+    prepare: prepare.yaml
+    converge: converge.yaml
+    verify: verify.yaml
+  config_options:
+    defaults:
+      remote_tmp: /tmp
+      jinja2_extensions: jinja2.ext.do
+verifier:
+  name: ansible
+scenario:
+  name: default
+  create_sequence:
+    - dependency
+    - create
+    - prepare
+  converge_sequence:
+    - converge

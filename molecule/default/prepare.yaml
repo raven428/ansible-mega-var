@@ -1,0 +1,28 @@
+---
+- name: Prepare controller
+  hosts: localhost # DevSkim: ignore DS162092
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  vars:
+    roles_dir: "{{ lookup('env', 'ANSIBLE_ROLES_PATH').split(':')[-1] }}"
+  tasks:
+    - name: Create molecule roles directory
+      ansible.builtin.file:
+        path: "{{ roles_dir }}"
+        state: directory
+        force: true
+        recurse: true
+    - name: Symbolic links to roles
+      ansible.builtin.file:
+        src: "/ansible/deps/roles/{{ role }}"
+        dest: "{{ roles_dir }}/{{ role }}"
+        state: link
+        force: true
+      loop:
+        - "ansible-mega-var"
+      loop_control:
+        loop_var: role
+- name: Prepare targets
+  hosts: all
+  tasks: []

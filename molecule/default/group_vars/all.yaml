@@ -1,0 +1,78 @@
+---
+service_name: gaiad
+download_root: "/tmp/molecule"
+local_bin_path: "/usr/local/bin"
+service_home: "/usr/local/{{ service_name }}"
+check_flag: "{{ download_root }}/to-notify-verifier-that-converged-in-check-mode"
+call_mode: "{{ lookup('ansible.builtin.env', 'ANSIBLE_CALL_MODE', default='split') }}"
+meva_packages:
+  - name:
+      - git
+      - vim
+      - lsof
+      - nginx
+      - rsync
+    state: present
+    update_cache: true
+    install_recommends: false
+meva_groups2create:
+  - name: "{{ service_name }}"
+meva_users2create:
+  - name: "{{ service_name }}"
+    group: "{{ service_name }}"
+    create_home: false
+    home: "{{ service_home }}"
+    shell: "/usr/sbin/nologin"
+    password_expire_warn: 3
+meva_key2user:
+  - user: "{{ service_name }}"
+    key: "ssh-ed25519
+      AAAAC3NzaC1lZDI1NTE5AAAAIGvDthv4Z9eqO2yljFz9rrZ8zibYPyNHrTKkbSR3FuuJ test"
+meva_dirs2create:
+  - path: "{{ local_bin_path }}"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  - path: "{{ service_home | dirname }}"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  - path: "{{ service_home }}/.ssh"
+    owner: "{{ service_name }}"
+    group: "{{ service_name }}"
+    mode: "0700"
+meva_templates2upload:
+  - src: "templates/service-restricted.j2"
+    dest: "/etc/systemd/system/{{ service_name }}.service"
+    mode: "0440"
+    force: "yes"
+    vars:
+      unit:
+        Description: "Node {{ service_name }} service"
+      service:
+        Restart: ""
+        User: "{{ service_name }}"
+        Group: "{{ service_name }}"
+        ReadWritePaths: "{{ service_home }}"
+        WorkingDirectory: "{{ service_home }}"
+        SyslogIdentifier: "{{ service_name }}"
+        EnvironmentFile: "-/etc/default/{{ service_name }}"
+meva_systemd4units: # DevSkim: ignore DS126858
+  - name: "{{ service_name }}"
+meva_files2upload:
+  - src: "README.md"
+    dest: "{{ service_home }}"
+    mode: "0644"
+    force: false
+  - src: ".lycheeignore"
+    dest: "{{ service_home }}/lycheeignore"
+    mode: "0644"
+    force: false
+meva_tree2rsync:
+  - src: "tests"
+    dest: "{{ service_home }}/rsync"
+meva_file2down:
+  - url: "https://github.com/cosmos/gaia/releases/\
+      download/v14.2.0/gaiad-v14.2.0-linux-amd64"
+    dest: "{{ local_bin_path }}"
+    creates: "{{ service_name }}"
