@@ -25,18 +25,4 @@
         loop_var: role
 - name: Prepare targets
   hosts: all
-  tasks:
-    - name: Remove downloads directory
-      ansible.builtin.file:
-        path: "{{ download_root }}"
-        state: absent
-    - name: Create downloads directory
-      ansible.builtin.file:
-        path: "{{ i.path }}"
-        state: directory
-        force: true
-        recurse: true
-      loop_control:
-        loop_var: i
-      loop: "{{ dirs2prepare }}"
-      when: "prop_type.endswith('_other')"
+  tasks: []

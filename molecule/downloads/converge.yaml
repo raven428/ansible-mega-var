@@ -2,18 +2,12 @@
 - name: Perform actions from inventory variables
   hosts: all
   pre_tasks:
-    - name: Create a check mode flag if running in check mode
+    - name: Manage the check mode flag
       ansible.builtin.file:
         path: "{{ check_flag }}"
-        state: directory
+        state: "{{ 'directory' if ansible_check_mode else 'absent' }}"
         mode: "0755"
       check_mode: false
-      when: ansible_check_mode
-    - name: Remove the check mode flag if not running in check mode
-      ansible.builtin.file:
-        path: "{{ check_flag }}"
-        state: absent
-      when: not ansible_check_mode
   tasks:
     - name: "Run call_mode='{{ call_mode }}', prop_type='{{ prop_type }}'
         upload" # noqa name[template]

@@ -1,0 +1,7 @@
+---
+- name: Verify downloaded files
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Refresh service facts
+      ansible.builtin.service_facts:

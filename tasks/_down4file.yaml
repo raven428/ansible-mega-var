@@ -5,7 +5,8 @@
     attributes: "{{ i.attributes | default(omit) }}"
     backup: "{{ i.backup | default(omit) }}"
     checksum: "{{ i.checksum | default(omit) }}"
-    ciphers: "{{ i.ciphers | default(omit) }}"
+    ciphers: "{{ i.ciphers | default(omit) if ansible_version.full is
+      version('2.14', '>=') else omit }}"
     client_cert: "{{ i.client_cert | default(omit) }}"
     client_key: "{{ i.client_key | default(omit) }}"
     dest: "{{ _meva_keys.download_name }}"
@@ -22,13 +23,16 @@
     seuser: "{{ i.seuser | default(omit) }}"
     timeout: "{{ i.timeout | default(omit) }}"
     tmp_dest: "{{ i.tmp_dest | default(omit) }}"
-    unredirected_headers: "{{ i.unredirected_headers | default(omit) }}"
+    unredirected_headers: "{{ i.unredirected_headers | default(omit) if
+      ansible_version.full is version('2.12', '>=') else omit }}"
     unsafe_writes: "{{ i.unsafe_writes | default(omit) }}"
     url_password: "{{ i.url_password | default(omit) }}"
     url_username: "{{ i.url_username | default(omit) }}"
     url: "{{ i.url | default(mandatory) }}"
-    use_gssapi: "{{ i.use_gssapi | default(omit) }}"
-    use_netrc: "{{ i.use_netrc | default(omit) }}"
+    use_gssapi: "{{ i.use_gssapi | default(omit) if ansible_version.full is
+      version('2.11', '>=') else omit }}"
+    use_netrc: "{{ i.use_netrc | default(omit) if ansible_version.full is
+      version('2.14', '>=') else omit }}"
     use_proxy: "{{ i.use_proxy | default(omit) }}"
   register: _download_archive
   until: _download_archive is succeeded

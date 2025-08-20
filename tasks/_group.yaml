@@ -1,12 +1,17 @@
 ---
 - name: Ensure some groups
   ansible.builtin.group:
-    force: "{{ i.force | default(omit) }}"
-    gid_max: "{{ i.gid_max | default(omit) }}"
+    force: "{{ i.force | default(omit) if ansible_version.full is version('2.15', '>=')
+      else omit }}"
     gid: "{{ i.gid | default(omit) }}"
+    gid_max: "{{ i.gid_max | default(omit) if ansible_version.full is
+      version('2.18', '>=') else omit }}"
+    gid_min: "{{ i.gid_max | default(omit) if ansible_version.full is
+      version('2.18', '>=') else omit }}"
     local: "{{ i.local | default(omit) }}"
     name: "{{ i.name | mandatory }}"
-    non_unique: "{{ i.non_unique | default(omit) }}"
+    non_unique: "{{ i.non_unique | default(omit) if ansible_version.full is
+      version('2.8', '>=') else omit }}"
     state: "{{ i.state | default('present') }}"
     system: "{{ i.system | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"

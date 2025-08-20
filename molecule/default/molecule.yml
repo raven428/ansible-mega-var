@@ -37,15 +37,10 @@ provisioner:
 verifier:
   name: ansible
 scenario:
-  name: downloads
+  name: default
   create_sequence:
     - dependency
     - create
     - prepare
-  check_sequence:
-    - check
-    - verify
   converge_sequence:
     - converge
-    - idempotence
-    - verify

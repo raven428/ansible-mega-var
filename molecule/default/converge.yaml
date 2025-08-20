@@ -1,0 +1,88 @@
+---
+- name: Perform actions from inventory variables
+  hosts: all
+  pre_tasks:
+    - name: Manage the check mode flag
+      ansible.builtin.file:
+        path: "{{ check_flag }}"
+        state: "{{ 'directory' if ansible_check_mode else 'absent' }}"
+        mode: "0755"
+      check_mode: false
+  tasks:
+    - name: "Run call_mode='{{ call_mode }}'"
+      ansible.builtin.include_role:
+        name: ansible-mega-var
+      when: call_mode == 'full'
+    - name: "Run call_mode='{{ call_mode }}'"
+      when: call_mode == 'split'
+      block:
+        - name: Install packages
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _apt.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_packages }}"
+        - name: Create groups
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _group.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_groups2create }}"
+        - name: Create users
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _user.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_users2create }}"
+        - name: Create dirs
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _dir.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_dirs2create }}"
+        - name: Download files
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _download.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_file2down }}"
+        - name: Create keys
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _key.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_key2user }}"
+        - name: Create templates
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _template.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_templates2upload }}"
+        - name: Create systemd
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _systemd.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_systemd4units }}" # DevSkim: ignore DS126858
+        - name: Create file
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _file.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_files2upload }}"
+        - name: Create rsync
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _rsync.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_tree2rsync }}"

@@ -55,3 +55,10 @@ export CONTENGI ANSIBLE_CONT_NAME ANSIBLE_IMAGE_NAME
     sleep 1
   done
 }
+export ANSIBLE_ROLES_PATH="/tmp/ansible/roles2test"
+deps_dir='deps/roles'
+[[ -d ${deps_dir} ]] || {
+  /usr/bin/env mkdir -vp ${deps_dir}
+  /usr/bin/env rm -vf "${deps_dir}/ansible-mega-var"
+  /usr/bin/env ln -sfv ../.. "${deps_dir}/ansible-mega-var"
+}
