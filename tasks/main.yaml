@@ -88,3 +88,15 @@
   loop_control:
     loop_var: i
   loop: "{{ meva_mounts }}"
+
+- name: Command to run
+  ansible.builtin.include_tasks: _command.yaml
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_cmd2run }}" # DevSkim: ignore DS126858
+
+- name: Run for shell
+  ansible.builtin.include_tasks: _shell.yaml
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_run4shell }}"

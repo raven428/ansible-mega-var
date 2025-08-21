@@ -16,3 +16,5 @@ meva_lvg: []
 meva_lvol: []
 meva_filesystems: []
 meva_mounts: []
+meva_cmd2run: [] # DevSkim: ignore DS126858
+meva_run4shell: []
