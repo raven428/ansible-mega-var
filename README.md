@@ -55,38 +55,44 @@ In case you haven't filled most of the variables, a call of the role can be sign
       ansible.builtin.include_role:
         role: mega-var
         tasks_from: _apt.yaml
-      vars:
-        meva_packages: "{{ meva_site_packages }}"
+      loop_control:
+        loop_var: i
+      loop: "{{ meva_site_packages }}"
     - name: Ensure some groups outside of the whole role call
       ansible.builtin.include_role:
         role: mega-var
         tasks_from: _group.yaml
-      vars:
-        meva_groups2create: "{{ meva_site_groups2create }}"
+      loop_control:
+        loop_var: i
+      loop: "{{ meva_site_groups2create }}"
     - name: Ensure some users outside of the whole role call
       ansible.builtin.include_role:
         role: mega-var
         tasks_from: _user.yaml
-      vars:
-        meva_users2create: "{{ meva_site_users2create }}"
+      loop_control:
+        loop_var: i
+      loop: "{{ meva_site_users2create }}"
     - name: Ensure some dirs outside of the whole role call
       ansible.builtin.include_role:
         role: mega-var
-        tasks_from: _dir.yaml
-      vars:
-        meva_dirs2create: "{{ meva_site_dirs2create }}"
+        tasks_from: _file.yaml
+      loop_control:
+        loop_var: i
+      loop: "{{ meva_site_dirs2create }}"
     - name: Ensure some templates outside of the whole role call
       ansible.builtin.include_role:
         role: mega-var
         tasks_from: _template.yaml
-      vars:
-        meva_templates2upload: "{{ meva_site_templates2upload }}"
+      loop_control:
+        loop_var: i
+      loop: "{{ meva_site_templates2upload }}"
     - name: Ensure some files outside of the whole role call
       ansible.builtin.include_role:
         role: mega-var
-        tasks_from: _file.yaml
-      vars:
-        meva_files2upload: "{{ meva_site_files2upload }}"
+        tasks_from: _copy.yaml
+      loop_control:
+        loop_var: i
+      loop: "{{ meva_site_files2upload }}"
 - name: Download some files from GitHub releases example
   hosts: download_github
   become: true
