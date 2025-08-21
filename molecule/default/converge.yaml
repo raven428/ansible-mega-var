@@ -40,7 +40,7 @@
         - name: Create dirs
           ansible.builtin.include_role:
             name: ansible-mega-var
-            tasks_from: _dir.yaml
+            tasks_from: _file.yaml
           loop_control:
             loop_var: i
           loop: "{{ meva_dirs2create }}"

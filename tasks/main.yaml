@@ -17,8 +17,8 @@
     loop_var: i
   loop: "{{ meva_users2create }}"
 
-- name: Create some directories
-  ansible.builtin.include_tasks: _dir.yaml
+- name: Ensure some files or directories
+  ansible.builtin.include_tasks: _file.yaml
   loop_control:
     loop_var: i
   loop: "{{ meva_dirs2create }}"
