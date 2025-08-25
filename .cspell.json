@@ -103,7 +103,8 @@
     "oneshot",
     "memlock",
     "mprotect",
-    "syscall"
+    "syscall",
+    "chdir"
   ],
   "enabled": true
 }
