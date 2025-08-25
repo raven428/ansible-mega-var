@@ -17,8 +17,8 @@
     loop_var: i
   loop: "{{ meva_users2create }}"
 
-- name: Create some directories
-  ansible.builtin.include_tasks: _dir.yaml
+- name: Ensure some files or directories
+  ansible.builtin.include_tasks: _file.yaml
   loop_control:
     loop_var: i
   loop: "{{ meva_dirs2create }}"
@@ -29,8 +29,8 @@
     loop_var: i
   loop: "{{ meva_templates2upload }}"
 
-- name: Upload some files
-  ansible.builtin.include_tasks: _file.yaml
+- name: Copy some files
+  ansible.builtin.include_tasks: _copy.yaml
   loop_control:
     loop_var: i
   loop: "{{ meva_files2upload }}"
@@ -88,3 +88,15 @@
   loop_control:
     loop_var: i
   loop: "{{ meva_mounts }}"
+
+- name: Command to run
+  ansible.builtin.include_tasks: _command.yaml
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_cmd2run }}" # DevSkim: ignore DS126858
+
+- name: Run for shell
+  ansible.builtin.include_tasks: _shell.yaml
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_run4shell }}"

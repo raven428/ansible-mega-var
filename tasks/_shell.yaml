@@ -1,16 +1,15 @@
 ---
-- name: Ensure some file mounts
-  ansible.posix.mount:
-    backup: "{{ i.backup | default(omit) }}"
-    boot: "{{ i.boot | default(omit) }}"
-    dump: "{{ i.dump | default(omit) }}"
-    fstab: "{{ i.fstab | default(omit) }}"
-    fstype: "{{ i.fstype | default(omit) }}"
-    opts: "{{ i.opts | default(omit) }}"
-    passno: "{{ i.passno | default(omit) }}"
-    path: "{{ i.path | default(omit) }}"
-    src: "{{ i.src | default(omit) }}"
-    state: "{{ i.state | default(omit) }}"
+- name: Launch some shell
+  ansible.builtin.shell:
+    chdir: "{{ i.chdir | default(omit) }}"
+    cmd: "{{ i.cmd | default(omit) }}"
+    creates: "{{ i.creates | default(omit) }}"
+    executable: "{{ i.executable | default(omit) }}"
+    free_form: "{{ i.free_form | default(omit) }}"
+    removes: "{{ i.removes | default(omit) }}"
+    stdin: "{{ i.stdin | default(omit) }}"
+    stdin_add_newline: "{{ i.stdin_add_newline | default(omit) if ansible_version.full is
+      version('2.8', '>=') else omit }}"
   register: _task_result
   when: "i.when | default(omit)"
   tags: "{{ i.tags | default(omit) }}"
@@ -18,8 +17,8 @@
   notify: "{{ i.notify | default(omit) }}"
   timeout: "{{ i.timeout | default(omit) }}"
   check_mode: "{{ i.check_mode | default(omit) }}"
-  # failed_when: "i.failed_when | default(omit)"
-  # changed_when: "i.changed_when | default(omit)"
+  failed_when: "i.failed_when | default(_task_result.rc != 0)"
+  changed_when: "i.changed_when | default(omit)"
   become: "{{ i.become | default(omit) }}"
   become_exe: "{{ i.become_exe | default(omit) }}"
   become_user: "{{ i.become_user | default(omit) }}"

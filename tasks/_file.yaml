@@ -1,25 +1,43 @@
 ---
-- name: Upload some files
-  ansible.builtin.copy:
+- name: Create some directories
+  ansible.builtin.file:
+    access_time_format: "{{ i.access_time_format | default(omit) if ansible_version.full
+      is version('2.7', '>=') else omit }}"
+    access_time: "{{ i.access_time | default(omit) if ansible_version.full is
+      version('2.7', '>=') else omit }}"
     attributes: "{{ i.attributes | default(omit) }}"
-    backup: "{{ i.backup | default(omit) }}"
-    checksum: "{{ i.checksum | default(omit) }}"
-    content: "{{ i.content | default(omit) }}"
-    decrypt: "{{ i.decrypt | default(omit) }}"
-    dest: "{{ i.dest | mandatory }}"
-    directory_mode: "{{ i.directory_mode | default(omit) }}"
     follow: "{{ i.follow | default(omit) }}"
     force: "{{ i.force | default(omit) }}"
     group: "{{ i.group | default(omit) }}"
-    local_follow: "{{ i.local_follow | default(omit) }}"
-    mode: "{{ i.mode | default('0644') }}"
+    mode: "{{ i.mode | default('0755') }}"
+    modification_time_format: "{{ i.modification_time_format | default(omit) if
+      ansible_version.full is version('2.7', '>=') else omit }}"
+    modification_time: "{{ i.modification_time | default(omit) if ansible_version.full is
+      version('2.7', '>=') else omit }}"
     owner: "{{ i.owner | default(omit) }}"
-    remote_src: "{{ i.remote_src | default(omit) }}"
-    selevel: "{{ f.dir_selevel | default(omit) }}"
-    serole: "{{ f.dir_serole | default(omit) }}"
-    setype: "{{ f.dir_setype | default(omit) }}"
+    path: "{{ i.path | mandatory }}"
+    recurse: "{{ i.recurse | default(omit) }}"
+    selevel: "{{ i.selevel | default(omit) }}"
+    serole: "{{ i.serole | default(omit) }}"
+    setype: "{{ i.setype | default(omit) }}"
     seuser: "{{ f.dir_seuser | default(omit) }}"
     src: "{{ i.src | default(omit) }}"
+    state: "{{ i.state | default('directory') }}"
     unsafe_writes: "{{ i.unsafe_writes | default(omit) }}"
-    validate: "{{ i.validate | default(omit) }}"
+  register: _task_result
+  when: "i.when | default(omit)"
+  tags: "{{ i.tags | default(omit) }}"
+  diff: "{{ i.diff | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"
+  timeout: "{{ i.timeout | default(omit) }}"
+  check_mode: "{{ i.check_mode | default(omit) }}"
+  # failed_when: "i.failed_when | default(omit)"
+  # changed_when: "i.changed_when | default(omit)"
+  become: "{{ i.become | default(omit) }}"
+  become_exe: "{{ i.become_exe | default(omit) }}"
+  become_user: "{{ i.become_user | default(omit) }}"
+  become_flags: "{{ i.become_flags | default(omit) }}"
+  ignore_errors: "{{ i.ignore_errors | default(omit) }}"
+  retries: "{{ i.retries | default(omit) }}"
+  delay: "{{ i.delay | default(omit) }}"
+  until: "i.until | default(omit)"

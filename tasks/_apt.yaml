@@ -34,10 +34,19 @@
       ansible_version.full is version('2.10', '>=') else omit }}"
     update_cache: "{{ i.update_cache | default(omit) }}"
     upgrade: "{{ i.upgrade | default(omit) }}"
-  when: ansible_pkg_mgr == 'apt'
+  when: "i.when | default(ansible_pkg_mgr == 'apt')"
   notify: "{{ i.notify | default(omit) }}"
   timeout: "{{ i.timeout | default(111) }}"
   retries: "{{ i.retries | default(3) }}"
   delay: "{{ i.delay | default(1) }}"
-  until: _some_apt is success
-  register: _some_apt
+  until: _task_result is success
+  register: _task_result
+  tags: "{{ i.tags | default(omit) }}"
+  diff: "{{ i.diff | default(omit) }}"
+  # failed_when: "i.failed_when | default(omit)"
+  # changed_when: "i.changed_when | default(omit)"
+  become: "{{ i.become | default(omit) }}"
+  become_exe: "{{ i.become_exe | default(omit) }}"
+  become_user: "{{ i.become_user | default(omit) }}"
+  become_flags: "{{ i.become_flags | default(omit) }}"
+  ignore_errors: "{{ i.ignore_errors | default(omit) }}"

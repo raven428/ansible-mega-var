@@ -76,3 +76,11 @@ meva_file2down:
       download/v14.2.0/gaiad-v14.2.0-linux-amd64"
     dest: "{{ local_bin_path }}"
     creates: "{{ service_name }}"
+meva_cmd2run: # DevSkim: ignore DS126858
+  - argv:
+      - /usr/bin/env
+      - ls
+    changed_when: false
+meva_run4shell:
+  - cmd: /usr/bin/env ls
+    changed_when: false

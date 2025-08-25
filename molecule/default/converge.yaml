@@ -40,7 +40,7 @@
         - name: Create dirs
           ansible.builtin.include_role:
             name: ansible-mega-var
-            tasks_from: _dir.yaml
+            tasks_from: _file.yaml
           loop_control:
             loop_var: i
           loop: "{{ meva_dirs2create }}"
@@ -72,17 +72,31 @@
           loop_control:
             loop_var: i
           loop: "{{ meva_systemd4units }}" # DevSkim: ignore DS126858
-        - name: Create file
+        - name: Upload file
           ansible.builtin.include_role:
             name: ansible-mega-var
-            tasks_from: _file.yaml
+            tasks_from: _copy.yaml
           loop_control:
             loop_var: i
           loop: "{{ meva_files2upload }}"
-        - name: Create rsync
+        - name: Perform rsync
           ansible.builtin.include_role:
             name: ansible-mega-var
             tasks_from: _rsync.yaml
           loop_control:
             loop_var: i
           loop: "{{ meva_tree2rsync }}"
+        - name: Command to run
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _command.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_cmd2run }}" # DevSkim: ignore DS126858
+        - name: Run for shell
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: _shell.yaml
+          loop_control:
+            loop_var: i
+          loop: "{{ meva_run4shell }}"
