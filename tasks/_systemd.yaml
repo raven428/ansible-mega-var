@@ -11,7 +11,7 @@
     scope: "{{ i.scope | default(omit) }}"
     state: "{{ i.state | default(omit) }}"
   register: _task_result
-  when: "i.when | default(omit)"
+  when: "{{ i.when | default(omit) }} | default(omit)" # noqa no-jinja-when
   tags: "{{ i.tags | default(omit) }}"
   diff: "{{ i.diff | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"
@@ -26,4 +26,4 @@
   ignore_errors: "{{ i.ignore_errors | default(omit) }}"
   retries: "{{ i.retries | default(omit) }}"
   delay: "{{ i.delay | default(omit) }}"
-  until: "i.until | default(omit)"
+  until: "{{ i.until | default(omit) }} | default(omit)"

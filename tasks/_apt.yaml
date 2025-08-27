@@ -34,7 +34,7 @@
       ansible_version.full is version('2.10', '>=') else omit }}"
     update_cache: "{{ i.update_cache | default(omit) }}"
     upgrade: "{{ i.upgrade | default(omit) }}"
-  when: "i.when | default(ansible_pkg_mgr == 'apt')"
+  when: "{{ i.when | default(omit) }} | default(omit)" # noqa no-jinja-when
   notify: "{{ i.notify | default(omit) }}"
   timeout: "{{ i.timeout | default(111) }}"
   retries: "{{ i.retries | default(3) }}"
