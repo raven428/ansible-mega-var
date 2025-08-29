@@ -104,7 +104,8 @@
     "memlock",
     "mprotect",
     "syscall",
-    "chdir"
+    "chdir",
+    "createhome"
   ],
   "enabled": true
 }
