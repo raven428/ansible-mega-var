@@ -2,7 +2,7 @@
 - name: Ensure some keys
   ansible.posix.authorized_key:
     comment: "{{ i.comment | default(omit) }}"
-    exclusive: "{{ i.state | default(true) }}"
+    exclusive: "{{ i.exclusive | default(omit) }}"
     follow: "{{ i.follow | default(omit) }}"
     key_options: "{{ i.key_options | default(omit) }}"
     key: "{{ i.key | mandatory }}"
