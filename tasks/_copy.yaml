@@ -1,7 +1,7 @@
 ---
 - name: Upload some files
   ansible.builtin.copy:
-    attributes: "{{ i.attributes | default(omit) }}"
+    attributes: "{{ i.attributes | default(i.attr) | default(omit) }}"
     backup: "{{ i.backup | default(omit) }}"
     checksum: "{{ i.checksum | default(omit) }}"
     content: "{{ i.content | default(omit) }}"

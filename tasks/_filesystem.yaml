@@ -1,9 +1,9 @@
 ---
 - name: Ensure some file systems
   community.general.filesystem:
-    dev: "{{ i.dev | default(omit) }}"
+    dev: "{{ i.dev | default(i.device) | default(omit) }}"
     force: "{{ i.force | default(omit) }}"
-    fstype: "{{ i.fstype | default(omit) }}"
+    fstype: "{{ i.fstype | default(i.type) | default(omit) }}"
     opts: "{{ i.opts | default(omit) }}"
     resizefs: "{{ i.resizefs | default('no') }}"
     state: "{{ i.state | default(omit) }}"

@@ -8,7 +8,7 @@
     fstype: "{{ i.fstype | default(omit) }}"
     opts: "{{ i.opts | default(omit) }}"
     passno: "{{ i.passno | default(omit) }}"
-    path: "{{ i.path | default(omit) }}"
+    path: "{{ i.path | default(i.name) | default(omit) }}"
     src: "{{ i.src | default(omit) }}"
     state: "{{ i.state | default(omit) }}"
   register: _task_result

@@ -5,7 +5,7 @@
       is version('2.7', '>=') else omit }}"
     access_time: "{{ i.access_time | default(omit) if ansible_version.full is
       version('2.7', '>=') else omit }}"
-    attributes: "{{ i.attributes | default(omit) }}"
+    attributes: "{{ i.attributes | default(i.attr) | default(omit) }}"
     follow: "{{ i.follow | default(omit) }}"
     force: "{{ i.force | default(omit) }}"
     group: "{{ i.group | default(omit) }}"
@@ -15,7 +15,7 @@
     modification_time: "{{ i.modification_time | default(omit) if ansible_version.full is
       version('2.7', '>=') else omit }}"
     owner: "{{ i.owner | default(omit) }}"
-    path: "{{ i.path | mandatory }}"
+    path: "{{ i.path | default(i.dest) | default(i.name) | mandatory }}"
     recurse: "{{ i.recurse | default(omit) }}"
     selevel: "{{ i.selevel | default(omit) }}"
     serole: "{{ i.serole | default(omit) }}"

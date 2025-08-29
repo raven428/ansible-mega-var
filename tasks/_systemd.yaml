@@ -1,12 +1,12 @@
 ---
 - name: Create some systemd units
   ansible.builtin.systemd:
-    daemon_reexec: "{{ i.daemon_reexec | default(omit) }}"
-    daemon_reload: "{{ i.daemon_reload | default(omit) }}"
+    daemon_reexec: "{{ i.daemon_reexec | default(i['daemon-reexec']) | default(omit) }}"
+    daemon_reload: "{{ i.daemon_reload | default(i['daemon-reload']) | default(omit) }}"
     enabled: "{{ i.enabled | default(omit) }}"
     force: "{{ i.force | default(omit) }}"
     masked: "{{ i.masked | default(omit) }}"
-    name: "{{ i.name | mandatory }}"
+    name: "{{ i.name | default(i.service) | default(i.unit) | mandatory }}"
     no_block: "{{ i.no_block | default(omit) }}"
     scope: "{{ i.scope | default(omit) }}"
     state: "{{ i.state | default(omit) }}"
