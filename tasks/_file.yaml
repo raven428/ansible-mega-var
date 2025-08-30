@@ -5,7 +5,7 @@
       is version('2.7', '>=') else omit }}"
     access_time: "{{ i.access_time | default(omit) if ansible_version.full is
       version('2.7', '>=') else omit }}"
-    attributes: "{{ i.attributes | default(omit) }}"
+    attributes: "{{ i.attributes | default(i.attr) | default(omit) }}"
     follow: "{{ i.follow | default(omit) }}"
     force: "{{ i.force | default(omit) }}"
     group: "{{ i.group | default(omit) }}"
@@ -15,7 +15,7 @@
     modification_time: "{{ i.modification_time | default(omit) if ansible_version.full is
       version('2.7', '>=') else omit }}"
     owner: "{{ i.owner | default(omit) }}"
-    path: "{{ i.path | mandatory }}"
+    path: "{{ i.path | default(i.dest) | default(i.name) | mandatory }}"
     recurse: "{{ i.recurse | default(omit) }}"
     selevel: "{{ i.selevel | default(omit) }}"
     serole: "{{ i.serole | default(omit) }}"
@@ -25,7 +25,7 @@
     state: "{{ i.state | default('directory') }}"
     unsafe_writes: "{{ i.unsafe_writes | default(omit) }}"
   register: _task_result
-  when: "i.when | default(omit)"
+  when: "{{ i.when | default(omit) }} | default(omit)" # noqa no-jinja-when
   tags: "{{ i.tags | default(omit) }}"
   diff: "{{ i.diff | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"
@@ -40,4 +40,7 @@
   ignore_errors: "{{ i.ignore_errors | default(omit) }}"
   retries: "{{ i.retries | default(omit) }}"
   delay: "{{ i.delay | default(omit) }}"
-  until: "i.until | default(omit)"
+  until: "{{ i.until | default(omit) }} | default(omit)"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_dirs2create }}"

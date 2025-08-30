@@ -32,8 +32,11 @@ mkdir -vp "${HOME}"/.{ansible_async,cache}
 ANSIBLE_CONT_NAME="${CONT_NAME}"
 ANSIBLE_IMAGE_NAME="ghcr.io/raven428/container-images/${IMAGE_NAME}"
 export CONTENGI ANSIBLE_CONT_NAME ANSIBLE_IMAGE_NAME
+CONT_BRIDGE_NAME='bridge'
+[[ "${CONTENGI}" == "podman" ]] && CONT_BRIDGE_NAME='podman'
 {
   ANSIBLE_CONT_ADDONS=" \
+    --network=${CONT_BRIDGE_NAME} \
     -u 0 --privileged --userns=keep-id \
     --tmpfs /sys/fs/cgroup:rw,nosuid,noexec,nodev,mode=755 \
     -v ${HOME}/.cache:${HOME}/.cache:rw \
@@ -42,8 +45,6 @@ export CONTENGI ANSIBLE_CONT_NAME ANSIBLE_IMAGE_NAME
   " /usr/bin/env ansible-docker.sh true
 }
 [[ -v SKIP_DID ]] || {
-  /usr/bin/env "${CONTENGI}" exec "${CONT_NAME}" bash -c \
-    'echo '\''{"bridge": "none","iptables":false}'\'' > /etc/docker/daemon.json'
   count=7
   while ! /usr/bin/env "${CONTENGI}" exec "${CONT_NAME}" systemctl status docker; do
     echo "waiting container ready, left [$count] tries"

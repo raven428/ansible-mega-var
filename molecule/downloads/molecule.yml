@@ -9,7 +9,6 @@ platforms:
   - name: "dkr4ans"
     image: "ghcr.io/raven428/container-images/systemd-ubuntu-22_04:latest"
     privileged: true
-    network_mode: host
     cgroupns_mode: host
     pre_build_image: true
     override_command: false

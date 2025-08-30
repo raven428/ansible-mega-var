@@ -6,7 +6,7 @@
     authorization: "{{ i.authorization | default(omit) if ansible_version.full is
       version('2.8', '>=') else omit }}"
     comment: "{{ i.comment | default(omit) }}"
-    create_home: "{{ i.create_home | default('no') }}"
+    create_home: "{{ i.create_home | default(i.createhome) | default('no') }}"
     expires: "{{ i.expires | default(omit) }}"
     force: "{{ i.force | default(omit) }}"
     generate_ssh_key: "{{ i.generate_ssh_key | default(omit) }}"
@@ -17,7 +17,7 @@
     local: "{{ i.local | default(omit) }}"
     login_class: "{{ i.login_class | default(omit) }}"
     move_home: "{{ i.move_home | default(omit) }}"
-    name: "{{ i.name | mandatory }}"
+    name: "{{ i.name | default(i.user) | mandatory }}"
     non_unique: "{{ i.non_unique | default(omit) }}"
     password_expire_account_disable: "{{ i.password_expire_account_disable |
       default(omit) if ansible_version.full is version('2.18', '>=') else omit }}"
@@ -53,7 +53,7 @@
       version('2.12', '>=') else omit }}"
     update_password: "{{ i.update_password | default(omit) }}"
   register: _task_result
-  when: "i.when | default(omit)"
+  when: "{{ i.when | default(omit) }} | default(omit)" # noqa no-jinja-when
   tags: "{{ i.tags | default(omit) }}"
   diff: "{{ i.diff | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"
@@ -68,4 +68,7 @@
   ignore_errors: "{{ i.ignore_errors | default(omit) }}"
   retries: "{{ i.retries | default(omit) }}"
   delay: "{{ i.delay | default(omit) }}"
-  until: "i.until | default(omit)"
+  until: "{{ i.until | default(omit) }} | default(omit)"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_users2create }}"
