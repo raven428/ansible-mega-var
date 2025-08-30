@@ -31,3 +31,6 @@
   retries: "{{ i.retries | default(omit) }}"
   delay: "{{ i.delay | default(omit) }}"
   until: "{{ i.until | default(omit) }} | default(omit)"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_groups2create }}"

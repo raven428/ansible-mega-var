@@ -1,57 +1,30 @@
 ---
 - name: Ensure some packages
   ansible.builtin.include_tasks: _apt.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_packages }}"
 
 - name: Ensure some groups
   ansible.builtin.include_tasks: _group.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_groups2create }}"
 
 - name: Ensure some users
   ansible.builtin.include_tasks: _user.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_users2create }}"
 
 - name: Ensure some files or directories
   ansible.builtin.include_tasks: _file.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_dirs2create }}"
 
 - name: Upload some templates
   ansible.builtin.include_tasks: _template.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_templates2upload }}"
 
 - name: Copy some files
   ansible.builtin.include_tasks: _copy.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_files2upload }}"
 
 - name: Rsync some files
   ansible.builtin.include_tasks: _rsync.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_tree2rsync }}"
 
 - name: Create some systemd units
   ansible.builtin.include_tasks: _systemd.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_systemd4units }}" # DevSkim: ignore DS126858
 
 - name: Ensure some keys
   ansible.builtin.include_tasks: _key.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_key2user }}"
 
 - name: Download some files
   ansible.builtin.include_tasks: _download.yaml
@@ -61,42 +34,21 @@
 
 - name: Partitioning some disks
   ansible.builtin.include_tasks: _parted.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_partitions }}"
 
 - name: Ensure some volume groups
   ansible.builtin.include_tasks: _lvg.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_lvg }}"
 
 - name: Ensure some logical volumes
   ansible.builtin.include_tasks: _lvol.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_lvol }}"
 
 - name: Ensure some file systems
   ansible.builtin.include_tasks: _filesystem.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_filesystems }}"
 
 - name: Ensure some file mounts
   ansible.builtin.include_tasks: _mount.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_mounts }}"
 
 - name: Command to run
   ansible.builtin.include_tasks: _command.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_cmd2run }}" # DevSkim: ignore DS126858
 
 - name: Run for shell
   ansible.builtin.include_tasks: _shell.yaml
-  loop_control:
-    loop_var: i
-  loop: "{{ meva_run4shell }}"
