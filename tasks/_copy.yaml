@@ -1,7 +1,7 @@
 ---
 - name: Upload some files
   ansible.builtin.copy:
-    attributes: "{{ i.attributes | default(omit) }}"
+    attributes: "{{ i.attributes | default(i.attr) | default(omit) }}"
     backup: "{{ i.backup | default(omit) }}"
     checksum: "{{ i.checksum | default(omit) }}"
     content: "{{ i.content | default(omit) }}"
@@ -22,4 +22,23 @@
     src: "{{ i.src | default(omit) }}"
     unsafe_writes: "{{ i.unsafe_writes | default(omit) }}"
     validate: "{{ i.validate | default(omit) }}"
+  register: _task_result
+  when: "{{ i.when | default(omit) }} | default(omit)" # noqa no-jinja-when
+  tags: "{{ i.tags | default(omit) }}"
+  diff: "{{ i.diff | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"
+  timeout: "{{ i.timeout | default(omit) }}"
+  check_mode: "{{ i.check_mode | default(omit) }}"
+  # failed_when: "i.failed_when | default(omit)"
+  # changed_when: "i.changed_when | default(omit)"
+  become: "{{ i.become | default(omit) }}"
+  become_exe: "{{ i.become_exe | default(omit) }}"
+  become_user: "{{ i.become_user | default(omit) }}"
+  become_flags: "{{ i.become_flags | default(omit) }}"
+  ignore_errors: "{{ i.ignore_errors | default(omit) }}"
+  retries: "{{ i.retries | default(omit) }}"
+  delay: "{{ i.delay | default(omit) }}"
+  until: "{{ i.until | default(omit) }} | default(omit)"
+  loop_control:
+    loop_var: i
+  loop: "{{ meva_files2upload }}"
