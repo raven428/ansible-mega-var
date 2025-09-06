@@ -105,7 +105,8 @@
     "mprotect",
     "syscall",
     "chdir",
-    "createhome"
+    "createhome",
+    "getent"
   ],
   "enabled": true
 }
