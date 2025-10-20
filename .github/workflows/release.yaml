@@ -1,0 +1,19 @@
+# kics-scan disable=555ab8f9-2001-455e-a077-f2d0f41e2fb9
+---
+name: upload release
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  galaxy:
+    name: "upload role to Ansible galaxy"
+    timeout-minutes: 11
+    runs-on: ubuntu-latest
+    steps:
+      - name: import to galaxy
+        env:
+          VER: ${{ github.ref_name }}
+          ANSIBLE_GALAXY_TOKEN: ${{ secrets.GALAXY_TOKEN }}
+        run: ansible-galaxy role import raven428 ansible-mega-var --role-name mega_var
+          --token "${ANSIBLE_GALAXY_TOKEN}" --branch "${VER}"

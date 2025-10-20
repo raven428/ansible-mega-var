@@ -117,7 +117,7 @@ jobs:
           fetch-depth: 0
           submodules: true
       - name: MegaLinter
-        uses: oxsecurity/megalinter@v8
+        uses: oxsecurity/megalinter@v9
         env:
           VALIDATE_ALL_CODEBASE: true
   all-green:
