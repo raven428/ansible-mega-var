@@ -4,6 +4,23 @@
 
 The role performs actions from inventory variables without creating a lot of tasks and copy-pasted roles
 
+## Role release to Ansible galaxy
+
+- clone me:
+
+  ```bash
+  git clone --recursive \
+  git@github.com:raven428/ansible-mega-var.git \
+  ansible-mega-var
+  ```
+
+- make tag and send to release:
+
+  ```bash
+  export VER=v0.0.1 && git checkout master && git pull
+  git tag -fm $(git branch --sho) ${VER} && git push --force origin $(git describe)
+  ```
+
 ## Example `site.yaml` (TLDR)
 
 ### For the whole role
