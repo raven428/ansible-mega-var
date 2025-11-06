@@ -53,7 +53,7 @@
   become_exe: "{{ i.become_exe | default(omit) }}"
   become_user: "{{ i.become_user | default(omit) }}"
   become_flags: "{{ i.become_flags | default(omit) }}"
-  ignore_errors: "{{ i.ignore_errors | default(omit) }}"
+  # ignore_errors: "{{ i.ignore_errors | default(omit) }}"
   loop_control:
     loop_var: i
   loop: "{{ meva_packages }}"
