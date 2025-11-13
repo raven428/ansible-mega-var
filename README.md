@@ -17,7 +17,7 @@ The role performs actions from inventory variables without creating a lot of tas
 - make tag and send to release:
 
   ```bash
-  export VER='1.0.3' && git checkout master && git pull
+  export VER='1.0.4' && git checkout master && git pull
   git tag -fm $(git branch --sho) ${VER} && git push --force origin $(git describe)
   ```
 
