@@ -41,6 +41,7 @@
   when: "{{ i.when | default(omit) }} | default(omit)" # noqa no-jinja-when
   notify: "{{ i.notify | default(omit) }}"
   timeout: "{{ i.timeout | default(111) }}"
+  check_mode: "{{ i.check_mode | default(omit) }}"
   retries: "{{ i.retries | default(3) }}"
   delay: "{{ i.delay | default(1) }}"
   until: _task_result is success
