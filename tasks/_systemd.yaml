@@ -1,32 +1,6 @@
 ---
-- name: Create some systemd units
-  ansible.builtin.systemd:
-    daemon_reexec: "{{ i.daemon_reexec | default(i['daemon-reexec']) | default(omit) }}"
-    daemon_reload: "{{ i.daemon_reload | default(i['daemon-reload']) | default(omit) }}"
-    enabled: "{{ i.enabled | default(omit) }}"
-    force: "{{ i.force | default(omit) }}"
-    masked: "{{ i.masked | default(omit) }}"
-    name: "{{ i.name | default(i.service) | default(i.unit) | mandatory }}"
-    no_block: "{{ i.no_block | default(omit) }}"
-    scope: "{{ i.scope | default(omit) }}"
-    state: "{{ i.state | default(omit) }}"
-  register: _task_result
-  when: "{{ i.when | default(omit) }} | default(omit)" # noqa no-jinja-when
-  tags: "{{ i.tags | default(omit) }}"
-  diff: "{{ i.diff | default(omit) }}"
-  notify: "{{ i.notify | default(omit) }}"
-  timeout: "{{ i.timeout | default(omit) }}"
-  check_mode: "{{ i.check_mode | default(omit) }}"
-  # failed_when: "i.failed_when | default(omit)"
-  # changed_when: "i.changed_when | default(omit)"
-  become: "{{ i.become | default(omit) }}"
-  become_exe: "{{ i.become_exe | default(omit) }}"
-  become_user: "{{ i.become_user | default(omit) }}"
-  become_flags: "{{ i.become_flags | default(omit) }}"
-  # ignore_errors: "{{ i.ignore_errors | default(omit) }}"
-  retries: "{{ i.retries | default(omit) }}"
-  delay: "{{ i.delay | default(omit) }}"
-  until: "{{ i.until | default(omit) }} | default(omit)"
+- name: Call module with each unit
+  ansible.builtin.include_tasks: _systemd1.yaml
   loop_control:
     loop_var: i
   loop: "{{ meva_systemd4units }}" # DevSkim: ignore DS126858
