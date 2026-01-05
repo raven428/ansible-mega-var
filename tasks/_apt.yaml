@@ -40,9 +40,9 @@
     upgrade: "{{ i.upgrade | default(omit) }}"
   when: "{{ i.when | default(omit) }} | default(omit)" # noqa no-jinja-when
   notify: "{{ i.notify | default(omit) }}"
-  timeout: "{{ i.timeout | default(111) }}"
+  timeout: "{{ i.timeout | default(333) }}"
   check_mode: "{{ i.check_mode | default(omit) }}"
-  retries: "{{ i.retries | default(3) }}"
+  retries: "{{ i.retries | default(5) }}"
   delay: "{{ i.delay | default(1) }}"
   until: _task_result is success
   register: _task_result
@@ -55,6 +55,8 @@
   become_user: "{{ i.become_user | default(omit) }}"
   become_flags: "{{ i.become_flags | default(omit) }}"
   # ignore_errors: "{{ i.ignore_errors | default(omit) }}"
+  async: "{{ i.async | default(77) }}"
+  poll: "{{ i.poll | default(5) }}"
   loop_control:
     loop_var: i
   loop: "{{ meva_packages }}"
