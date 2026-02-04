@@ -2,12 +2,72 @@
 - name: Perform actions from inventory variables
   hosts: all
   pre_tasks:
+    - name: Check if we are after check mode
+      ansible.builtin.stat:
+        path: "{{ check_flag }}"
+      register: check_flag_stat
+      check_mode: false
+
+    - name: Poison files after check mode to test checksum validation
+      ansible.builtin.include_tasks: "include/poison-file.yaml"
+      # won't work due to attrs, but doesn't matter:
+      # '{{ download_root }}/absolute-f.dest-trailing-yes/bin/pyenv',
+      loop: |
+        {%- if prop_type in ['simple_target', 'simple_controller',
+          'release_target', 'release_controller'] -%}
+        [
+          '{{ download_root }}/absolute-f.dest-no/bin/pyenv',
+          '{{ download_root }}/absolute-f.dest-trailing-slash-no/pyenv',
+          '{{ download_root }}/absolute-f.dest-trailing-slash-yes/pyenv',
+          '{{ download_root }}/f.dest-abs1/Makefile',
+          '{{ download_root }}/f.dest-dir1/Makefile',
+          '{{ download_root }}/install/latest.bash',
+          '{{ download_root }}/Makefile',
+          '{{ download_root }}/relative-f.dest-trailing-no/bin/pyenv',
+          '{{ download_root }}/relative-f.dest-trailing-slash-no/pyenv',
+          '{{ download_root }}/relative-f.dest-trailing-slash-yes/pyenv',
+          '{{ download_root }}/relative-f.dest-trailing-yes/bin/pyenv',
+        ]
+        {%- elif prop_type in ['simple_other', 'release_other'] -%}
+        [
+          '{{ download_root }}/{{ download_paths.single }}/{{
+            download_options.direct }}/{{ download_file_name }}',
+          '{{ download_root }}/{{ download_paths.single }}/{{
+            download_options.con_copy }}/{{ download_file_name }}',
+          '{{ download_root }}/{{ download_paths.compress }}/{{
+            download_options.direct }}/{{ decompressed_file_name }}',
+          '{{ download_root }}/{{ download_paths.compress }}/{{
+            download_options.con_copy }}/{{ decompressed_file_name }}',
+          '{{ download_root }}/{{ download_paths.arch_full }}/{{
+            download_options.direct }}/pyenv/Makefile',
+          '{{ download_root }}/{{ download_paths.arch_full }}/{{
+            download_options.con_copy }}/pyenv/Makefile',
+        ]
+        {%- elif prop_type == 'compress' -%}
+        [
+          '{{ download_root }}/gz/{{ decompressed_file_name }}',
+          '{{ download_root }}/bz2/{{ decompressed_file_name }}',
+          '{{ download_root }}/lz4/{{ decompressed_file_name }}',
+          '{{ download_root }}/zst/{{ decompressed_file_name }}',
+          '{{ download_root }}/lzma/{{ decompressed_file_name }}',
+          '{{ download_root }}/xz/{{ decompressed_file_name }}',
+        ]
+        {%- else -%}
+        []
+        {%- endif -%}
+      loop_control:
+        loop_var: poison_item
+      when:
+        - check_flag_stat.stat.exists | default(false)
+        - not ansible_check_mode
+
     - name: Manage the check mode flag
       ansible.builtin.file:
         path: "{{ check_flag }}"
         state: "{{ 'directory' if ansible_check_mode else 'absent' }}"
         mode: "0755"
       check_mode: false
+
   tasks:
     - name: "Run call_mode='{{ call_mode }}', prop_type='{{ prop_type }}'
         upload" # noqa name[template]
