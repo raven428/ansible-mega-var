@@ -1,0 +1,12 @@
+# kics-scan disable=88841d5c-d22d-4b7e-a6a0-89ca50e44b9f
+---
+- name: Ensure directory exists for poison file
+  ansible.builtin.file:
+    path: "{{ poison_item | dirname }}"
+    state: directory
+
+- name: Create poison file
+  ansible.builtin.copy:
+    content: "WRONG CONTENT - THIS SHOULD BE REPLACED\n"
+    dest: "{{ poison_item }}"
+    force: true
