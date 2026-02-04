@@ -39,6 +39,12 @@ options:
       - Source path replacing src_dir+f_name
     required: false
     type: str
+  get_checksum:
+    description:
+      - Calculate sha512 checksum for source file
+    required: false
+    type: bool
+    default: false
 author:
   - ChatGPT (https://chatgpt.com)
   - Dmitry Sukhodoyev (https://github.com/raven428/ansible-mega-var)
@@ -73,12 +79,38 @@ changed:
 '''
 
 # pylint: disable=import-error
+import hashlib
+from pathlib import Path
+
 from ansible.module_utils.basic import (  # type: ignore[reportMissingImports]
   AnsibleModule,
 )
 from ansible.module_utils.mega_var import (  # type: ignore[reportMissingImports]
   resolve_paths,
 )
+
+
+def get_file_stat(file_path: str) -> dict[str, object] | None:
+  path = Path(file_path)
+  if not path.exists():
+    return None
+
+  stat_info = path.stat()
+  checksum = ''
+
+  if path.is_file():
+    sha512 = hashlib.sha512()
+    with path.open('rb') as f:
+      for chunk in iter(lambda: f.read(65536), b''):
+        sha512.update(chunk)
+    checksum = sha512.hexdigest()
+
+  return {
+    'exists': True,
+    'checksum': checksum,
+    'size': stat_info.st_size,
+    'mode': oct(stat_info.st_mode)[-4:],
+  }
 
 
 def main() -> None:
@@ -109,6 +141,11 @@ def main() -> None:
         'required': False,
         'default': '',
       },
+      'get_checksum': {
+        'type': 'bool',
+        'required': False,
+        'default': False,
+      },
     },
     supports_check_mode=True,
   )
@@ -117,16 +154,21 @@ def main() -> None:
   f_dest = module.params['f_dest']
   i_dest = module.params['i_dest']
   src_dir = module.params['src_dir']
+  get_checksum = module.params['get_checksum']
 
   if not i_dest and not f_dest:
     module.fail_json(msg='Either i.dest or f.dest must be defined and non-empty')
   if i_dest and not i_dest.startswith('/'):
     module.fail_json(msg='i_dest must be an absolute path')
 
-  module.exit_json(
-    changed=False,
-    **resolve_paths(src_dir, f_name, f_dest, i_dest, f_src),
-  )
+  result = resolve_paths(src_dir, f_name, f_dest, i_dest, f_src)
+
+  if get_checksum and not result['src_is_dir']:
+    result['src_checksum'] = get_file_stat(result['src4copy'])
+  else:
+    result['src_checksum'] = None
+
+  module.exit_json(changed=False, **result)
 
 
 if __name__ == '__main__':

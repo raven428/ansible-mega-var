@@ -6,6 +6,7 @@
     f_dest: "{{ f.dest | default(omit) }}"
     i_dest: "{{ i.dest | default(omit) }}"
     f_src: "{{ f.src | default(omit) }}"
+    get_checksum: true
   register: meva_pro
   delegate_to: "{{ i.delegate_to | default(omit) }}"
 
@@ -42,14 +43,6 @@
   register: dest_file_stat
   when: not meva_pro.src4copy.endswith('/')
 
-- name: Check source file for singles
-  ansible.builtin.stat:
-    path: "{{ meva_pro.src4copy }}"
-    checksum_algorithm: sha512
-  register: src_file_stat
-  delegate_to: "{{ i.delegate_to | default(omit) }}"
-  when: not meva_pro.src4copy.endswith('/')
-
 - name: Propagate unpacked files
   ansible.builtin.copy:
     src: "{{ meva_pro.src4copy }}"
@@ -57,13 +50,13 @@
     force: >-
       {%- if 'force' in f -%}
         {{ f.force }}
-      {%- elif meva_pro.src4copy.endswith('/') -%}
+      {%- elif meva_pro.src_is_dir -%}
         true
-      {%- elif dest_file_stat is not skipped and src_file_stat is not skipped -%}
+      {%- elif dest_file_stat is not skipped and meva_pro.src_checksum is not none -%}
         {{
           not dest_file_stat.stat.exists | default(true) or
           dest_file_stat.stat.checksum | default('') !=
-            src_file_stat.stat.checksum | default('none')
+            meva_pro.src_checksum.checksum | default('none')
         }}
       {%- else -%}
         {{ _download_archive.changed }}
