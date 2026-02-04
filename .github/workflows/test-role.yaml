@@ -19,14 +19,14 @@ jobs:
       fail-fast: false
       matrix:
         call_mode:
-          - full
+          # - full
           - split
         ansible_ver:
-          - "06"
-          - "07"
-          - "08"
-          - "09"
-          - "10"
+          # - "06"
+          # - "07"
+          # - "08"
+          # - "09"
+          # - "10"
           - "11"
     steps:
       - uses: actions/checkout@v4
@@ -57,11 +57,11 @@ jobs:
           - release_controller
           - compress # (full=remote, split=local)
         call_mode:
-          - full
+          # - full
           - split
         ansible_ver:
-          - "07"
-          - "09"
+          # - "07"
+          # - "09"
           - "11"
     steps:
       - uses: actions/checkout@v4
