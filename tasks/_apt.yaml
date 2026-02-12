@@ -1,5 +1,6 @@
 ---
-- name: Ensure some apt packages
+- name: 'Ensure {{ meva_packages | map(''json_query'', "name || package || pkg ||
+    ''undefined''") | flatten }} apt packages' # noqa name[template]
   ansible.builtin.apt:
     allow_change_held_packages: "{{ i.allow_change_held_packages | default(omit) if
       ansible_version.full is version('2.13', '>=') else omit }}"
