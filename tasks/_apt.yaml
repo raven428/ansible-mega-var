@@ -49,13 +49,13 @@
   register: _task_result
   tags: "{{ i.tags | default(omit) }}"
   diff: "{{ i.diff | default(omit) }}"
-  # failed_when: "i.failed_when | default(omit)"
-  # changed_when: "i.changed_when | default(omit)"
+  failed_when: "{{ i.failed_when | default(omit) }} | default(_task_result.failed)"
+  changed_when: "{{ i.changed_when | default(omit) }} | default(_task_result.changed)"
+  ignore_errors: "{{ i.ignore_errors | default(false) }}"
   become: "{{ i.become | default(omit) }}"
   become_exe: "{{ i.become_exe | default(omit) }}"
   become_user: "{{ i.become_user | default(omit) }}"
   become_flags: "{{ i.become_flags | default(omit) }}"
-  # ignore_errors: "{{ i.ignore_errors | default(omit) }}"
   async: "{{ i.async | default(77) }}"
   poll: "{{ i.poll | default(5) }}"
   loop_control:
