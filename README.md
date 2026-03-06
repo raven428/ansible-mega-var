@@ -18,7 +18,7 @@ The role performs actions from inventory variables without creating a lot of tas
 
   ```bash
   git checkout master && git pull
-  git tag -fm $(git branch --sho) 1.0.6 && git push --force origin $(git describe)
+  git tag -fm $(git branch --sho) 1.0.7 && git push --force origin $(git describe)
   ```
 
 ## Example `site.yaml` (TLDR)
