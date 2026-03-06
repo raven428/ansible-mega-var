@@ -6,6 +6,7 @@
     f_dest: "{{ f.dest | default(omit) }}"
     i_dest: "{{ i.dest | default(omit) }}"
     f_src: "{{ f.src | default(omit) }}"
+    get_checksum: true
   register: meva_pro
   delegate_to: "{{ i.delegate_to | default(omit) }}"
 
@@ -35,12 +36,31 @@
   register: directory_result
   when: "meva_pro.dest4dir != ''"
 
+- name: Check destination file for singles
+  ansible.builtin.stat:
+    path: "{{ meva_pro.dest4copy }}"
+    checksum_algorithm: sha512
+  register: dest_file_stat
+  when: not meva_pro.src4copy.endswith('/')
+
 - name: Propagate unpacked files
   ansible.builtin.copy:
     src: "{{ meva_pro.src4copy }}"
     dest: "{{ meva_pro.dest4copy }}"
-    force: "{{ f.force | default(_download_archive.changed or
-      meva_pro.src4copy.endswith('/')) }}"
+    force: >-
+      {%- if 'force' in f -%}
+        {{ f.force }}
+      {%- elif meva_pro.src_is_dir -%}
+        true
+      {%- elif dest_file_stat is not skipped and meva_pro.src_checksum is not none -%}
+        {{
+          not dest_file_stat.stat.exists | default(true) or
+          dest_file_stat.stat.checksum | default('') !=
+            meva_pro.src_checksum.checksum | default('none')
+        }}
+      {%- else -%}
+        {{ _download_archive.changed }}
+      {%- endif -%}
     owner: "{{ f.owner | default(omit) }}"
     group: "{{ f.group | default(omit) }}"
     mode: "{{ omit }}" # performed by chmod_tree
