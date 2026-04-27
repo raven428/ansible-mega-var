@@ -55,7 +55,7 @@ jobs:
       - name: test role
         env:
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
-          IMAGE_NAME: ansible-${{ matrix.ansible_ver }}:latest
+          APPIMAGE_NAME: "ansible-${{ matrix.ansible_ver }}-001.AppImage"
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/default/run-tests.sh
   downloads:
@@ -91,7 +91,7 @@ jobs:
         env:
           ANSIBLE_PROP_TYPE: ${{ matrix.prop_type }}
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
-          IMAGE_NAME: ansible-${{ matrix.ansible_ver }}:latest
+          APPIMAGE_NAME: "ansible-${{ matrix.ansible_ver }}-001.AppImage"
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/downloads/run-tests.sh
   pytest:
