@@ -1,7 +1,7 @@
 ---
 - name: Check if unit is known to systemd
-  ansible.builtin.command: "systemctl list-unit-files
-    {{ i.name }}.service" # noqa command-instead-of-module
+  ansible.builtin.command: "systemctl list-unit-files {{ i.name if '.' in i.name else
+    i.name + '.service' }}" # noqa command-instead-of-module
   register: unit_check
   changed_when: false
   failed_when: false

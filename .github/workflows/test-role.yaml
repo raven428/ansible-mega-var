@@ -8,6 +8,25 @@ on:
   pull_request:
   schedule:
     - cron: "11 11 * * 1"
+  # checkov:skip=CKV_GHA_7
+  workflow_dispatch:
+    inputs:
+      mega_var_ref:
+        description: "ansible-mega-var branch/tag to test against"
+        required: false
+        default: ""
+      mini_vault_ref:
+        description: "ansible-mini-vault branch/tag/SHA to test against"
+        required: false
+        default: ""
+      mega_launch_ref:
+        description: "ansible-launch-var branch/tag to test against"
+        required: false
+        default: ""
+      mega_service_ref:
+        description: "ansible-mega-service branch/tag/SHA to test against"
+        required: false
+        default: ""
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
@@ -29,14 +48,14 @@ jobs:
           - "10"
           - "11"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           submodules: true
       - name: test role
         env:
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
-          IMAGE_NAME: ansible-${{ matrix.ansible_ver }}:latest
+          APPIMAGE_NAME: "ansible-${{ matrix.ansible_ver }}-001.AppImage"
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/default/run-tests.sh
   downloads:
@@ -64,7 +83,7 @@ jobs:
           - "09"
           - "11"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           submodules: true
@@ -72,7 +91,7 @@ jobs:
         env:
           ANSIBLE_PROP_TYPE: ${{ matrix.prop_type }}
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
-          IMAGE_NAME: ansible-${{ matrix.ansible_ver }}:latest
+          APPIMAGE_NAME: "ansible-${{ matrix.ansible_ver }}-001.AppImage"
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/downloads/run-tests.sh
   pytest:
@@ -80,7 +99,7 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           submodules: true
@@ -92,8 +111,9 @@ jobs:
     name: linters
     timeout-minutes: 11
     runs-on: ubuntu-24.04
+    if: github.event_name != 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           submodules: true
@@ -111,8 +131,9 @@ jobs:
     name: MegaLinter
     timeout-minutes: 11
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           submodules: true
@@ -120,16 +141,33 @@ jobs:
         uses: oxsecurity/megalinter@v9
         env:
           VALIDATE_ALL_CODEBASE: true
-  all-green:
-    name: all green
-    timeout-minutes: 5
+  mega_service:
+    name: test mega-service role
+    timeout-minutes: 55
     runs-on: ubuntu-latest
     needs:
       - default
       - downloads
       - linters
       - MegaLinter
-    if: always()
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: trigger and wait for mega-service workflow
+        env:
+          GH_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
+          MEGA_VAR_REF: ${{ github.head_ref || github.ref_name }}
+          MINI_VAULT_REF: ${{ inputs.mini_vault_ref || 'master' }}
+          MEGA_LAUNCH_REF: ${{ inputs.mega_launch_ref || 'master' }}
+          MEGA_SERVICE_REF: ${{ inputs.mega_service_ref || 'master' }}
+        run: 'gh workflow run test-role.yaml --repo raven428/ansible-mega-service --ref
+          "${MEGA_SERVICE_REF}" --field mega_launch_ref="${MEGA_LAUNCH_REF}" --field
+          mega_var_ref="${MEGA_VAR_REF}" --field mini_vault_ref="${MINI_VAULT_REF}"'
+  all-green:
+    name: all green
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: mega_service
+    if: github.event_name == 'pull_request'
     permissions:
       checks: read
     steps:

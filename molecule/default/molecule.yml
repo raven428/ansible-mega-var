@@ -2,6 +2,8 @@
 dependency:
   name: galaxy
   enabled: true
+  options:
+    force: true
 driver:
   # see molecule_docker/playbooks for example
   name: docker
