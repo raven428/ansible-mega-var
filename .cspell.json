@@ -38,6 +38,7 @@
     "followlinks",
     "FURB",
     "gaiad",
+    "getent",
     "gssapi",
     "ignorecase",
     "inlinevar",
@@ -108,7 +109,8 @@
     "userns",
     "venv",
     "vimrc",
-    "getent"
+    "zizmor",
+    "ZIZMOR"
   ],
   "enabled": true
 }
