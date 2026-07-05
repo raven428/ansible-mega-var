@@ -102,7 +102,7 @@ from ansible.module_utils.basic import (  # type: ignore[reportMissingImports]
 
 
 def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912
-  try:
+  try:  # noqa: PLW0717
     orig_file_path = str(posixpath.abspath(data['src']))
     path_list = os.path.splitext(orig_file_path)  # noqa: PTH122
     original_file_dir = os.path.dirname(orig_file_path)  # noqa: PTH120

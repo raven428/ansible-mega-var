@@ -208,7 +208,7 @@ def main() -> None:  # noqa: C901,PLR0914
     dirs1 = dirs.copy()
     files1 = files.copy()
     if not module.params['skip_entry']:
-      try:
+      try:  # noqa: PLW0717
         st = root_path.stat(follow_symlinks=follow)
         special_names = ['']
         if root_path.is_dir():
