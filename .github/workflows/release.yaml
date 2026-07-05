@@ -5,6 +5,7 @@ on:
   push:
     tags:
       - "*"
+permissions: {}
 jobs:
   galaxy:
     name: "upload role to Ansible galaxy"
