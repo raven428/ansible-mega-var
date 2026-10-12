@@ -131,6 +131,13 @@ All the variables except `meva_ghr2down` and `meva_file2down` is just wrapper an
 
 Here will be only non-obvious options of usage
 
+### Common options of wrapper items
+
+Every item of the wrapper variables, except `meva_file2down` and `meva_ghr2down`, accepts two keys besides the module options:
+
+- `no_log: true` hides the label, the result, and the diff of this item only, e.g., for a private key in `content` of `meva_files2upload`; for `meva_key2user` and `meva_systemd4units` the label of the `included:` line becomes `(censored due to no_log)`
+- `loop_label` replaces the item printed in the `(item=…)` label, the whole item is printed by default
+
 ### Simple HTTP download with `meva_file2down` variable
 
 There are [the molecule tests](molecule/downloads/group_vars/all.yaml) cases description. Most options are available from `ansible.builtin.get_url`, `ansible.builtin.file` and `ansible.builtin.copy`

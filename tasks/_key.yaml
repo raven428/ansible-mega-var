@@ -3,4 +3,6 @@
   ansible.builtin.include_tasks: _key1.yaml
   loop_control:
     loop_var: i
+    label: "{{ '(censored due to no_log)' if i.no_log | default(false)
+      else i.loop_label | default(i) }}"
   loop: "{{ meva_key2user }}"

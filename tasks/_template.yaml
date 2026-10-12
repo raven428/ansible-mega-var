@@ -5,7 +5,7 @@
     backup: "{{ i.backup | default(omit) }}"
     block_end_string: "{{ i.block_end_string | default(omit) }}"
     block_start_string: "{{ i.block_start_string | default(omit) }}"
-    comment_end_string: "{{ i.follow | default(omit) }}"
+    comment_end_string: "{{ i.comment_end_string | default(omit) }}"
     comment_start_string: "{{ i.comment_start_string | default(omit) }}"
     dest: "{{ i.dest | mandatory }}"
     follow: "{{ i.follow | default(omit) }}"
@@ -47,6 +47,8 @@
   until: "{{ i.until | default(omit) }} | default(omit)"
   async: "{{ i.async | default(omit) }}"
   poll: "{{ i.poll | default(omit) }}"
+  no_log: "{{ i.no_log | default(omit) }}"
   loop_control:
     loop_var: i
+    label: "{{ i.loop_label | default(i) }}"
   loop: "{{ meva_templates2upload }}"

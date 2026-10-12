@@ -43,6 +43,8 @@
   until: "{{ i.until | default(omit) }} | default(omit)"
   async: "{{ i.async | default(omit) }}"
   poll: "{{ i.poll | default(omit) }}"
+  no_log: "{{ i.no_log | default(omit) }}"
   loop_control:
     loop_var: i
+    label: "{{ i.loop_label | default(i) }}"
   loop: "{{ meva_dirs2create }}"

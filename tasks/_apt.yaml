@@ -58,6 +58,8 @@
   become_flags: "{{ i.become_flags | default(omit) }}"
   async: "{{ i.async | default(77) }}"
   poll: "{{ i.poll | default(5) }}"
+  no_log: "{{ i.no_log | default(omit) }}"
   loop_control:
     loop_var: i
+    label: "{{ i.loop_label | default(i) }}"
   loop: "{{ meva_packages }}"
