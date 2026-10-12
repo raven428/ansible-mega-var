@@ -14,22 +14,29 @@ on:
       mega_var_ref:
         description: "ansible-mega-var branch/tag to test against"
         required: false
+        type: string
         default: ""
       mini_vault_ref:
         description: "ansible-mini-vault branch/tag/SHA to test against"
         required: false
+        type: string
         default: ""
       mega_launch_ref:
         description: "ansible-launch-var branch/tag to test against"
         required: false
+        type: string
         default: ""
       mega_service_ref:
         description: "ansible-mega-service branch/tag/SHA to test against"
         required: false
+        type: string
         default: ""
 permissions: {}
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   default:
     name: default
