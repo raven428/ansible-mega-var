@@ -12,7 +12,7 @@ printf "\n\n\nmolecule [create] action\n"
 # shellcheck disable=2154
 ANSIBLE_LOG_PATH="${LOG_PATH}-0create" "${_appimage_bin}" molecule -v create -s "${sce}"
 printf "\n\n\nmolecule [converge] action\n"
-ANSIBLE_LOG_PATH="${LOG_PATH}-2converge" \
+ANSIBLE_RUN_TRAPS='true' ANSIBLE_LOG_PATH="${LOG_PATH}-2converge" \
   "${_appimage_bin}" molecule -v converge -s "${sce}" --
 printf "\n\n\nmolecule [idempotence] action\n"
 ANSIBLE_LOG_PATH="${LOG_PATH}-3idempotence" \

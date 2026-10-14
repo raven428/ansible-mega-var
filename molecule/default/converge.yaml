@@ -1,6 +1,10 @@
 ---
 - name: Perform actions from inventory variables
   hosts: all
+  handlers:
+    - name: Trap broken changed_when
+      ansible.builtin.fail:
+        msg: changed_when of the wrapper is moved out of jinja or completely into it
   pre_tasks:
     - name: Manage the check mode flag
       ansible.builtin.file:
@@ -10,9 +14,38 @@
       check_mode: false
   tasks:
     - name: "Run call_mode='{{ call_mode }}'"
-      ansible.builtin.include_role:
-        name: ansible-mega-var
       when: call_mode == 'full'
+      block:
+        - name: Run all wrappers
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+        - name: Trap broken conditionals in wrappers
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+          vars:
+            meva_packages: "{{ [w | combine(meva_trap_args['_apt.yaml'])] }}"
+            meva_groups2create: "{{ [w | combine(meva_trap_args['_group.yaml'])] }}"
+            meva_users2create: "{{ [w | combine(meva_trap_args['_user.yaml'])] }}"
+            meva_dirs2create: "{{ [w | combine(meva_trap_args['_file.yaml'])] }}"
+            meva_templates2upload: "{{ [w | combine(meva_trap_args['_template.yaml'])] }}"
+            meva_files2upload: "{{ [w | combine(meva_trap_args['_copy.yaml'])] }}"
+            meva_tree2rsync: "{{ [w | combine(meva_trap_args['_rsync.yaml'])] }}"
+            meva_systemd4units: # DevSkim: ignore DS126858
+              "{{ [w | combine(meva_trap_args['_systemd.yaml'])] }}"
+            meva_key2user: "{{ [w | combine(meva_trap_args['_key.yaml'])] }}"
+            meva_partitions: "{{ [w | combine(meva_trap_args['_parted.yaml'])] }}"
+            meva_lvg: "{{ [w | combine(meva_trap_args['_lvg.yaml'])] }}"
+            meva_lvol: "{{ [w | combine(meva_trap_args['_lvol.yaml'])] }}"
+            meva_filesystems: "{{ [w | combine(meva_trap_args['_filesystem.yaml'])] }}"
+            meva_mounts: "{{ [w | combine(meva_trap_args['_mount.yaml'])] }}"
+            meva_cmd2run: # DevSkim: ignore DS126858
+              "{{ [w | combine(meva_trap_args['_command.yaml'])] }}"
+            meva_run4shell: "{{ [w | combine(meva_trap_args['_shell.yaml'])] }}"
+          when: run_traps
+          loop_control:
+            loop_var: w
+            label: "main.yaml: {{ w }}"
+          loop: "{{ meva_traps }}"
     - name: "Run call_mode='{{ call_mode }}'"
       when: call_mode == 'split'
       block:
@@ -67,3 +100,30 @@
           ansible.builtin.include_role:
             name: ansible-mega-var
             tasks_from: _shell.yaml
+        - name: Trap broken conditionals in wrappers
+          ansible.builtin.include_role:
+            name: ansible-mega-var
+            tasks_from: "{{ w.0.key }}"
+          vars:
+            meva_trap: "{{ [w.1 | combine(w.0.value)] }}"
+            meva_packages: "{{ meva_trap }}"
+            meva_groups2create: "{{ meva_trap }}"
+            meva_users2create: "{{ meva_trap }}"
+            meva_dirs2create: "{{ meva_trap }}"
+            meva_templates2upload: "{{ meva_trap }}"
+            meva_files2upload: "{{ meva_trap }}"
+            meva_tree2rsync: "{{ meva_trap }}"
+            meva_systemd4units: "{{ meva_trap }}" # DevSkim: ignore DS126858
+            meva_key2user: "{{ meva_trap }}"
+            meva_partitions: "{{ meva_trap }}"
+            meva_lvg: "{{ meva_trap }}"
+            meva_lvol: "{{ meva_trap }}"
+            meva_filesystems: "{{ meva_trap }}"
+            meva_mounts: "{{ meva_trap }}"
+            meva_cmd2run: "{{ meva_trap }}" # DevSkim: ignore DS126858
+            meva_run4shell: "{{ meva_trap }}"
+          when: run_traps
+          loop_control:
+            loop_var: w
+            label: "{{ w.0.key }}: {{ w.1 }}"
+          loop: "{{ meva_trap_args | dict2items | product(meva_traps) | list }}"
