@@ -25,7 +25,7 @@
     state: "{{ i.state | default('directory') }}"
     unsafe_writes: "{{ i.unsafe_writes | default(omit) }}"
   register: _task_result
-  when: "{{ i.when | default(omit) }} | default(omit)" # noqa no-jinja-when
+  when: "{{ i.when | default(omit) }} | default(true)" # noqa no-jinja-when
   tags: "{{ i.tags | default(omit) }}"
   diff: "{{ i.diff | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"
@@ -38,9 +38,9 @@
   become_exe: "{{ i.become_exe | default(omit) }}"
   become_user: "{{ i.become_user | default(omit) }}"
   become_flags: "{{ i.become_flags | default(omit) }}"
-  retries: "{{ i.retries | default(omit) }}"
+  retries: "{{ i.retries | default(3 if 'until' in i else 0) }}"
   delay: "{{ i.delay | default(omit) }}"
-  until: "{{ i.until | default(omit) }} | default(omit)"
+  until: "{{ i.until | default(omit) }} | default(_task_result is success)"
   async: "{{ i.async | default(omit) }}"
   poll: "{{ i.poll | default(omit) }}"
   no_log: "{{ i.no_log | default(omit) }}"

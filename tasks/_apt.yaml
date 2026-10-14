@@ -39,7 +39,7 @@
       ansible_version.full is version('2.10', '>=') else omit }}"
     update_cache: "{{ i.update_cache | default(omit) }}"
     upgrade: "{{ i.upgrade | default(omit) }}"
-  when: "{{ i.when | default(omit) }} | default(omit)" # noqa no-jinja-when
+  when: "{{ i.when | default(omit) }} | default(true)" # noqa no-jinja-when
   notify: "{{ i.notify | default(omit) }}"
   timeout: "{{ i.timeout | default(333) }}"
   check_mode: "{{ i.check_mode | default(omit) }}"
