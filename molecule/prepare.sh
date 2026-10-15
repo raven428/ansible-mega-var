@@ -2,7 +2,7 @@
 set -ueo pipefail
 umask 0022
 : "${APPIMAGE_RELEASE:="latest"}"
-: "${APPIMAGE_NAME:="ansible-11-001.AppImage"}"
+: "${APPIMAGE_NAME:="ansible-11-005.AppImage"}"
 [[ -v ANSIBLE_GITHUB_TOKEN ]] || {
   echo 'mandatory variable [ANSIBLE_GITHUB_TOKEN] not found, exiting…'
   exit 1

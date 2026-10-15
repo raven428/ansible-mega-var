@@ -64,7 +64,7 @@ jobs:
       - name: test role
         env:
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
-          APPIMAGE_NAME: "ansible-${{ matrix.ansible_ver }}-001.AppImage"
+          APPIMAGE_NAME: "ansible-${{ matrix.ansible_ver }}-005.AppImage"
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/default/run-tests.sh
   downloads:
@@ -101,7 +101,7 @@ jobs:
         env:
           ANSIBLE_PROP_TYPE: ${{ matrix.prop_type }}
           ANSIBLE_CALL_MODE: ${{ matrix.call_mode }}
-          APPIMAGE_NAME: "ansible-${{ matrix.ansible_ver }}-001.AppImage"
+          APPIMAGE_NAME: "ansible-${{ matrix.ansible_ver }}-005.AppImage"
           ANSIBLE_GITHUB_TOKEN: ${{ secrets.LOCAL_WS_TOKEN }}
         run: molecule/downloads/run-tests.sh
   pytest:
@@ -138,11 +138,11 @@ jobs:
           env.BRA }}/sources/linters-ubuntu-22_04/check-dir.sh | bash
           curl -sL \
           https://raw.githubusercontent.com/raven428/container-images/refs/heads/${{
-          env.BRA }}/sources/ansible-ubuntu/check-dir.sh | bash
+          env.BRA }}/_shared/install/ansible/check-dir.sh | bash
   MegaLinter:
     name: MegaLinter
     timeout-minutes: 11
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: github.event_name != 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v7 # zizmor: ignore[unpinned-uses]
@@ -157,7 +157,7 @@ jobs:
   mega_service:
     name: test mega-service role
     timeout-minutes: 55
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - default
       - downloads
@@ -178,7 +178,7 @@ jobs:
   all-green:
     name: all green
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: mega_service
     if: github.event_name == 'pull_request'
     permissions:
