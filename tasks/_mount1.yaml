@@ -1,0 +1,33 @@
+---
+- name: Ensure some file mounts
+  ansible.posix.mount:
+    backup: "{{ i.backup | default(omit) }}"
+    boot: "{{ i.boot | default(omit) }}"
+    dump: "{{ i.dump | default(omit) }}"
+    fstab: "{{ i.fstab | default(omit) }}"
+    fstype: "{{ i.fstype | default(omit) }}"
+    opts: "{{ i.opts | default(omit) }}"
+    passno: "{{ i.passno | default(omit) }}"
+    path: "{{ i.path | default(i.name) | default(omit) }}"
+    src: "{{ i.src | default(omit) }}"
+    state: "{{ i.state | default(omit) }}"
+  register: _task_result
+  when: "{{ i.when | default(omit) }} | default(true)" # noqa no-jinja-when
+  tags: "{{ i.tags | default(omit) }}"
+  diff: "{{ i.diff | default(omit) }}"
+  notify: "{{ i.notify | default(omit) }}"
+  timeout: "{{ i.timeout | default(omit) }}"
+  check_mode: "{{ i.check_mode | default(omit) }}"
+  failed_when: "{{ i.failed_when | default(omit) }} | default(_task_result.failed)"
+  changed_when: "{{ i.changed_when | default(omit) }} | default(_task_result.changed)"
+  ignore_errors: "{{ i.ignore_errors | default(false) }}"
+  become: "{{ i.become | default(omit) }}"
+  become_exe: "{{ i.become_exe | default(omit) }}"
+  become_user: "{{ i.become_user | default(omit) }}"
+  become_flags: "{{ i.become_flags | default(omit) }}"
+  retries: "{{ i.retries | default(3 if 'until' in i else 0) }}"
+  delay: "{{ i.delay | default(omit) }}"
+  until: "{{ i.until | default(omit) }} | default(_task_result is success)"
+  async: "{{ i.async | default(omit) }}"
+  poll: "{{ i.poll | default(omit) }}"
+  no_log: "{{ i.no_log | default(omit) }}"
