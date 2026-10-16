@@ -101,7 +101,7 @@ from ansible.module_utils.basic import (  # type: ignore[reportMissingImports]
 )
 
 
-def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912
+def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912,PLR0915
   try:  # noqa: PLW0717
     orig_file_path = str(posixpath.abspath(data['src']))
     path_list = os.path.splitext(orig_file_path)  # noqa: PTH122
@@ -140,6 +140,11 @@ def decompress_file(data={}):  # noqa: ANN001,ANN201,B006,C901,PLR0912
         'r',
       ) as f_in, open(dst, 'wb') as f_out:  # noqa: PTH123
         shutil.copyfileobj(f_in, f_out)
+    elif ext in {'.lz', '.lzip'}:
+      with open(dst, 'wb') as f_out:  # noqa: PTH123
+        f_out.writelines(
+          importlib.import_module('lzip').decompress_file_iter(orig_file_path),
+        )
     elif ext == '.gz':
       gzip = importlib.import_module('gzip')
       with gzip.open(
