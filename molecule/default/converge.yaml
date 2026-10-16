@@ -5,6 +5,15 @@
     - name: Trap broken changed_when
       ansible.builtin.fail:
         msg: changed_when of the wrapper is moved out of jinja or completely into it
+    - name: Notify unchanged first
+      ansible.builtin.set_fact:
+        meva_notified: "{{ meva_notified | default([]) + ['unchanged first'] }}"
+    - name: Notify changed
+      ansible.builtin.set_fact:
+        meva_notified: "{{ meva_notified | default([]) + ['changed'] }}"
+    - name: Notify unchanged last
+      ansible.builtin.set_fact:
+        meva_notified: "{{ meva_notified | default([]) + ['unchanged last'] }}"
   pre_tasks:
     - name: Manage the check mode flag
       ansible.builtin.file:
@@ -46,6 +55,9 @@
             loop_var: w
             label: "main.yaml: {{ w }}"
           loop: "{{ meva_traps }}"
+        - name: Check notify isolation of wrappers
+          ansible.builtin.include_tasks: "include/notify-case.yaml"
+          when: run_traps
     - name: "Run call_mode='{{ call_mode }}'"
       when: call_mode == 'split'
       block:
@@ -127,3 +139,10 @@
             loop_var: w
             label: "{{ w.0.key }}: {{ w.1 }}"
           loop: "{{ meva_trap_args | dict2items | product(meva_traps) | list }}"
+        - name: Check notify isolation of wrappers
+          ansible.builtin.include_tasks: "include/notify-case.yaml"
+          when: run_traps
+          loop_control:
+            loop_var: w
+            label: "{{ w.key }}"
+          loop: "{{ meva_trap_args | dict2items }}"

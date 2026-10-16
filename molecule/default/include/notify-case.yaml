@@ -1,0 +1,35 @@
+---
+- name: Reset notified handlers
+  ansible.builtin.set_fact:
+    meva_notified: []
+- name: "Run wrappers with one changed item in {{ w.key | default('main.yaml') }}"
+  ansible.builtin.include_role:
+    name: ansible-mega-var
+    tasks_from: "{{ w.key | default('main.yaml') }}"
+  vars:
+    meva_packages: "{{ meva_notify_cases['_apt.yaml'] }}"
+    meva_groups2create: "{{ meva_notify_cases['_group.yaml'] }}"
+    meva_users2create: "{{ meva_notify_cases['_user.yaml'] }}"
+    meva_dirs2create: "{{ meva_notify_cases['_file.yaml'] }}"
+    meva_templates2upload: "{{ meva_notify_cases['_template.yaml'] }}"
+    meva_files2upload: "{{ meva_notify_cases['_copy.yaml'] }}"
+    meva_tree2rsync: "{{ meva_notify_cases['_rsync.yaml'] }}"
+    meva_systemd4units: # DevSkim: ignore DS126858
+      "{{ meva_notify_cases['_systemd.yaml'] }}"
+    meva_key2user: "{{ meva_notify_cases['_key.yaml'] }}"
+    meva_partitions: "{{ meva_notify_cases['_parted.yaml'] }}"
+    meva_lvg: "{{ meva_notify_cases['_lvg.yaml'] }}"
+    meva_lvol: "{{ meva_notify_cases['_lvol.yaml'] }}"
+    meva_filesystems: "{{ meva_notify_cases['_filesystem.yaml'] }}"
+    meva_mounts: "{{ meva_notify_cases['_mount.yaml'] }}"
+    meva_cmd2run: # DevSkim: ignore DS126858
+      "{{ meva_notify_cases['_command.yaml'] }}"
+    meva_run4shell: "{{ meva_notify_cases['_shell.yaml'] }}"
+    meva_file2down: []
+    meva_ghr2down: []
+- name: Run notified handlers
+  ansible.builtin.meta: flush_handlers
+- name: Check that only the changed item notified its handler
+  ansible.builtin.assert:
+    that: meva_notified == ['changed']
+    fail_msg: "{{ w.key | default('main.yaml') }} notified {{ meva_notified }}"

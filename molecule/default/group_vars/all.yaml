@@ -115,3 +115,10 @@ meva_trap_args:
   _mount.yaml: { path: /nonexistent/meva-trap-absent, state: unmounted }
   _command.yaml: { argv: [/usr/bin/env, "true"] }
   _shell.yaml: { cmd: /usr/bin/env true }
+meva_notify_items:
+  - { changed_when: false, failed_when: false, notify: Notify unchanged first }
+  - { changed_when: true, failed_when: false, notify: Notify changed }
+  - { changed_when: false, failed_when: false, notify: Notify unchanged last }
+# meva_notify_items combined with meva_trap_args of every wrapper file
+meva_notify_cases: "{{ dict(meva_trap_args | zip(meva_trap_args.values()
+  | product(meva_notify_items) | map('combine') | batch(meva_notify_items | length))) }}"
