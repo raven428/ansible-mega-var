@@ -9,9 +9,3 @@ meva_arch_bin: >-
     meva_arch_map[ansible_architecture] |
     default(ansible_architecture)
   }}
-_meva_cond_true: "true"
-_meva_cond_failed: "_task_result.failed"
-_meva_cond_changed: "_task_result.changed"
-_meva_cond_rc: "_task_result.rc != 0"
-_meva_cond_success: "_task_result is success"
-_meva_cond_unit: "unit_check.rc == 0 or not ansible_check_mode"

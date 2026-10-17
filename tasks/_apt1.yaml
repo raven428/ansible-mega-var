@@ -39,7 +39,7 @@
       ansible_version.full is version('2.10', '>=') else omit }}"
     update_cache: "{{ i.update_cache | default(omit) }}"
     upgrade: "{{ i.upgrade | default(omit) }}"
-  when: "{{ i.when | default(_meva_cond_true) }}" # noqa no-jinja-when
+  when: "{{ i.when | default(omit) }} | default(true)" # noqa no-jinja-when
   notify: "{{ i.notify | default(omit) }}"
   timeout: "{{ i.timeout | default(333) }}"
   check_mode: "{{ i.check_mode | default(omit) }}"
@@ -49,8 +49,8 @@
   register: _task_result
   tags: "{{ i.tags | default(omit) }}"
   diff: "{{ i.diff | default(omit) }}"
-  failed_when: "{{ i.failed_when | default(_meva_cond_failed) }}"
-  changed_when: "{{ i.changed_when | default(_meva_cond_changed) }}"
+  failed_when: "{{ i.failed_when | default(omit) }} | default(_task_result.failed)"
+  changed_when: "{{ i.changed_when | default(omit) }} | default(_task_result.changed)"
   ignore_errors: "{{ i.ignore_errors | default(false) }}"
   become: "{{ i.become | default(omit) }}"
   become_exe: "{{ i.become_exe | default(omit) }}"
