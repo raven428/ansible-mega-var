@@ -19,14 +19,14 @@
     user: "{{ i.user | mandatory }}"
     validate_certs: "{{ i.validate_certs | default(omit) }}"
   register: _task_result
-  when: "{{ i.when | default(omit) }} | default(true)" # noqa no-jinja-when
+  when: "{{ i.when | default(_meva_cond_true) }}" # noqa no-jinja-when
   tags: "{{ i.tags | default(omit) }}"
   diff: "{{ i.diff | default(omit) }}"
   notify: "{{ i.notify | default(omit) }}"
   timeout: "{{ i.timeout | default(omit) }}"
   check_mode: "{{ i.check_mode | default(omit) }}"
-  failed_when: "{{ i.failed_when | default(omit) }} | default(_task_result.failed)"
-  changed_when: "{{ i.changed_when | default(omit) }} | default(_task_result.changed)"
+  failed_when: "{{ i.failed_when | default(_meva_cond_failed) }}"
+  changed_when: "{{ i.changed_when | default(_meva_cond_changed) }}"
   ignore_errors: "{{ i.ignore_errors | default(false) }}"
   become: "{{ i.become | default(omit) }}"
   become_exe: "{{ i.become_exe | default(omit) }}"
@@ -34,7 +34,7 @@
   become_flags: "{{ i.become_flags | default(omit) }}"
   retries: "{{ i.retries | default(3 if 'until' in i else 0) }}"
   delay: "{{ i.delay | default(omit) }}"
-  until: "{{ i.until | default(omit) }} | default(_task_result is success)"
+  until: "{{ i.until | default(_meva_cond_success) }}"
   async: "{{ i.async | default(omit) }}"
   poll: "{{ i.poll | default(omit) }}"
   no_log: "{{ i.no_log | default(omit) }}"
